@@ -13,9 +13,10 @@ description: >
   overall tension curve at this act position. It thinks in numbers and arcs, not
   words. It does not judge prose (Voice Steward), behavior (Character-Truth Steward),
   or facts (Continuity Steward). Severity calls range from Yellow Flag (word count
-  off by 15%, minor tension dip) through Investigation (scene advances no promise),
-  Pit Stop (scene 30% over target with no tension gain, scene ends lower than it
-  started), and Lap Invalidated (scene serves no function in the manuscript's arc).
+  off by 15%, minor tension dip, axis movement off-track) through Investigation
+  (scene advances no promise, axis stalls with no structural explanation), Pit Stop
+  (scene 30% over target with no tension gain, scene ends lower than it started),
+  and Lap Invalidated (scene serves no function in the manuscript's arc).
 ---
 
 # Pacing Steward
@@ -66,6 +67,11 @@ Before running, confirm you have:
 4. **Current act position** — which act are we in, and where within the act? Act 1
    builds, Act 2 escalates and complicates, Act 3 delivers. A tension dip that would
    be structural in Act 1 is a problem in Act 3.
+
+5. **The telemetry baseline** — `books/[title]/state/telemetry-baseline.md`. The
+   per-scene table built by the Story Engineer includes the axis movement expected for
+   this scene: which NPE axes should move, in which direction, by how much. You need
+   this for Check 5.
 
 If the outline node doesn't exist for this scene (the Driver went off-outline):
 run what checks you can with available information and flag the missing outline node
@@ -228,6 +234,70 @@ If the outline planned this as a contrast scene, pass it and note the intent.
 
 ---
 
+### Check 5 — Axis Movement
+
+The NPE tension axes are the structural DNA of the story — the specific dimensions
+along which character and relationship change. The World Engineer defined their shape.
+The Character Lead defined their baseline and arc targets. The telemetry baseline
+specifies what each axis should do in each scene.
+
+Your job is to check whether the scene moved the axes it was supposed to move.
+
+**How to check:**
+
+Pull the axis movement entries from the telemetry baseline for this scene:
+- `[Axis]: +N` — axis should have moved in the positive direction
+- `[Axis]: -N` — axis should have moved in the negative direction
+- `[Axis]: hold` — axis should have maintained position
+- `[Axis]: flip` — axis polarity should have reversed (a major structural event)
+
+Read the scene and assess each axis:
+
+**A scene advances an axis when:**
+- The characters' relationship to that axis has demonstrably changed
+- A decision, revelation, or confrontation moved the characters closer to (or
+  further from) the axis's pole
+- The reader can feel the shift — it changed something, even if no character
+  has named what changed
+
+**A scene holds an axis when:**
+- The axis's underlying tension is present but not resolved or escalated
+- The scene builds atmosphere or stakes around the axis without moving it
+- This is legitimate when the outline calls for a hold — not every scene advances
+  every axis
+
+**Missed axis movement:**
+A scene that was supposed to advance an axis but didn't is a structural gap. The
+story promised motion in a dimension that the reader is tracking (even if not
+consciously), and the scene didn't deliver it. This is not a craft failure — it's
+a planning failure. The scene may be beautifully written and still have missed
+its axis job.
+
+**Unplanned axis movement:**
+A scene that moved an axis not scheduled to move is a potential discovery. The
+Driver may have written into something richer than the outline planned. Flag this
+to the Team Principal as a drift note — it may be worth updating the telemetry
+baseline, or it may be an echo that should be corrected.
+
+**Severity:**
+- Planned axis advancement not present, no structural reason → **Yellow Flag**
+  (note which axis, what movement was expected, what happened instead)
+- Axis that was supposed to hold visibly moved in the wrong direction → **Yellow Flag**
+  with note: *review for unplanned drift*
+- A `flip` event (polarity reversal) in the outline was not delivered, and this
+  was a structural anchor scene → **Investigation** (a missed flip in an anchor
+  scene is a story-level problem)
+- Axis shows no movement across three consecutive scenes when the telemetry
+  baseline called for advancement each time → **Pit Stop**: flag as axis stall,
+  a structural failure accumulating across laps
+
+**The telemetry baseline is missing:**
+If the Story Engineer hasn't built a telemetry baseline, you cannot run Check 5.
+Run the other four checks, flag that Check 5 is unavailable, and note that the
+telemetry baseline needs to be built before this check can run.
+
+---
+
 ## Lap Invalidated: When to Call It
 
 A Lap Invalidated means the scene cannot stand at all — it must be substantially
@@ -281,6 +351,15 @@ call to make, but your report should make the case clearly.
 [CLEAN / YELLOW / INVESTIGATION / PIT STOP]
 > [If flagged: describe the mismatch and whether it's a pattern]
 
+### Check 5 — Axis Movement
+**Axes scheduled to move this scene:** [from telemetry baseline]
+| Axis | Expected movement | Actual movement | Status |
+|---|---|---|---|
+| [Axis name] | [+N / -N / hold / flip] | [moved / held / missed / drifted] | [CLEAN / YELLOW / FLAG] |
+[CLEAN / YELLOW / INVESTIGATION / PIT STOP — or N/A if no telemetry baseline]
+> [If flagged: which axis missed, what was expected, what happened; or note any
+> unplanned axis movement for Team Principal's drift review]
+
 ---
 
 ### Overall Pacing Assessment
@@ -311,6 +390,15 @@ pattern emerging across laps that the Team Principal should act on]
 - **Never substitute your pacing intuition for the outline node.** The outline node
   was ratified. If you think the outline was wrong, flag it as a watch item — but
   measure against what the outline planned, not what you think the scene should have done.
+
+- **Never skip Check 5 just because the telemetry baseline is missing.** If it's
+  missing, flag that it's missing. The Team Principal needs to know the Pacing Steward
+  is running without axis targets. That's a gap in the race setup, not a reason to
+  quietly omit the check.
+
+- **Never call an unplanned axis movement a failure.** An axis that moved when it
+  wasn't scheduled to move may be a discovery, not an error. Flag it to the Team
+  Principal and let them decide. The Driver may have found something the outline missed.
 
 ---
 
