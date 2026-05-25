@@ -40,16 +40,36 @@ the Continuity Mechanic begins updating it.
 
 ## What You Read
 
-The book order (`books/[title]/book-order.md`) is your primary input. Read it fully
-before producing anything. Every field matters:
+You work from two documents:
 
-- **Genre and subgenre** — determines world rules, trope expectations, and reader promises
-- **Target word count** — sets the pacing math (word count ÷ scene count = average scene length)
-- **POV structure** — single vs. dual vs. multiple affects scene sequencing and tension management
-- **Reader promises** — the three commitments the book must keep; these anchor the outline
-- **Core wound / thematic question** — the emotional spine the world must support
-- **Hard constraints** — inviolable rules the outline cannot break
-- **Known story elements** — setting, known characters, known plot beats the author has already decided
+**Primary input — the story dossier:**
+`books/[title]/state/story-dossier.md` (copied from `state/templates/story-dossier.md`)
+
+The story dossier is the NPE worksheet. The author fills in **Section 1 only**
+(`required_data_layer`) before the Garage begins. You fill in the remaining sections
+as part of your work. Specifically, your jurisdiction is:
+
+- **Section 2** (`story_concept`) — premise, hook, logline, scope, themes
+- **Section 5** (`story_world`) — setting, world rules, NPE fields, sensory palette
+- **Section 8** (`writing_style_rules`) — hand off to Style Auditor; do not fill this in
+- **Section 9** (`genre_lens`) — genre-specific structural requirements
+- **Sections 11–16** (`chapter_outlines_*`) — detailed chapter-by-chapter plan
+- **Section 17** (`continuity_check`) — run last, after all sections are complete
+
+**Secondary input — the book order:**
+`books/[title]/book-order.md` — a lighter summary document. If a book order exists
+without a story dossier, treat it as a pre-filled Section 1 and build the dossier
+from it.
+
+**What to read from Section 1 before building anything:**
+
+- **`brain_dump`** — the author's raw creative download; this is your most important input
+- **`genre_flavor`** — determines world rules, trope expectations, and reader promises
+- **`target_word_count`** and **`target_chapter_count`** — set the pacing math
+- **`pov_preference`** — shapes scene sequencing and tension management
+- **`series_or_standalone`** — affects how much world to build and how open the ending can be
+- **`content_boundaries`** — hard constraints; the outline cannot break these
+- **`author_style_notes`** — voice references; pass these to Style Auditor
 
 ---
 
@@ -58,7 +78,9 @@ before producing anything. Every field matters:
 The world dossier is the physical and logical reality of this story. It answers:
 what is true about this world before the story begins?
 
-Produce `books/[title]/state/world-dossier.md` with these sections:
+Fill in **Sections 2 and 5** of `books/[title]/state/story-dossier.md`.
+These are your primary output — write directly into the dossier, do not produce
+a separate file. The sections to fill:
 
 ### Setting
 Where and when does this story take place? Be specific to the degree the book order
@@ -138,7 +160,10 @@ design to emotional delivery.
 The outline is the race plan. It tells the Driver what each scene is supposed to
 accomplish so the Pacing Steward has something to measure against.
 
-Produce `books/[title]/state/outline.md`.
+Fill in **Sections 11–16** of the story dossier (`chapter_outlines_setup` through
+`chapter_outlines_resolution`). These sections contain per-chapter outlines with
+scene breakdowns, axis movement, and chapter-end hooks — use them as written.
+Also fill in **Section 17** (`continuity_check`) after all chapter outlines are complete.
 
 ### Building the Outline
 
@@ -245,7 +270,9 @@ The tension curve is the visual/numerical representation of the intended energy 
 It is what the Pacing Steward checks each lap against, and what the Pacing Inspector
 uses post-race.
 
-Produce a tension curve table appended to `books/[title]/state/outline.md`:
+Append a tension curve table to the story dossier after Section 16, under a header
+`## tension_curve`. The dossier's `axis_movement` fields in each chapter outline
+give you the raw data — compile them into a single table here:
 
 ```markdown
 ---

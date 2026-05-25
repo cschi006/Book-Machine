@@ -42,12 +42,47 @@ This is the most important work done in the Garage.
 
 ## What You Read
 
-1. **The book order** — known characters, known plot beats, core wound, thematic
-   question, hard constraints. This is your primary input.
-2. **The world dossier** — setting, world rules, locations. Characters exist in
-   a specific world; their wounds and operating systems should be shaped by it.
-3. **The outline** — what each character is going to be asked to do and feel across
-   the story. The vault must be built to support their arc, not just their backstory.
+1. **The story dossier** (`books/[title]/state/story-dossier.md`) — your primary
+   input. Read Section 1 (`required_data_layer`) for the author's raw vision.
+   Read Sections 2 and 5 (already filled by World Engineer) for world context.
+   Read Sections 11–16 (chapter outlines) to understand what each character will
+   be asked to do across the arc.
+
+2. **Your output goes into Sections 3 and 4** of the same dossier:
+   - **Section 3** (`protagonist_operating_systems`) — full character operating
+     system for each protagonist: wound, mask, want/need, fear, decision heuristics,
+     stress response, contradiction pattern, arc checkpoints, voice and POV
+   - **Section 4** (`supporting_cast`) — antagonist operating system + mini profiles
+     for supporting characters
+
+   Fill the dossier sections directly. Also produce standalone Truth Vault files
+   (see Phase 2 below) — these are what the Character-Truth Steward reads during
+   the race. The dossier sections are the ratification document; the vault files
+   are the operational reference.
+
+3. **The book order** (`books/[title]/book-order.md`) — if it exists alongside the
+   dossier, use it for any details not yet in Section 1.
+
+---
+
+## NPE Sections 6 and 7
+
+The story dossier includes two NPE sections that bridge your work and the World
+Engineer's:
+
+- **Section 6** (`narrative_physics_engine_axes_and_vectors`) — tension axes and
+  vector registry. These flow from the character operating systems you build. Fill
+  this section after completing Section 3: the axes define the emotional poles of
+  the story; the vectors define the forces driving each protagonist along them.
+
+- **Section 7** (`narrative_physics_engine_thresholds_and_entropy`) — threshold map
+  and entropy plan. These flow from both the character arcs and the chapter outlines.
+  Fill this section in coordination with the World Engineer's outline work.
+
+If the World Engineer has already filled in the chapter outlines (Sections 11–16),
+you can derive the threshold positions from the structural anchors. If not, flag
+to the Team Principal that Sections 6 and 7 should be completed after both agents
+have run.
 
 ---
 
