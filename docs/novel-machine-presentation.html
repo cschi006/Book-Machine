@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Novel Writing Machine — A System Documentation (v0.2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F5F1E8;
+    --paper-deep: #EAE3D2;
+    --ink: #1A1815;
+    --ink-soft: #3D3934;
+    --ink-muted: #6F6A62;
+    --rule: #C9C0AC;
+    --creative: #5B4FB4;
+    --judgment: #B8860B;
+    --track: #C8102E;
+    --serif: 'Fraunces', 'IBM Plex Serif', Georgia, serif;
+    --body: 'IBM Plex Serif', Georgia, serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 19px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+  .narrow { max-width: 720px; margin: 0 auto; }
+  .wide { max-width: 1080px; margin: 0 auto; }
+
+  header.masthead {
+    border-bottom: 1px solid var(--rule);
+    padding: 24px 0;
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+    background-color: rgba(245, 241, 232, 0.92);
+  }
+  .masthead-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .masthead-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-variation-settings: "opsz" 14, "SOFT" 0;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+  .masthead-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+  }
+
+  .hero {
+    padding: 120px 0 80px;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    width: 80px;
+    height: 80px;
+    background-image: repeating-conic-gradient(var(--ink) 0% 25%, var(--paper) 0% 50%);
+    background-size: 16px 16px;
+    opacity: 0.85;
+    border-radius: 50%;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--track);
+    margin-bottom: 32px;
+  }
+  .hero-eyebrow span {
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--track);
+    vertical-align: middle;
+    margin-right: 12px;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+    font-weight: 350;
+    font-size: clamp(54px, 8vw, 108px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px;
+    max-width: 12ch;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    font-weight: 350;
+    color: var(--track);
+  }
+  .hero-deck {
+    font-family: var(--serif);
+    font-size: 24px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    max-width: 32ch;
+    margin-bottom: 48px;
+    font-weight: 350;
+  }
+  .hero-byline {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    max-width: 600px;
+  }
+  .hero-byline strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  section.act {
+    padding: 96px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .sector-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sector-label::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--track);
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .sector-label.creative::before { background: var(--creative); }
+  .sector-label.judgment::before { background: var(--judgment); }
+
+  h2.act-title {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 96, "SOFT" 30;
+    font-weight: 400;
+    font-size: clamp(40px, 5.5vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    max-width: 18ch;
+  }
+  h2.act-title em {
+    font-style: italic;
+    font-variation-settings: "opsz" 96, "SOFT" 60;
+  }
+
+  .act-lede {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.45;
+    font-weight: 350;
+    color: var(--ink-soft);
+    margin-bottom: 48px;
+    max-width: 32ch;
+  }
+
+  .prose p {
+    margin-bottom: 1.4em;
+    max-width: 64ch;
+  }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { font-weight: 600; color: var(--ink); }
+  .prose em { font-style: italic; }
+
+  h3.sub {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 24;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin: 56px 0 16px;
+    max-width: 28ch;
+  }
+
+  blockquote.pull {
+    border-left: 3px solid var(--track);
+    padding: 8px 0 8px 28px;
+    margin: 48px 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-variation-settings: "opsz" 36, "SOFT" 50;
+    font-weight: 350;
+    font-size: 28px;
+    line-height: 1.3;
+    color: var(--ink);
+    max-width: 28ch;
+  }
+
+  /* — Skill cards — */
+  .roster {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    margin: 48px 0;
+    border: 1px solid var(--rule);
+  }
+  .skill-card {
+    background: var(--paper);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+  .roster.on-deep .skill-card { background: var(--paper-deep); }
+  .roster.on-deep .skill-card:hover { background: #DDD3BC; }
+  .skill-card:hover { background: var(--paper-deep); }
+  .skill-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+  }
+  .skill-tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .skill-tag.creative { color: var(--creative); }
+  .skill-tag.creative::before { background: var(--creative); }
+  .skill-tag.judgment { color: var(--judgment); }
+  .skill-tag.judgment::before { background: var(--judgment); }
+  .skill-name {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 24;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .skill-role {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  /* — Severity table — */
+  .severity-table {
+    margin: 48px 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .severity-table th, .severity-table td {
+    padding: 18px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  .severity-table tr:last-child td { border-bottom: none; }
+  .severity-table th {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+  .severity-table td {
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .severity-flag {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 20;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .severity-flag-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .flag-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .flag-yellow { background: #E8B419; }
+  .flag-investigate { background: #D88B12; }
+  .flag-pitstop { background: #C8102E; }
+  .flag-invalid { background: #8A1928; border: 1px solid var(--ink); }
+  .flag-garage { background: var(--ink); }
+
+  /* — Pipeline diagram — */
+  .pipeline-section {
+    padding: 0 0 32px;
+    margin: 56px 0 24px;
+  }
+  .pipeline {
+    padding: 40px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    position: relative;
+    cursor: zoom-in;
+    transition: border-color 0.2s;
+  }
+  .pipeline:hover {
+    border-color: var(--ink);
+  }
+  .pipeline svg { width: 100%; height: auto; display: block; }
+  .pipeline-expand {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-muted);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 6px 10px 6px 12px;
+    border-radius: 2px;
+    pointer-events: none;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .pipeline:hover .pipeline-expand {
+    color: var(--ink);
+    border-color: var(--ink);
+    background: var(--paper-deep);
+  }
+
+  /* — Modal — */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 24, 21, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 32px;
+    cursor: zoom-out;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.show {
+    display: flex;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .modal-inner {
+    width: 100%;
+    max-width: 1600px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 56px 56px 48px;
+    position: relative;
+    cursor: default;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    padding: 8px 14px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .modal-close:hover { background: var(--ink); color: var(--paper); }
+  .modal-inner svg { width: 100%; height: auto; display: block; }
+
+  /* — Numbered list — */
+  ol.steps {
+    list-style: none;
+    counter-reset: step;
+    margin: 32px 0 48px;
+  }
+  ol.steps li {
+    counter-increment: step;
+    padding: 20px 0 20px 56px;
+    position: relative;
+    border-bottom: 1px solid var(--rule);
+    max-width: 64ch;
+  }
+  ol.steps li:last-child { border-bottom: none; }
+  ol.steps li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--track);
+    font-weight: 500;
+  }
+  ol.steps strong {
+    display: block;
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 20;
+    font-weight: 500;
+    font-size: 19px;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  ol.steps span.desc {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* — Mini step list (inline 7-step) — */
+  .seven-step {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 32px 0;
+    border: 1px solid var(--rule);
+    background: var(--rule);
+  }
+  .seven-step li {
+    flex: 1 1 14%;
+    min-width: 110px;
+    list-style: none;
+    background: var(--paper);
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .seven-step .ix {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--track);
+    letter-spacing: 0.14em;
+  }
+  .seven-step .nm {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 18;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.15;
+  }
+
+  /* — Code-like block — */
+  .codeblock {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 24px;
+    line-height: 1.7;
+    margin: 32px 0;
+    max-width: 720px;
+    overflow-x: auto;
+  }
+  .codeblock .key { color: #E8B419; }
+  .codeblock .placeholder { color: var(--ink-muted); font-style: italic; }
+  .codeblock .comment { color: #8A8579; }
+
+  /* — Inline aside — */
+  .aside {
+    border: 1px solid var(--ink);
+    padding: 28px 24px;
+    margin: 48px 0;
+    max-width: 64ch;
+    position: relative;
+    background: var(--paper);
+  }
+  .aside::before {
+    content: 'PIT WALL';
+    position: absolute;
+    top: -8px;
+    left: 16px;
+    background: var(--paper);
+    padding: 0 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+  }
+  .aside p { font-size: 16px; line-height: 1.55; margin-bottom: 0.9em; }
+  .aside p:last-child { margin-bottom: 0; }
+
+  /* On deep background sections, aside background matches */
+  section[style*="paper-deep"] .aside { background: var(--paper-deep); }
+  section[style*="paper-deep"] .aside::before { background: var(--paper-deep); }
+
+  /* — Two-column ledger — */
+  .ledger {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 48px 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+  .ledger-col {
+    padding: 24px 24px 24px 0;
+  }
+  .ledger-col:last-child {
+    padding-left: 24px;
+    border-left: 1px solid var(--rule);
+  }
+  .ledger-head {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink);
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .ledger-col ul {
+    list-style: none;
+  }
+  .ledger-col li {
+    padding: 12px 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    border-bottom: 1px dotted var(--rule);
+  }
+  .ledger-col li:last-child { border-bottom: none; }
+  .ledger-col strong {
+    color: var(--ink);
+    font-weight: 500;
+    display: block;
+    font-family: var(--serif);
+    font-size: 16px;
+  }
+
+  /* — System Roster table — */
+  .roster-table {
+    margin: 48px 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .roster-col {
+    background: var(--paper);
+    padding: 24px 20px;
+  }
+  .roster-col h4 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .roster-col ul { list-style: none; }
+  .roster-col li {
+    padding: 10px 0;
+    border-bottom: 1px dotted var(--rule);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .roster-col li:last-child { border-bottom: none; }
+  .roster-col .rn {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 18;
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .roster-col .rr {
+    color: var(--ink-soft);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+  .roster-col .rs {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .roster-col .rs.done { color: #2A7A3A; }
+  .roster-col .rs.wrap { color: var(--creative); }
+  .roster-col .rs.stub { color: var(--track); }
+  .roster-col .sub {
+    margin-left: 14px;
+    padding: 6px 0;
+    border-bottom: none;
+    color: var(--ink-soft);
+    font-size: 12px;
+  }
+  .roster-col .sub .rn {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+
+  /* — Footer — */
+  footer.colophon {
+    padding: 80px 0 96px;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .colophon-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .colophon-mark {
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 96, "SOFT" 50;
+    font-weight: 350;
+    font-style: italic;
+    font-size: 48px;
+    line-height: 1;
+    color: var(--paper);
+    margin-bottom: 24px;
+  }
+  .colophon-deck {
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--paper-deep);
+    max-width: 36ch;
+  }
+  .colophon h4 {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--rule);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .colophon p {
+    font-family: var(--body);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--paper-deep);
+    margin-bottom: 8px;
+  }
+  .colophon a { color: var(--paper); text-decoration: underline; text-decoration-color: var(--ink-muted); }
+
+  /* — Scroll reveal — */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* — Mobile — */
+  @media (max-width: 960px) {
+    .roster-table { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 760px) {
+    body { font-size: 17px; }
+    .wrap { padding: 0 20px; }
+    .hero { padding: 80px 0 56px; }
+    .hero::before { width: 48px; height: 48px; top: 20px; right: 20px; background-size: 10px 10px; }
+    .hero-deck { font-size: 20px; }
+    .hero-byline { flex-wrap: wrap; gap: 16px; font-size: 10px; }
+    section.act { padding: 64px 0; }
+    blockquote.pull { font-size: 22px; padding-left: 20px; }
+    .pipeline { padding: 20px; }
+    .pipeline-expand { display: none; }
+    .modal-inner { padding: 40px 20px 24px; }
+    .roster { grid-template-columns: 1fr; }
+    .roster-table { grid-template-columns: 1fr; }
+    .colophon-grid { grid-template-columns: 1fr; gap: 32px; }
+    .ledger { grid-template-columns: 1fr; }
+    .ledger-col:last-child { padding-left: 0; border-left: none; border-top: 1px solid var(--rule); padding-top: 24px; }
+    .severity-table { font-size: 14px; }
+    .severity-table th, .severity-table td { padding: 12px 8px; }
+    .codeblock { font-size: 11px; padding: 16px; }
+    .seven-step li { flex: 1 1 45%; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div class="masthead-title">The Novel Writing Machine</div>
+    <div class="masthead-meta">A system documentation · v0.2</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-eyebrow"><span></span>Designed for Goddess Divine · Future Fiction Academy</div>
+    <h1>A novel writing <em>machine</em>, organized like a Formula 1 race weekend.</h1>
+    <p class="hero-deck">An agentic system for long-form fiction — built from a vocabulary of engineers, mechanics, stewards, and a team principal — that protects the author's judgment at the moments where it actually matters.</p>
+    <div class="hero-byline">
+      <div><strong>Architect</strong><br>Elizabeth Ann West</div>
+      <div><strong>Design partner</strong><br>Claude (Anthropic)</div>
+      <div><strong>Filed</strong><br>May 2026 · v0.2</div>
+    </div>
+  </div>
+</section>
+
+<!-- ACT I: THE PROBLEM -->
+<section class="act reveal">
+  <div class="wrap narrow">
+    <div class="sector-label">Sector 01 · The premise</div>
+    <h2 class="act-title">Single-agent writing pipelines break in <em>predictable</em> ways.</h2>
+    <p class="act-lede">Long-form AI generation produces three failure modes that no amount of prompt-engineering can quietly fix.</p>
+
+    <div class="prose">
+      <p><strong>Eye colors drift.</strong> A character whose eyes were dark in chapter three are hazel by chapter twelve. The model holds a vague impression of the character, not the fact, and the fact mutates over thousands of generated tokens.</p>
+
+      <p><strong>Characters know things they shouldn't yet.</strong> The model has read the whole outline and leaks foreknowledge into a POV character's thoughts. Elizabeth Bennet — yes, the heroine of <em>Pride and Prejudice</em>, used here as the running example — references Wickham's elopement in chapter ten, ten chapters before she is told. The reader catches it. The illusion breaks.</p>
+
+      <p><strong>The prose flattens into a generic competent voice.</strong> Sentence rhythms converge. The same constructions recur with quiet inevitability — <em>"It wasn't X but Y."</em> <em>"The air shifted."</em> Names cluster around an unmistakable AI-default palette: Marcus Chen, Sarah Whitfield, Elena Ashford. The book becomes legible as AI-written even when it isn't trying to be.</p>
+
+      <blockquote class="pull">A single model writing a 90,000-word novel is a single human writing a 90,000-word novel without sleep, notes, or judgment. The structure is what's missing, not the talent.</blockquote>
+
+      <p>The machine in this document is the structure. It splits the work across many specialized roles, gives each one a narrow lane and clear constraints, and stages their cooperation as the three acts of a Formula 1 race weekend: pre-race setup, the race itself, and post-race inspection.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACT II: THE METAPHOR -->
+<section class="act reveal" style="background: var(--paper-deep);">
+  <div class="wrap narrow">
+    <div class="sector-label">Sector 02 · The shape of the thing</div>
+    <h2 class="act-title">Three levels. Each one a <em>gate</em> the work must pass through.</h2>
+    <p class="act-lede">The racing metaphor maps almost too cleanly, which is usually a sign it's the right one. Garage. Race. Parc fermé.</p>
+
+    <div class="prose">
+      <p>Every Formula 1 weekend has the same architecture. The car gets built in the garage — engineers tune setup, mechanics check tolerances, the team confirms scrutineering before the car ever rolls onto the track. The race itself runs lap by lap, with stewards watching every move and a team principal calling strategy from the pit wall. After the chequered flag, the cars go into parc fermé — the impound area — where inspectors check that everything that crossed the finish line meets specification.</p>
+
+      <p>A novel passes through the same three phases. Pre-writing setup. Drafting, scene by scene. Post-draft inspection. The metaphor is not a costume on top of a generic agent pipeline — it is the structure itself. Each level has a clear exit gate, a clear set of deliverables, and a clear escalation path when something goes wrong.</p>
+
+      <p>Two more pieces of vocabulary travel through the whole system. <strong>Scenes are laps.</strong> They are the atomic unit of story, small enough for one agent to hold complete context. <strong>Chapters are stints</strong> — continuous runs of laps on the same set of tires, between pit stops. The reader experiences chapters. The writer builds scenes.</p>
+    </div>
+  </div>
+
+  <!-- PIPELINE DIAGRAM — full-width breakout, click to enlarge -->
+  <div class="wrap pipeline-section">
+    <div class="pipeline" id="pipelineTrigger" role="button" tabindex="0" aria-label="Click to enlarge the pipeline diagram">
+      <div class="pipeline-expand">↗ Click to enlarge</div>
+      <svg viewBox="0 0 1200 520" xmlns="http://www.w3.org/2000/svg" id="pipelineSvg">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#1A1815" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+        </defs>
+
+        <!-- Sector labels -->
+        <text x="200" y="36" font-family="JetBrains Mono, monospace" font-size="12" fill="#6F6A62" letter-spacing="2" text-anchor="middle">SECTOR 01 · GARAGE</text>
+        <text x="600" y="36" font-family="JetBrains Mono, monospace" font-size="12" fill="#6F6A62" letter-spacing="2" text-anchor="middle">SECTOR 02 · RACE</text>
+        <text x="1000" y="36" font-family="JetBrains Mono, monospace" font-size="12" fill="#6F6A62" letter-spacing="2" text-anchor="middle">SECTOR 03 · PARC FERMÉ</text>
+
+        <!-- Phase containers -->
+        <rect x="60" y="56" width="280" height="420" fill="#F5F1E8" stroke="#C9C0AC" stroke-width="1"/>
+        <rect x="460" y="56" width="280" height="420" fill="#F5F1E8" stroke="#C9C0AC" stroke-width="1"/>
+        <rect x="860" y="56" width="280" height="420" fill="#F5F1E8" stroke="#C9C0AC" stroke-width="1"/>
+
+        <!-- Garage skills (5) -->
+        <g>
+          <rect x="76" y="76" width="248" height="44" fill="#EEE9F8" stroke="#5B4FB4" stroke-width="0.6"/>
+          <text x="200" y="103" text-anchor="middle" font-family="Fraunces, serif" font-size="15" fill="#3D2D8C">Story Engineer</text>
+
+          <rect x="76" y="128" width="248" height="44" fill="#EEE9F8" stroke="#5B4FB4" stroke-width="0.6"/>
+          <text x="200" y="155" text-anchor="middle" font-family="Fraunces, serif" font-size="15" fill="#3D2D8C">World Engineer</text>
+
+          <rect x="76" y="180" width="248" height="44" fill="#EEE9F8" stroke="#5B4FB4" stroke-width="0.6"/>
+          <text x="200" y="207" text-anchor="middle" font-family="Fraunces, serif" font-size="15" fill="#3D2D8C">Character Lead</text>
+
+          <rect x="76" y="232" width="248" height="44" fill="#EEE9F8" stroke="#5B4FB4" stroke-width="0.6"/>
+          <text x="200" y="259" text-anchor="middle" font-family="Fraunces, serif" font-size="15" fill="#3D2D8C">Naming Mechanic</text>
+
+          <rect x="76" y="284" width="248" height="44" fill="#FBF1DA" stroke="#B8860B" stroke-width="0.6"/>
+          <text x="200" y="311" text-anchor="middle" font-family="Fraunces, serif" font-size="15" fill="#7A5A07">Style Auditor</text>
+
+          <text x="200" y="456" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#6F6A62" letter-spacing="1.5">↓ SCRUTINEERING</text>
+        </g>
+
+        <!-- Race skills -->
+        <g>
+          <!-- Driver -->
+          <rect x="476" y="76" width="248" height="56" fill="#EEE9F8" stroke="#5B4FB4" stroke-width="0.6"/>
+          <text x="600" y="100" text-anchor="middle" font-family="Fraunces, serif" font-size="15" fill="#3D2D8C">Driver</text>
+          <text x="600" y="118" text-anchor="middle" font-family="IBM Plex Serif, serif" font-size="11" fill="#6F6A62" font-style="italic">runs the lap (7-step loop)</text>
+
+          <!-- Pit Crew (group with 3 sub-roles) -->
+          <rect x="476" y="148" width="248" height="120" fill="#EEE9F8" stroke="#5B4FB4" stroke-width="0.6"/>
+          <text x="600" y="168" text-anchor="middle" font-family="Fraunces, serif" font-size="15" fill="#3D2D8C">Pit Crew</text>
+          <line x1="490" y1="178" x2="710" y2="178" stroke="#C9C0AC" stroke-width="0.5"/>
+          <text x="600" y="198" text-anchor="middle" font-family="IBM Plex Serif, serif" font-size="11" fill="#3D3934">Backstory Mechanic</text>
+          <text x="600" y="218" text-anchor="middle" font-family="IBM Plex Serif, serif" font-size="11" fill="#3D3934">Continuity Mechanic</text>
+          <text x="600" y="238" text-anchor="middle" font-family="IBM Plex Serif, serif" font-size="11" fill="#3D3934">Sidethought Catcher</text>
+          <text x="600" y="258" text-anchor="middle" font-family="IBM Plex Serif, serif" font-size="10" fill="#6F6A62" font-style="italic">parallel prep</text>
+
+          <!-- Stewards Panel -->
+          <rect x="476" y="284" width="248" height="120" fill="#FBF1DA" stroke="#B8860B" stroke-width="0.6"/>
+          <text x="600" y="304" text-anchor="middle" font-family="Fraunces, serif" font-size="15" fill="#7A5A07">Stewards Panel</text>
+          <line x1="490" y1="314" x2="710" y2="314" stroke="#C9C0AC" stroke-width="0.5"/>
+          <text x="600" y="334" text-anchor="middle" font-family="IBM Plex Serif, serif" font-size="11" fill="#3D3934">Continuity · Voice</text>
+          <text x="600" y="354" text-anchor="middle" font-family="IBM Plex Serif, serif" font-size="11" fill="#3D3934">Character-Truth · Pacing</text>
+          <text x="600" y="378" text-anchor="middle" font-family="IBM Plex Serif, serif" font-size="10" fill="#6F6A62" font-style="italic">audit every lap</text>
+
+          <text x="600" y="456" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#6F6A62" letter-spacing="1.5">↓ CHEQUERED FLAG</text>
+        </g>
+
+        <!-- Parc Fermé skills (6 now, with Craft Editor leading) -->
+        <g>
+          <rect x="876" y="76" width="248" height="40" fill="#FBF1DA" stroke="#B8860B" stroke-width="0.6"/>
+          <text x="1000" y="101" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#7A5A07">Craft Editor</text>
+
+          <rect x="876" y="124" width="248" height="40" fill="#FBF1DA" stroke="#B8860B" stroke-width="0.6"/>
+          <text x="1000" y="149" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#7A5A07">Grammar Mechanic</text>
+
+          <rect x="876" y="172" width="248" height="40" fill="#FBF1DA" stroke="#B8860B" stroke-width="0.6"/>
+          <text x="1000" y="197" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#7A5A07">Crutch Inspector</text>
+
+          <rect x="876" y="220" width="248" height="40" fill="#FBF1DA" stroke="#B8860B" stroke-width="0.6"/>
+          <text x="1000" y="245" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#7A5A07">Pacing Inspector</text>
+
+          <rect x="876" y="268" width="248" height="40" fill="#FBF1DA" stroke="#B8860B" stroke-width="0.6"/>
+          <text x="1000" y="293" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#7A5A07">Reader Simulator</text>
+
+          <rect x="876" y="316" width="248" height="40" fill="#FBF1DA" stroke="#B8860B" stroke-width="0.6"/>
+          <text x="1000" y="341" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#7A5A07">Payoff Auditor</text>
+
+          <text x="1000" y="456" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#6F6A62" letter-spacing="1.5">↓ RATIFIED MANUSCRIPT</text>
+        </g>
+
+        <!-- Phase connectors -->
+        <line x1="340" y1="266" x2="458" y2="266" stroke="#1A1815" stroke-width="1" marker-end="url(#arr)"/>
+        <line x1="740" y1="266" x2="858" y2="266" stroke="#1A1815" stroke-width="1" marker-end="url(#arr)"/>
+
+        <!-- Drift = discovery return path -->
+        <path d="M 600 408 Q 600 500 200 350" fill="none" stroke="#C8102E" stroke-width="0.9" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+        <text x="400" y="498" font-family="JetBrains Mono, monospace" font-size="10" fill="#C8102E" letter-spacing="1.5" text-anchor="middle">DRIFT = DISCOVERY (REBUILD)</text>
+
+        <!-- Craft editor through-line annotation -->
+        <text x="1000" y="396" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6F6A62" letter-spacing="1.2" font-style="italic">craft-editor is also called per-lap</text>
+        <text x="1000" y="408" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#6F6A62" letter-spacing="1.2" font-style="italic">by Driver Step 6 + Voice Steward</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="wrap narrow">
+    <div class="prose">
+      <p>The dashed red path is the one most novel pipelines miss. When the prose reveals something better than the outline planned, the system can route back to the garage — not as a failure, but as a discovery. The team principal makes the call. The outline updates. The race resumes from the affected scene with the new direction locked in.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACT III: GARAGE -->
+<section class="act reveal">
+  <div class="wrap narrow">
+    <div class="sector-label creative">Sector 03 · Garage</div>
+    <h2 class="act-title">Everything before a single word of prose is <em>written</em>.</h2>
+    <p class="act-lede">Five skills work in sequence to produce the foundations the rest of the system depends on. The gate at the end is called scrutineering: the car cannot roll onto the track until every deliverable passes inspection.</p>
+
+    <div class="prose">
+      <p>The garage exists to make the most expensive failure mode of long-form generation impossible: writing 40,000 words before noticing the structure doesn't hold. Each garage skill produces a concrete artifact, and the next skill reads the previous one's output. By the time the car leaves the garage, the system knows what story is being told, who is telling it, where they are, what they want, how they sound, and what the reader needs to feel by the last page.</p>
+    </div>
+
+    <div class="roster">
+      <div class="skill-card">
+        <span class="skill-tag creative">Creative</span>
+        <div class="skill-name">Story Engineer</div>
+        <div class="skill-role">Builds the 17-section dossier, scene-by-scene outline, payoff architecture, tension curve, and telemetry baselines. Wraps the existing Dossier Cascade skill.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-tag creative">Creative</span>
+        <div class="skill-name">World Engineer</div>
+        <div class="skill-role">Initializes the world-state ledger that every other agent answers to. Static facts plus a schema for the dynamic state that updates scene by scene.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-tag creative">Creative</span>
+        <div class="skill-name">Character Lead</div>
+        <div class="skill-role">Writes off-screen interiority files — backstories, micro-histories, sensory associations, body memory, fears with origins. The reader never sees these; the Driver writes from inside them.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-tag creative">Creative</span>
+        <div class="skill-name">Naming Mechanic</div>
+        <div class="skill-role">Pulls cast names from period and region-appropriate pools with explicit exclusion of AI-cluster names. No Marcus Chen. No Whitfield. No Ashford.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-tag judgment">Judgment</span>
+        <div class="skill-name">Style Auditor</div>
+        <div class="skill-role">Reads voice samples from the author's prior books to build the voice anchor — sentence rhythm, vocabulary register, signature moves. Then assembles the manuscript-specific crutch list: patterns to avoid, with local density limits.</div>
+      </div>
+    </div>
+
+    <h3 class="sub">The knowledge-state machinery</h3>
+    <div class="prose">
+      <p>Buried inside the World Engineer's output is the single most important piece of machinery in the whole system: a per-character, per-scene knowledge state. Every fact in the ledger carries a <em>known_to</em> field listing which characters know it, and a <em>known_since</em> field marking the scene where they learned it.</p>
+
+      <p>Before the Driver writes any scene, it queries the ledger: <em>what does Elizabeth Bennet know as of scene fourteen?</em> The query returns a scoped subset of the ledger — not the whole world model, but only the facts that character can reference at that moment in the story. The leak that produces "characters knowing things they shouldn't" stops being possible, because the Driver never sees the facts it isn't allowed to use.</p>
+    </div>
+
+    <div class="aside">
+      <p>The exit gate at the end of the garage is called <strong>scrutineering</strong>. The team principal reviews every deliverable — dossier, outline, ledger, interiority files, name list, voice anchor, crutch list — and refuses to enter the Race until each one passes. There is also an optional <strong>qualifying lap</strong>: one pilot scene drafted before the full race, so any problems with voice or interiority surface before twenty more scenes get built on top of a bad foundation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACT IV: RACE -->
+<section class="act reveal" style="background: var(--paper-deep);">
+  <div class="wrap narrow">
+    <div class="sector-label creative">Sector 04 · The Race</div>
+    <h2 class="act-title">Each scene is a lap. Each lap gets <em>watched</em>.</h2>
+    <p class="act-lede">Drafting happens one scene at a time. The Driver runs the lap through a seven-step loop. While it drafts, the Pit Crew preps for the next. After the lap, four stewards inspect what was written.</p>
+
+    <div class="prose">
+      <p>The Race is where prose actually gets generated, but the choreography is what matters. The Driver does not draft in isolation. It wraps an existing seven-step chapter loop and runs it in scene mode — gathering context from the dossier and the ledger, planning the scene, drafting, then running three editorial passes before producing a final draft that applies all of them.</p>
+    </div>
+
+    <h3 class="sub">The seven-step loop</h3>
+    <ul class="seven-step" aria-label="The Driver's seven-step loop">
+      <li><span class="ix">01</span><span class="nm">Gather</span></li>
+      <li><span class="ix">02</span><span class="nm">Plan</span></li>
+      <li><span class="ix">03</span><span class="nm">Draft</span></li>
+      <li><span class="ix">04</span><span class="nm">Repetition</span></li>
+      <li><span class="ix">05</span><span class="nm">Continuity</span></li>
+      <li><span class="ix">06</span><span class="nm">Craft</span></li>
+      <li><span class="ix">07</span><span class="nm">Final</span></li>
+    </ul>
+
+    <div class="prose">
+      <p>The repetition pass reads the lap against the previous five scenes, hunting for echoes the author would not want — repeated body language, recycled metaphors, opening structures that pattern-match across chapters. The continuity pass cross-checks the draft against the world-state ledger, including a per-character knowledge query that flags any reference to a fact the POV character does not yet know at this scene. The craft pass — Step 6 — is where the prose becomes prose.</p>
+    </div>
+
+    <h3 class="sub">The Pit Crew</h3>
+    <div class="prose">
+      <p>While the Driver runs a lap, three pit-crew mechanics work in parallel on the work that surrounds the prose. They are the difference between an autonomous race and a stop-and-start race.</p>
+    </div>
+
+    <div class="roster on-deep">
+      <div class="skill-card">
+        <span class="skill-tag creative">Creative</span>
+        <div class="skill-name">Backstory Mechanic</div>
+        <div class="skill-role">Generates interiority on demand for minor characters who acquire significant page time mid-novel — the cast members the Character Lead deliberately did not pre-build.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-tag creative">Creative</span>
+        <div class="skill-name">Continuity Mechanic</div>
+        <div class="skill-role">Writes updates to the world-state ledger after every lap — new knowledge, location changes, prop moves, relationship shifts. The only agent in the system with write access to the dynamic ledger.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-tag creative">Creative</span>
+        <div class="skill-name">Sidethought Catcher</div>
+        <div class="skill-role">Captures the emergent ideas the Driver throws off mid-scene — the things that don't belong in this lap but might be the seed of a future one. Filed in the race log for later.</div>
+      </div>
+    </div>
+
+    <h3 class="sub">The Stewards Panel</h3>
+    <div class="prose">
+      <p>The stewards are the independent post-lap audit — a second line of defense after the Driver's own in-loop passes. Four jurisdictions, each scoped narrowly, each silent outside its lane:</p>
+    </div>
+
+    <div class="roster on-deep">
+      <div class="skill-card">
+        <span class="skill-tag judgment">Judgment</span>
+        <div class="skill-name">Continuity Steward</div>
+        <div class="skill-role">Reads against the world-state ledger. Flags references to facts the POV character shouldn't yet know, physical drift, spatial impossibilities, prop errors, timeline contradictions.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-tag judgment">Judgment</span>
+        <div class="skill-name">Voice Steward</div>
+        <div class="skill-role">Runs the craft-editor skill in lap-audit mode against the voice anchor. Same craft authority the Driver used in-loop; here it is the independent re-check after the lap is finalized.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-tag judgment">Judgment</span>
+        <div class="skill-name">Character-Truth Steward</div>
+        <div class="skill-role">Reads against the interiority files. Flags behavior inconsistent with the character's operating system, dialogue that doesn't match private vocabulary, generic reactions where specific history demands specific ones.</div>
+      </div>
+      <div class="skill-card">
+        <span class="skill-tag judgment">Judgment</span>
+        <div class="skill-name">Pacing Steward</div>
+        <div class="skill-role">Reads against the tension curve and telemetry. Flags missed word-count targets, divergence from target tension, missed axis movement, energy-curve anomalies.</div>
+      </div>
+    </div>
+
+    <h3 class="sub">The severity gradient</h3>
+    <div class="prose">
+      <p>Each steward assigns severity to its flags. The Team Principal — the only agent allowed to make strategic calls — consolidates the panel's reports and decides the action. There are five levels, from a passing note to a full structural reset:</p>
+    </div>
+
+    <table class="severity-table">
+      <thead>
+        <tr>
+          <th style="width: 30%;">Flag</th>
+          <th>What happens</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="severity-flag-cell"><span class="flag-dot flag-yellow"></span><span class="severity-flag">Yellow flag</span></div></td>
+          <td>Note logged in the race log. The lap counts. The race continues.</td>
+        </tr>
+        <tr>
+          <td><div class="severity-flag-cell"><span class="flag-dot flag-investigate"></span><span class="severity-flag">Investigation</span></div></td>
+          <td>Flagged for review at the next pit stop. The lap counts provisionally; the race continues.</td>
+        </tr>
+        <tr>
+          <td><div class="severity-flag-cell"><span class="flag-dot flag-pitstop"></span><span class="severity-flag">Pit stop</span></div></td>
+          <td>Come in now. The specific issue gets fixed before the next lap. The lap counts after the fix.</td>
+        </tr>
+        <tr>
+          <td><div class="severity-flag-cell"><span class="flag-dot flag-invalid"></span><span class="severity-flag">Lap invalidated</span></div></td>
+          <td>The Driver re-runs the scene with the steward's note as a constraint. The old lap is discarded.</td>
+        </tr>
+        <tr>
+          <td><div class="severity-flag-cell"><span class="flag-dot flag-garage"></span><span class="severity-flag">Back to garage</span></div></td>
+          <td>Structural problem the race can't fix on the fly. Outline updates, ledger updates, then the race resumes from the affected scene.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <blockquote class="pull">Drift = tangent gets corrected. Drift = discovery rewrites the outline. The author makes that call.</blockquote>
+
+    <div class="prose">
+      <p>The Team Principal handles most calls automatically. Yellow flags log and continue. Investigations queue for review. Pit stops fix and resume. Lap invalidations re-run the scene with new constraints. Only the back-to-garage class of call — and specifically the distinction between drift-as-tangent and drift-as-discovery — surfaces to the author for ratification. That decision is where the book becomes itself, and where authorial judgment is most needed.</p>
+    </div>
+
+    <div class="aside">
+      <p><strong>One craft authority, four scopes.</strong> The <em>craft-editor</em> skill is the one place line-editing judgment lives. The Driver calls it at Step 6 of every lap. The Voice Steward calls it again in audit mode on the finalized lap. Parc Fermé calls it a third time across the whole manuscript. And it can be called standalone whenever the author wants a clean line edit on any passage.</p>
+      <p>Same philosophy every time — name the beat, measure every line against it, kill what does no work, recast what can be stronger. Different scopes. One source of truth for prose quality.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACT V: PARC FERMÉ -->
+<section class="act reveal">
+  <div class="wrap narrow">
+    <div class="sector-label judgment">Sector 05 · Parc fermé</div>
+    <h2 class="act-title">After the chequered flag, the <em>inspection</em>.</h2>
+    <p class="act-lede">Stewards catch what's visible lap by lap. Parc fermé catches what's only visible from altitude — patterns across the whole manuscript that no single scene reveals.</p>
+
+    <div class="prose">
+      <p>Six inspectors run in sequence after the final scene completes. None of them edit the manuscript directly. Each produces flagged candidates with reframes — locations, observations, suggestions — and the author ratifies what gets applied. The principle is the same as the Race phase: judgment surfaces to the human, the machine never overwrites without permission.</p>
+    </div>
+
+    <ol class="steps">
+      <li><strong>Craft Editor (manuscript scope)</strong><span class="desc">The primary book-wide craft sweep — the same skill the Driver and Voice Steward use, now applied to the whole manuscript at once. Weight, voice, vague nouns, lived-vs-written. Line-level rewrites surfaced as candidates for ratification.</span></li>
+      <li><strong>Grammar Mechanic</strong><span class="desc">Subordinate to craft-editor. Sentence rhythm and opener variety across chapters — runs of uniform sentence lengths, repeated opening structures, mechanical tics that only show up at book scale.</span></li>
+      <li><strong>Crutch Inspector</strong><span class="desc">Subordinate to craft-editor, sharing the same avoid-list. Global frequency of crutch patterns. The metric is density and frequency, not presence: twice in a chapter is fine, three times in two paragraphs is not.</span></li>
+      <li><strong>Pacing Inspector</strong><span class="desc">Compares actual scene-by-scene tension and word counts against the target tension curve. Surfaces drag zones and energy dips.</span></li>
+      <li><strong>Reader Simulator</strong><span class="desc">Sequential first-read of the manuscript reporting engagement state per chunk — confused, bored, hooked, moved, suspicious. The curve matters more than any single moment.</span></li>
+      <li><strong>Payoff Auditor</strong><span class="desc">Cross-checks the manuscript against the payoff architecture. Every setup pays off. Every payoff has its setup. Promises made are promises kept.</span></li>
+    </ol>
+
+    <div class="prose">
+      <p>The three craft-related passes run separately on purpose — one pass rarely catches everything. Craft-editor runs first as the primary sweep. Grammar-mechanic and crutch-inspector then run as dedicated sub-passes for the specific patterns invisible to any single-scene reader. Frequency only shows up at manuscript scale.</p>
+    </div>
+
+    <div class="aside">
+      <p>Each Parc Fermé flag carries a location, an observation, a severity, and one to three reframe candidates. The author reads the full flag list and decides per flag: <strong>accept</strong> (apply the reframe), <strong>reject</strong> (mark it as kept intentionally), or <strong>revise</strong> (write the fix herself). Ratified edits apply. The manuscript is then classified — race result official.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACT VI: THE BOOK ORDER -->
+<section class="act reveal" style="background: var(--paper-deep);">
+  <div class="wrap narrow">
+    <div class="sector-label">Sector 06 · The entry point</div>
+    <h2 class="act-title">Every race begins with a <em>book order</em>.</h2>
+    <p class="act-lede">The author pitches the book the way an editor would brief a developmental team. Hook, audience, payoffs, voice references. Concrete enough to constrain. Open enough to discover.</p>
+
+    <div class="prose">
+      <p>The system runs on a single file at the root of each book's project: <em>book-order.md</em>. It is the author's pitch in, structured the way a query letter or development brief would be — the discipline of pitching forces clarity on the commercial and emotional intent before the machine builds anything.</p>
+
+      <p>The payoffs section is the load-bearing part. Generic payoffs produce generic books. The system needs payoffs concrete enough to anchor every scene that contributes to them.</p>
+    </div>
+
+    <div class="codeblock">
+<span class="comment"># Required payoffs — what the reader needs to feel by the last page</span>
+
+<span class="key">payoff_1:</span> the heroine forgives herself for the stable boy incident
+<span class="key">payoff_2:</span> the hero earns the heroine's trust without an apology speech
+<span class="key">payoff_3:</span> the magic system's cost lands as devastating, not cool
+
+<span class="comment"># Voice references — books whose voice samples the Style Auditor reads</span>
+<span class="key">voice_reference:</span> [<span class="placeholder">prior_book_1</span>, <span class="placeholder">prior_book_2</span>]
+
+<span class="comment"># Disclosure</span>
+<span class="key">disclosure:</span> "This book was written with author-directed AI tools."
+    </div>
+
+    <div class="prose">
+      <p>The book order goes into the Team Principal's hands. The Team Principal reads it, refuses to start if any required field is still bracketed, prints the planned phase sequence, and waits for the author to confirm before kicking off. From there, the machine runs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACT VII: THE GATES -->
+<section class="act reveal">
+  <div class="wrap narrow">
+    <div class="sector-label">Sector 07 · Where the human stays</div>
+    <h2 class="act-title">Autonomous on the boring parts. <em>Gated</em> on the parts that matter.</h2>
+    <p class="act-lede">The machine is not designed to produce a finished manuscript without the author. It is designed to remove the work that doesn't need authorial judgment, so the work that does can get full attention.</p>
+
+    <div class="prose">
+      <p>Four pause points exist by design. They are the places where, if the machine pushed through alone, the manuscript would land in revision territory anyway — and where surfacing the decision in real time costs ten minutes but saves ten hours of post-hoc work.</p>
+    </div>
+
+    <div class="ledger">
+      <div class="ledger-col">
+        <div class="ledger-head">The author ratifies</div>
+        <ul>
+          <li><strong>Scrutineering</strong>Garage outputs feel right before the race begins.</li>
+          <li><strong>Naming lock-in</strong>Names are identity. Confirm before they freeze.</li>
+          <li><strong>Drift = discovery</strong>The moment the book becomes itself.</li>
+          <li><strong>Parc fermé flags</strong>Every reframe is a candidate, not a command.</li>
+        </ul>
+      </div>
+      <div class="ledger-col">
+        <div class="ledger-head">The machine handles</div>
+        <ul>
+          <li><strong>Yellow flags</strong>Logged and continued automatically.</li>
+          <li><strong>Pit stops</strong>Self-resolved before the next lap.</li>
+          <li><strong>Lap invalidations</strong>Re-run with new constraints.</li>
+          <li><strong>Continuity bookkeeping</strong>The world-state ledger updates after every scene.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>What this enables, in practice, is a pattern that earlier AI writing pipelines couldn't approach. Ratify the garage outputs in an evening session. Launch the race. Walk away. The machine drafts overnight — scene after scene, with stewards flagging and the team principal handling most calls automatically. In the morning, the author wakes to a queue of new scenes drafted in her voice, a race log of every call along the way, and a short list of decisions waiting on her judgment.</p>
+
+      <p>For an 85,000-word novel, that is a week of those sessions rather than one overnight. But "wake up to eight new scenes drafted" stops being a dream and becomes a workflow.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACT VIII: SYSTEM ROSTER -->
+<section class="act reveal" style="background: var(--paper-deep);">
+  <div class="wrap wide">
+    <div class="sector-label">Sector 08 · System roster</div>
+    <h2 class="act-title">Every skill. Every status. <em>One</em> table.</h2>
+    <p class="act-lede">A complete enumeration of the racing team, what each role does, and what's built versus still in design.</p>
+
+    <div class="roster-table">
+
+      <!-- GARAGE -->
+      <div class="roster-col">
+        <h4>Sector 01 · Garage</h4>
+        <ul>
+          <li>
+            <div class="rn"><span>Story Engineer</span><span class="rs wrap">wraps</span></div>
+            <div class="rr">Dossier, scene-outline, payoffs, tension curve, telemetry. Wraps story-dossier-cascade.</div>
+          </li>
+          <li>
+            <div class="rn"><span>World Engineer</span><span class="rs done">built</span></div>
+            <div class="rr">World-state ledger plus knowledge-state machinery. Static facts and dynamic state schema.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Character Lead</span><span class="rs done">built</span></div>
+            <div class="rr">Interiority files for every major character. Off-screen gravity wells the Driver writes from.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Naming Mechanic</span><span class="rs stub">stub</span></div>
+            <div class="rr">Cast names from period/region-appropriate pools, anti-cluster filtered.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Style Auditor</span><span class="rs stub">stub</span></div>
+            <div class="rr">Reads voice samples, builds the voice anchor and the manuscript-specific crutch list.</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- RACE -->
+      <div class="roster-col">
+        <h4>Sector 02 · Race</h4>
+        <ul>
+          <li>
+            <div class="rn"><span>Team Principal</span><span class="rs done">built</span></div>
+            <div class="rr">Orchestrates the whole pipeline. Makes every severity call. Only agent that restructures the outline.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Driver</span><span class="rs done">built</span></div>
+            <div class="rr">Runs one lap through the 7-step loop in scene mode. Wraps chapter-writer-7step.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Pit Crew</span><span class="rs stub">stub</span></div>
+            <div class="rr">Parallel prep ops. Three sub-mechanics:</div>
+          </li>
+          <li class="sub"><div class="rn"><span>↳ Backstory Mechanic</span></div></li>
+          <li class="sub"><div class="rn"><span>↳ Continuity Mechanic</span></div></li>
+          <li class="sub"><div class="rn"><span>↳ Sidethought Catcher</span></div></li>
+          <li>
+            <div class="rn"><span>Stewards Panel</span><span class="rs stub">stub</span></div>
+            <div class="rr">Four-jurisdiction lap audit. Continuity · Voice · Character-Truth · Pacing.</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- PARC FERMÉ -->
+      <div class="roster-col">
+        <h4>Sector 03 · Parc fermé</h4>
+        <ul>
+          <li>
+            <div class="rn"><span>Craft Editor</span><span class="rs done">built</span></div>
+            <div class="rr">The primary craft sweep at manuscript scope. Same skill used per-lap by Driver and Voice Steward.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Grammar Mechanic</span><span class="rs done">built</span></div>
+            <div class="rr">Subordinate to craft-editor. Rhythm runs and opener variety across chapters.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Crutch Inspector</span><span class="rs done">built</span></div>
+            <div class="rr">Subordinate to craft-editor. Crutch frequency and density, book-wide.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Pacing Inspector</span><span class="rs stub">stub</span></div>
+            <div class="rr">Compares actual tension and word counts against the targets.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Reader Simulator</span><span class="rs stub">stub</span></div>
+            <div class="rr">Sequential first-read engagement curve.</div>
+          </li>
+          <li>
+            <div class="rn"><span>Payoff Auditor</span><span class="rs stub">stub</span></div>
+            <div class="rr">Setup ↔ payoff cross-check.</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- FOUNDATIONAL -->
+      <div class="roster-col">
+        <h4>Foundational · wrapped</h4>
+        <ul>
+          <li>
+            <div class="rn"><span>chapter-writer-7step</span><span class="rs wrap">existing</span></div>
+            <div class="rr">The 7-step loop the Driver wraps. Standalone for chapter mode; scene mode for the Race.</div>
+          </li>
+          <li>
+            <div class="rn"><span>craft-editor</span><span class="rs done">built</span></div>
+            <div class="rr">The one craft authority. Called from four scopes: Driver Step 6, Voice Steward, Parc fermé, standalone.</div>
+          </li>
+          <li>
+            <div class="rn"><span>story-dossier-cascade</span><span class="rs wrap">existing</span></div>
+            <div class="rr">The 17-section EAW worksheet. Includes the Narrative Physics Engine — tension axes, thresholds, entropy spikes, the 11 Laws.</div>
+          </li>
+          <li>
+            <div class="rn"><span>chapter-word-counter</span><span class="rs wrap">existing</span></div>
+            <div class="rr">±200 word tolerance checks. Used by the Driver and the Pacing Inspector.</div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="prose">
+      <p>Status legend: <strong>built</strong> means the skill has a complete SKILL.md and is ready to run. <strong>Wraps / existing</strong> means it calls a foundational skill the author already maintains. <strong>Stub</strong> means the role is scaffolded but not yet designed — pending a follow-up session and ideally a real manuscript to tune against.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COLOPHON -->
+<footer class="colophon">
+  <div class="wrap colophon-grid">
+    <div>
+      <div class="colophon-mark">Lights out.</div>
+      <p class="colophon-deck">A system for long-form fiction that respects what the author does best, and removes what no author should ever have to do twice.</p>
+    </div>
+    <div>
+      <h4>System</h4>
+      <p>Levels — Garage, Race, Parc Fermé</p>
+      <p>Skills — 15 specialized roles + 3 foundational wrapped</p>
+      <p>Built — 7 fully implemented, 8 stubs to design</p>
+      <p>Gates — 4 human-ratification points</p>
+      <p>Status — v0.2, Race phase implemented, Parc fermé stubs next</p>
+    </div>
+    <div>
+      <h4>Filed</h4>
+      <p>Architect — Elizabeth Ann West</p>
+      <p>Operating as — Goddess Divine</p>
+      <p>Imprint — Future Fiction Press</p>
+      <p>Academy — Future Fiction Academy</p>
+      <p>Date — May 2026</p>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL for enlarged pipeline diagram -->
+<div class="modal-overlay" id="pipelineModal" aria-hidden="true" role="dialog" aria-label="Enlarged pipeline diagram">
+  <div class="modal-inner" id="modalInner">
+    <button class="modal-close" id="modalClose" aria-label="Close enlarged diagram">× Close</button>
+    <div id="modalSvgHost"></div>
+  </div>
+</div>
+
+<script>
+  // Scroll-triggered reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -80px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Modal: click pipeline to enlarge
+  const trigger = document.getElementById('pipelineTrigger');
+  const modal = document.getElementById('pipelineModal');
+  const modalSvgHost = document.getElementById('modalSvgHost');
+  const modalClose = document.getElementById('modalClose');
+  const modalInner = document.getElementById('modalInner');
+  const sourceSvg = document.getElementById('pipelineSvg');
+
+  function openModal() {
+    // Clone the SVG into the modal each time so the original isn't moved.
+    modalSvgHost.innerHTML = '';
+    const clone = sourceSvg.cloneNode(true);
+    clone.removeAttribute('id');
+    modalSvgHost.appendChild(clone);
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  trigger.addEventListener('click', openModal);
+  trigger.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openModal();
+    }
+  });
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    // Clicking the dim background closes; clicking the inner panel does not.
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+  });
+</script>
+
+</body>
+</html>

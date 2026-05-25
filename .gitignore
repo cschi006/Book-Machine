@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Book working files — drafts and state are tracked, but not exports
+books/*/exports/
+books/*/tmp/
+
+# Secrets / tokens
+*.token
+.secrets
