@@ -17,6 +17,9 @@ desktop.ini
 *.swp
 *.swo
 
+# Node
+node_modules/
+
 # Book working files — drafts and state are tracked, but not exports
 books/*/exports/
 books/*/tmp/

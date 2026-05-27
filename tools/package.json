@@ -1,0 +1,12 @@
+{
+  "name": "book-machine-server",
+  "version": "1.0.0",
+  "description": "Local server bridging Book Machine dashboard to Claude API + filesystem",
+  "main": "book-machine-server.js",
+  "scripts": {
+    "start": "node book-machine-server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
+}

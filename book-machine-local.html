@@ -1,0 +1,2692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Book Machine — Local</title>
+<style>
+:root {
+  --paper: #fdf6ea; --paper-deep: #f4ebd8; --ink: #3d2817; --ink-soft: #5a4a38;
+  --ink-muted: #8a7560; --rule: #ede0c8; --rust: #c97b5a; --rust-deep: #8a5a3a;
+  --sans: ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --mono: ui-monospace,"JetBrains Mono",monospace;
+  --serif: Georgia,"Iowan Old Style",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:radial-gradient(ellipse 600px 400px at 85% -10%,#f6e6c8 0%,transparent 60%),
+             radial-gradient(ellipse 500px 350px at -10% 110%,#e4ead8 0%,transparent 55%),
+             #fdf6ea;
+  color:var(--ink);line-height:1.55;padding:28px 32px 64px;min-height:100vh;
+}
+.wrap{max-width:960px;margin:0 auto}
+.section{margin-bottom:36px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-left{display:flex;align-items:center;gap:8px}
+h2{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--rust-deep);font-weight:700;margin:0}
+.paw{width:16px;height:16px;flex-shrink:0;opacity:.65}
+
+/* Header */
+.header{display:flex;align-items:center;gap:18px;margin-bottom:32px}
+.mascot{width:78px;height:60px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(120,80,40,.15))}
+.header-text h1{font-size:26px;margin:0 0 2px;font-weight:700;letter-spacing:-.01em;color:#5a3a25}
+.header-text .sub{color:var(--ink-muted);font-size:13px;margin:0}
+.header-right{margin-left:auto;display:flex;gap:10px;align-items:center;flex-shrink:0}
+.model-badge{font-family:var(--mono);font-size:11px;background:var(--paper-deep);border:1px solid #d4c0a0;color:#6e5a3a;padding:3px 10px;border-radius:10px;cursor:pointer;white-space:nowrap}
+.model-badge:hover{border-color:var(--rust)}
+.server-badge{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:10px;cursor:pointer;white-space:nowrap;font-weight:700;border:1.5px solid;transition:all 300ms}
+.server-badge.offline{background:var(--paper-deep);border-color:#d4c0a0;color:#8a7560}
+.server-badge.online{background:#e4f4e0;border-color:#a8c4a2;color:#2a6e2a}
+.server-badge.checking{background:#f4f0e0;border-color:#d4c090;color:#6e5a2a}
+.gear-btn{background:none;border:1.5px solid #d4c0a0;color:var(--ink-muted);width:36px;height:36px;padding:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:background 150ms,border-color 150ms}
+.gear-btn:hover{background:var(--paper-deep);border-color:var(--rust);color:var(--ink)}
+
+/* Folder banner */
+.folder-banner{background:#fff;border:1.5px solid var(--rule);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:28px;font-size:13px;color:var(--ink-soft)}
+.folder-banner.connected{border-color:#a8c4a2;background:#f4faf4}
+.folder-path{font-family:var(--mono);font-size:11px;color:var(--ink-muted);background:var(--paper-deep);border:1px solid var(--rule);padding:2px 8px;border-radius:6px;margin-top:3px;word-break:break-all}
+.folder-info{flex:1}
+
+/* Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{background:#fff;border:1.5px solid var(--rule);border-radius:18px;padding:20px 22px;box-shadow:0 2px 0 rgba(180,130,70,.06);transition:transform 200ms,box-shadow 200ms}
+.card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(180,130,70,.08)}
+.card h3{font-size:17px;font-weight:700;color:#5a3a25;letter-spacing:-.005em;margin-bottom:4px}
+.card .meta{font-size:12px;color:var(--ink-muted);margin-bottom:12px}
+.badge{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 11px;border-radius:14px;margin-bottom:10px}
+.badge.drafting{background:#ead9e8;color:#7a4a72}
+.badge.editing{background:#f4e1c1;color:#8a5a2a}
+.badge.revision{background:#ecdcc4;color:#6e5a3a}
+.badge.idle{background:#e8e0d4;color:#6a6258}
+.badge.complete{background:#d8e6d4;color:#4a6e4a}
+.progress-wrap{background:var(--paper-deep);border-radius:8px;height:10px;overflow:hidden;margin:10px 0 5px;border:1px solid var(--rule)}
+.progress-bar{height:100%;background:linear-gradient(90deg,#a8c4a2 0%,#d4a574 60%,var(--rust) 100%);border-radius:8px}
+.progress-text{font-size:12px;color:var(--ink-muted)}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1.5px dashed var(--rule)}
+
+/* Buttons */
+button{font:inherit;cursor:pointer;border:1.5px solid #d4c0a0;background:#fff;color:#5a3a25;padding:9px 16px;border-radius:12px;font-size:13px;font-weight:600;transition:background 150ms,border-color 150ms,transform 100ms}
+button:hover{background:var(--paper);border-color:var(--rust)}
+button:active{transform:scale(.97)}
+button.primary{background:var(--rust);color:var(--paper);border-color:var(--rust);box-shadow:0 2px 0 var(--rust-deep)}
+button.primary:hover{background:#b86a4a;border-color:#b86a4a}
+button.primary:active{box-shadow:none;transform:translateY(2px)}
+button.small{padding:6px 12px;font-size:12px;border-radius:10px}
+button.danger{color:#8a3a3a;border-color:#e0b8b8}
+button.danger:hover{background:#f5d4d4}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* Agent panel */
+.box{background:#fff;border:1.5px solid var(--rule);border-radius:18px;padding:22px 24px;box-shadow:0 2px 0 rgba(180,130,70,.06)}
+.box-intro{font-size:13px;color:#6e5a3a;margin:0 0 18px}
+.agent-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.agent-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
+.agent-field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--rust-deep)}
+select.sel{font:inherit;font-size:13px;padding:9px 12px;border:1.5px solid #d4c0a0;border-radius:10px;background:#fff;color:var(--ink);cursor:pointer}
+select.sel:focus{outline:none;border-color:var(--rust)}
+
+/* Response */
+.response-wrap{margin-top:16px}
+.response-header{background:var(--paper-deep);border:1.5px solid var(--rule);border-bottom:none;border-radius:12px 12px 0 0;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--ink-muted);font-weight:600}
+.response-body{border:1.5px solid var(--rule);border-top:none;border-radius:0 0 12px 12px;padding:20px 24px;max-height:480px;overflow-y:auto;background:#fefaf0;font-family:var(--serif);font-size:15px;line-height:1.75;white-space:pre-wrap;word-wrap:break-word}
+.response-footer{display:flex;gap:8px;justify-content:flex-end;padding-top:10px}
+.dot{display:inline-block;width:7px;height:7px;background:var(--rust);border-radius:50%;animation:pulse 1s ease-in-out infinite;margin-right:4px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Editor */
+.editor-wrap{background:#fff;border:1.5px solid var(--rule);border-radius:18px;overflow:hidden;box-shadow:0 2px 0 rgba(180,130,70,.06)}
+.editor-toolbar{background:var(--paper-deep);border-bottom:1.5px solid var(--rule);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.editor-filename{font-family:var(--mono);font-size:12px;color:var(--ink-soft);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.editor-status{font-size:11px;color:var(--ink-muted);white-space:nowrap}
+textarea.editor-ta{font:15px/1.75 var(--serif);color:var(--ink);width:100%;min-height:420px;max-height:70vh;border:none;padding:24px 32px;resize:none;background:#fefaf0;outline:none}
+
+/* Modals */
+.overlay{position:fixed;inset:0;background:rgba(60,40,25,.55);display:flex;align-items:center;justify-content:center;z-index:2000;padding:24px;animation:fadeIn 180ms ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--paper);border-radius:18px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal.wide{max-width:580px}
+.mhead{padding:18px 24px;border-bottom:1.5px solid var(--rule);background:var(--paper-deep);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
+.mhead h3{font-size:17px;font-weight:700;color:#5a3a25;margin:0}
+.mbody{padding:24px;display:flex;flex-direction:column;gap:18px}
+.mfoot{padding:16px 24px;border-top:1.5px solid var(--rule);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--paper)}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--rust-deep)}
+.fh{font-size:11px;color:var(--ink-muted)}
+.fi,.fsel,.fta{font:inherit;font-size:13px;padding:10px 14px;border:1.5px solid #d4c0a0;border-radius:10px;background:#fff;color:var(--ink);width:100%}
+.fi:focus,.fsel:focus,.fta:focus{outline:none;border-color:var(--rust)}
+.fta{resize:vertical;min-height:64px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stitle{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--rust);border-bottom:1.5px solid var(--rule);padding-bottom:8px}
+.xbtn{width:32px;height:32px;padding:0;border-radius:50%;font-size:16px;display:inline-flex;align-items:center;justify-content:center}
+.empty{color:var(--ink-muted);font-size:13px;font-style:italic;padding:24px;text-align:center}
+code{background:var(--paper-deep);padding:1px 6px;border-radius:4px;font-size:11px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3d2817;color:#fdf6ea;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:9999;display:none;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+
+/* ── Reader panel ────────────────────────────────────────── */
+#reader-modal{position:fixed;inset:0;z-index:3000;display:none;flex-direction:column;background:#fefaf0;animation:fadeIn 180ms ease}
+.rtopbar{background:var(--paper-deep);border-bottom:1.5px solid var(--rule);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
+.rtopbar-title{font-weight:700;color:#5a3a25;font-size:14px;white-space:nowrap;flex-shrink:0}
+.rtopbar-nav{display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap;min-width:0}
+.rtopbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.rnote-count{font-size:12px;color:var(--ink-muted);font-weight:600;white-space:nowrap}
+.rscroll{flex:1;overflow-y:auto;padding:32px 24px 80px}
+.rinner{max-width:700px;margin:0 auto;font-family:Georgia,'Iowan Old Style',serif;font-size:16.5px;line-height:1.8;color:#2d2418}
+/* headings */
+.rh1{font-family:var(--sans);font-size:22px;font-weight:700;color:#5a3a25;text-align:center;margin:52px 0 24px;letter-spacing:-.005em}
+.rh2{font-family:var(--sans);font-size:16px;font-weight:700;color:#5a3a25;margin:36px 0 14px}
+.rh3{font-family:var(--sans);font-size:14px;font-weight:700;color:var(--rust-deep);margin:24px 0 10px;text-transform:uppercase;letter-spacing:.06em}
+.rhr{text-align:center;color:#c4a070;letter-spacing:.8em;margin:28px 0;font-size:14px}
+.ranchor{display:block;position:relative;top:-72px;visibility:hidden}
+/* paragraphs */
+.rp{margin:0 0 14px;padding:8px 12px;border-radius:8px;cursor:pointer;position:relative;transition:background 150ms}
+.rp:hover{background:#fdf3df}
+.rp.has-edit{border-left:3px solid #d4a574;padding-left:9px;background:#fdf3df}
+.rp.has-note{background:#f4ebd8}
+.rp.has-note::before{content:'';position:absolute;left:3px;top:16px;width:6px;height:6px;border-radius:50%;background:var(--rust)}
+.rp.has-edit.has-note{border-left:3px solid #d4a574;background:#f4ebd8}
+.rp.active{background:#fbe8d4;box-shadow:inset 0 0 0 2px var(--rust)}
+.redit-badge{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#8a5a2a;background:#f4e1c1;padding:1px 6px;border-radius:6px;margin-right:6px;vertical-align:middle}
+/* note display */
+.rnote-display{margin:-10px 12px 14px;padding:10px 14px;background:#e4ead8;border-left:3px solid #7a9b6a;border-radius:0 8px 8px 0;font-family:var(--sans);font-size:13px;color:#3a4a30;line-height:1.55}
+.rnote-display .nlbl{font-weight:700;color:#5a6a48;display:block;margin-bottom:3px;text-transform:uppercase;font-size:10px;letter-spacing:.08em}
+/* inline editor */
+.rinline-ed{margin:-10px 12px 14px;padding:14px;background:#fff;border:1.5px solid var(--rust);border-radius:10px;font-family:var(--sans)}
+.rinline-ed textarea{width:100%;border:1px solid #d4c0a0;border-radius:8px;padding:10px;font:13px/1.6 var(--sans);resize:vertical;color:var(--ink);background:#fefaf0;display:block;margin-top:4px}
+.rinline-ed textarea:focus{outline:none;border-color:var(--rust)}
+.rinline-ed-actions{display:flex;gap:8px;margin-top:10px;justify-content:flex-end;align-items:center}
+.rfield-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--rust-deep);display:flex;justify-content:space-between;align-items:center}
+.rrevert{background:none;border:none;color:var(--rust);cursor:pointer;font-size:11px;text-decoration:underline;padding:0;font-weight:500}
+/* file sidebar */
+.rfile-sidebar{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--paper-deep);border-right:1.5px solid var(--rule);z-index:3001;overflow-y:auto;padding:0;transform:translateX(-100%);transition:transform 220ms ease;flex-shrink:0}
+.rfile-sidebar.open{transform:translateX(0)}
+.rsidebar-header{padding:12px 16px;border-bottom:1.5px solid var(--rule);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--paper-deep)}
+.rsidebar-header h4{font-size:13px;font-weight:700;color:#5a3a25;margin:0}
+.rfile-group{padding:8px 0}
+.rfile-group-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-muted);padding:6px 16px 4px}
+.rfile-item{display:block;width:100%;text-align:left;font:inherit;font-size:13px;color:var(--ink-soft);padding:8px 16px;border:none;background:none;cursor:pointer;transition:background 120ms;border-radius:0}
+.rfile-item:hover{background:var(--rule)}
+.rfile-item.active{background:var(--rust);color:#fff;font-weight:600}
+.rsidebar-toggle{background:var(--paper-deep);border:1.5px solid var(--rule);border-radius:0 8px 8px 0;padding:8px 6px;cursor:pointer;font-size:14px;color:var(--ink-muted);transition:background 150ms}
+.rsidebar-toggle:hover{background:var(--paper);color:var(--ink)}
+
+/* ── Pipeline flowchart ──────────────────────────────────── */
+.pipeline-outer{overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.pipeline-track{display:flex;align-items:stretch;gap:0;min-width:max-content;padding:4px 2px 8px}
+.pipe-node{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 14px 12px;min-width:138px;max-width:155px;border-radius:16px;border:1.5px solid var(--rule);background:#fff;position:relative;transition:all 200ms}
+.pipe-node.done{background:#f4faf4;border-color:#a8c4a2}
+.pipe-node.active{background:linear-gradient(150deg,#fff5ec 0%,#fde8d8 100%);border-color:var(--rust);box-shadow:0 4px 18px rgba(201,123,90,.2);transform:translateY(-3px)}
+.pipe-node.locked{opacity:.45}
+.pipe-icon{font-size:22px;line-height:1;margin-top:4px}
+.pipe-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#5a3a25;text-align:center;margin-top:2px}
+.pipe-node.active .pipe-title{color:var(--rust)}
+.pipe-node.done .pipe-title{color:#4a6e4a}
+.pipe-desc{font-size:11px;color:var(--ink-muted);text-align:center;line-height:1.4}
+.pipe-agents{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:4px}
+.pipe-agent-pill{font-size:10px;background:var(--paper-deep);border:1px solid var(--rule);color:var(--ink-muted);padding:1px 7px;border-radius:8px;white-space:nowrap}
+.pipe-node.active .pipe-agent-pill{background:#fde8d8;border-color:#e4a880;color:#7a4a2a}
+.pipe-node.done .pipe-agent-pill{background:#e4f4e0;border-color:#a8c4a2;color:#4a6e4a}
+.pipe-connector{display:flex;align-items:center;padding:0 6px;flex-shrink:0;padding-bottom:3px}
+.pipe-connector-line{color:#c4a470;font-size:20px;line-height:1;font-weight:300;user-select:none}
+.pipe-stage-num{position:absolute;top:6px;left:9px;font-size:10px;font-weight:700;color:var(--ink-muted);font-family:var(--mono);opacity:.7}
+.pipe-node.active .pipe-stage-num{color:var(--rust);opacity:1}
+.pipe-node.done .pipe-stage-num{color:#6a8e6a;opacity:1}
+.pipe-done-check{position:absolute;top:5px;right:9px;font-size:12px}
+.pipe-current-badge{position:absolute;bottom:-11px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;background:var(--rust);color:#fff;padding:1px 9px;border-radius:8px;white-space:nowrap;letter-spacing:.04em}
+
+/* ── Command Centre ──────────────────────────────────────── */
+.cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:620px){.cc-grid{grid-template-columns:1fr}}
+.cc-panel{background:#fff;border:1.5px solid var(--rule);border-radius:16px;padding:18px 20px;min-height:120px}
+.cc-panel-head{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--rust-deep);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.cc-item{padding:10px 13px;border-radius:10px;border:1.5px solid var(--rule);background:var(--paper);margin-bottom:8px;font-size:13px;color:var(--ink-soft);display:flex;align-items:flex-start;gap:10px}
+.cc-item:last-child{margin-bottom:0}
+.cc-item-icon{font-size:15px;flex-shrink:0;line-height:1.4}
+.cc-item-body{flex:1;min-width:0}
+.cc-item-title{font-weight:600;color:var(--ink);font-size:13px;line-height:1.35}
+.cc-item-sub{font-size:12px;color:var(--ink-muted);margin-top:2px;line-height:1.35}
+.cc-item.urgent{border-color:#e0a8a8;background:#fdf0f0}
+.cc-item.action{border-color:#d4a574;background:#fdf5e8}
+.cc-empty{color:var(--ink-muted);font-size:13px;font-style:italic;padding:6px 0}
+.cc-link{color:var(--rust);text-decoration:none;font-weight:600;font-size:12px;cursor:pointer;margin-left:4px}
+.cc-link:hover{text-decoration:underline}
+.cc-book-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-muted);background:var(--paper-deep);border:1px solid var(--rule);padding:2px 8px;border-radius:6px;cursor:pointer;white-space:nowrap}
+
+/* ── Pending proposals ───────────────────────────────────── */
+.proposal-card{background:#fff;border:1.5px solid var(--rule);border-radius:16px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start;transition:box-shadow 150ms}
+.proposal-card:hover{box-shadow:0 2px 12px rgba(180,130,70,.08)}
+.proposal-card+.proposal-card{margin-top:10px}
+.proposal-card.pending{border-left:4px solid #d4a574}
+.proposal-card.approved{border-left:4px solid #7ab07a;opacity:.75}
+.proposal-card.rejected{border-left:4px solid #c4a0a0;opacity:.45}
+.prop-status-badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:2px 8px;border-radius:8px;white-space:nowrap;margin-right:6px}
+.prop-status-badge.pending{background:#f4e1c1;color:#8a5a2a}
+.prop-status-badge.approved{background:#d8e6d4;color:#4a6e4a}
+.prop-status-badge.rejected{background:#e8d4d4;color:#6e4a4a}
+.prop-body{flex:1;min-width:0}
+.prop-title{font-weight:700;color:#5a3a25;font-size:14px;margin-bottom:3px;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.prop-meta{font-size:12px;color:var(--ink-muted);margin-bottom:6px}
+.prop-preview{font-size:13px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic}
+.prop-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+
+/* ── Proposal review modal ───────────────────────────────── */
+.modal.review-modal{max-width:880px;width:95vw;max-height:92vh}
+.diff-wrap{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--rule);border-radius:12px;overflow:hidden}
+@media(max-width:680px){.diff-wrap{grid-template-columns:1fr}}
+.diff-col{display:flex;flex-direction:column;max-height:52vh;overflow:hidden}
+.diff-col-head{padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;flex-shrink:0}
+.diff-col-head.original{background:#f4f0e8;color:#6e5238;border-bottom:1.5px solid var(--rule);border-right:1px solid var(--rule)}
+.diff-col-head.proposed{background:#e8f0e8;color:#4a6e4a;border-bottom:1.5px solid var(--rule)}
+.diff-body{padding:14px;font-family:var(--serif);font-size:13.5px;line-height:1.7;overflow-y:auto;flex:1}
+.diff-body.orig-body{background:#fefaf0;border-right:1px solid var(--rule)}
+.diff-body.prop-body{background:#f6fbf4}
+.diff-para{margin-bottom:10px;padding:5px 9px;border-radius:6px;transition:background 100ms}
+.diff-para.changed{background:#fff8e0;border-left:3px solid #d4a574}
+.diff-para.added{background:#eaf4e8;border-left:3px solid #7ab07a}
+.diff-para.removed{background:#fde8e8;border-left:3px solid #c0a0a0;text-decoration:line-through;opacity:.55}
+.review-no-file{background:#fefaf0;border:1.5px solid var(--rule);border-radius:12px;padding:20px 24px;font-family:var(--serif);font-size:14px;line-height:1.75;max-height:52vh;overflow-y:auto;white-space:pre-wrap}
+
+/* ── API key status strip ────────────────────────────────── */
+.api-status-strip{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:var(--paper-deep);border:1.5px solid var(--rule);border-radius:12px;margin-bottom:14px}
+.api-status-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-muted);margin-right:4px}
+.api-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:10px;font-size:12px;font-weight:600;border:1.5px solid;white-space:nowrap;transition:background 150ms}
+.api-chip.ok{background:#e4f4e0;color:#3a6e3a;border-color:#a8c4a2}
+.api-chip.missing{background:#fde8d8;color:#7a4a2a;border-color:#e4a880;cursor:pointer}
+.api-chip.missing:hover{background:#fdd8c0}
+.api-chip .chip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.api-chip.ok .chip-dot{background:#4a9a4a}
+.api-chip.missing .chip-dot{background:#c97b5a}
+.api-strip-action{margin-left:auto;font-size:12px;color:var(--rust);font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.api-strip-action:hover{text-decoration:underline}
+
+/* ── Interactive Next Up items ───────────────────────────── */
+.cc-check-btn{width:26px;height:26px;flex-shrink:0;border-radius:50%;font-size:13px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid #d4c0a0;background:#fff;color:var(--ink-muted);cursor:pointer;transition:all 150ms;align-self:flex-start;margin-top:1px}
+.cc-check-btn:hover{border-color:var(--rust);color:var(--rust);background:var(--paper)}
+.cc-check-btn.done{background:var(--rust);border-color:var(--rust);color:#fff}
+.cc-check-btn.done:hover{background:#b86a4a;border-color:#b86a4a}
+.cc-item.done-item .cc-item-title{text-decoration:line-through;color:var(--ink-muted)}
+.cc-item.done-item{opacity:.6}
+.cc-item.deferred-item{opacity:.5;border-style:dashed}
+.cc-defer-btn{padding:3px 8px;font-size:11px;border-radius:8px;flex-shrink:0;color:var(--ink-muted);align-self:flex-start;margin-top:1px;border-color:#ddd}
+.cc-defer-btn.active{color:var(--rust);border-color:var(--rust);background:var(--paper-deep)}
+.cc-item-actions{display:flex;flex-direction:column;gap:4px;align-items:center;flex-shrink:0}
+.cc-section-footer{font-size:11px;color:var(--ink-muted);margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.cc-section-footer a{color:var(--rust);cursor:pointer;font-weight:600}
+.cc-section-footer a:hover{text-decoration:underline}
+
+/* ── Proposal filter toggle ──────────────────────────────── */
+.prop-filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.prop-filter-btn{font-size:12px;padding:5px 12px;border-radius:10px;border:1.5px solid #d4c0a0;background:#fff;color:var(--ink-soft);cursor:pointer;font-weight:600;transition:all 150ms}
+.prop-filter-btn.active{background:var(--rust);color:#fff;border-color:var(--rust)}
+.prop-filter-btn:hover:not(.active){background:var(--paper);border-color:var(--rust)}
+.prop-count-badge{font-size:11px;font-weight:700;background:var(--paper-deep);border:1px solid var(--rule);color:var(--ink-muted);padding:2px 8px;border-radius:8px;margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Header -->
+<div class="header">
+  <svg class="mascot" viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="60" cy="78" rx="46" ry="5" fill="#3d2817" opacity=".08"/>
+    <ellipse cx="60" cy="56" rx="48" ry="28" fill="#a07a55"/>
+    <ellipse cx="60" cy="66" rx="35" ry="14" fill="#b88e6a" opacity=".5"/>
+    <ellipse cx="38" cy="32" rx="7" ry="6" fill="#a07a55"/><ellipse cx="82" cy="32" rx="7" ry="6" fill="#a07a55"/>
+    <ellipse cx="38" cy="34" rx="3" ry="3" fill="#6e5238"/><ellipse cx="82" cy="34" rx="3" ry="3" fill="#6e5238"/>
+    <circle cx="44" cy="52" r="2.5" fill="#3d2817"/><circle cx="76" cy="52" r="2.5" fill="#3d2817"/>
+    <circle cx="45" cy="51" r=".9" fill="#fff"/><circle cx="77" cy="51" r=".9" fill="#fff"/>
+    <ellipse cx="36" cy="60" rx="5" ry="3" fill="#d68a6a" opacity=".4"/><ellipse cx="84" cy="60" rx="5" ry="3" fill="#d68a6a" opacity=".4"/>
+    <ellipse cx="60" cy="64" rx="7" ry="4" fill="#5a3a25"/>
+    <path d="M53 72Q60 76 67 72" stroke="#3d2817" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <line x1="48" y1="68" x2="40" y2="66" stroke="#6e5238" stroke-width=".8" opacity=".6"/>
+    <line x1="72" y1="68" x2="80" y2="66" stroke="#6e5238" stroke-width=".8" opacity=".6"/>
+  </svg>
+  <div class="header-text">
+    <h1>Book Machine — Local</h1>
+    <p class="sub">Open directly in Chrome or Edge. Keys saved to this browser, files from your OneDrive.</p>
+  </div>
+  <div class="header-right">
+    <button class="small" onclick="saveToGitHub()" title="Copies the git save command to your clipboard">💾 Save to GitHub</button>
+    <span id="server-badge" class="server-badge offline" onclick="checkServerConnection()" title="Local server status — click to reconnect">⚡ Server offline</span>
+    <span class="model-badge" id="model-badge" onclick="openSettings()">Claude Sonnet 4.6</span>
+    <button class="gear-btn" onclick="openSettings()" title="Settings">⚙</button>
+  </div>
+</div>
+
+<!-- Folder banner -->
+<div class="folder-banner" id="folder-banner">
+  <div style="font-size:24px;flex-shrink:0" id="folder-icon">📂</div>
+  <div class="folder-info">
+    <div id="folder-msg"><strong>Connect your Book Machine folder</strong> — the dashboard will scan your books and read their current state automatically.</div>
+    <div id="folder-path" class="folder-path" style="display:none"></div>
+  </div>
+  <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap">
+    <button id="rescan-btn" onclick="scanBooksFolder()" style="display:none">↺ Rescan books</button>
+    <button id="folder-btn" onclick="connectFolder()">Connect folder</button>
+  </div>
+</div>
+
+<!-- Stories -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-left">
+      <svg class="paw" viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="6" ry="5" fill="#c97b5a"/><ellipse cx="6" cy="10" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="12" cy="6" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="18" cy="10" rx="2.5" ry="3" fill="#c97b5a"/></svg>
+      <h2>Your stories</h2>
+    </div>
+    <button class="small" onclick="openAddStory()">+ Add story</button>
+  </div>
+  <div class="grid" id="stories-grid"></div>
+</div>
+
+<!-- Pipeline -->
+<div class="section" id="pipeline-section" style="display:none">
+  <div class="section-header">
+    <div class="section-left">
+      <svg class="paw" viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="6" ry="5" fill="#c97b5a"/><ellipse cx="6" cy="10" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="12" cy="6" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="18" cy="10" rx="2.5" ry="3" fill="#c97b5a"/></svg>
+      <h2>Pipeline</h2>
+    </div>
+    <select class="sel" id="pipe-book-sel" style="font-size:12px;padding:5px 10px" onchange="renderPipeline(this.value)" title="Switch book"></select>
+  </div>
+  <div class="box" style="padding:20px 20px 24px">
+    <div class="pipeline-outer">
+      <div class="pipeline-track" id="pipeline-track">
+        <div class="empty" style="padding:16px">No books scanned yet.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Command Centre -->
+<div class="section" id="command-centre" style="display:none">
+  <div class="section-header">
+    <div class="section-left">
+      <svg class="paw" viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="6" ry="5" fill="#c97b5a"/><ellipse cx="6" cy="10" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="12" cy="6" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="18" cy="10" rx="2.5" ry="3" fill="#c97b5a"/></svg>
+      <h2>Command Centre</h2>
+    </div>
+    <span id="cc-book-badge" class="cc-book-label" onclick="focusPipelineSelect()"></span>
+  </div>
+  <div class="cc-grid">
+    <div class="cc-panel">
+      <div class="cc-panel-head">🚦 Next up</div>
+      <div id="cc-next"><div class="cc-empty">No open items found — scan your books.</div></div>
+    </div>
+    <div class="cc-panel">
+      <div class="cc-panel-head">⏳ Waiting on you</div>
+      <div id="cc-waiting"><div class="cc-empty">Nothing waiting.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Pending AI changes -->
+<div class="section" id="proposals-section" style="display:none">
+  <div class="section-header">
+    <div class="section-left">
+      <svg class="paw" viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="6" ry="5" fill="#c97b5a"/><ellipse cx="6" cy="10" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="12" cy="6" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="18" cy="10" rx="2.5" ry="3" fill="#c97b5a"/></svg>
+      <h2>Pending AI changes</h2>
+    </div>
+    <button class="small danger" onclick="clearOldProposals()">Clear old</button>
+  </div>
+  <div class="prop-filter-bar">
+    <button class="prop-filter-btn active" id="pf-pending" onclick="setPropFilter('pending')">⏳ Pending</button>
+    <button class="prop-filter-btn" id="pf-all" onclick="setPropFilter('all')">Show all</button>
+    <span class="prop-count-badge" id="prop-count-badge"></span>
+  </div>
+  <div id="proposals-list"></div>
+</div>
+
+<!-- Agent runner -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-left">
+      <svg class="paw" viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="6" ry="5" fill="#c97b5a"/><ellipse cx="6" cy="10" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="12" cy="6" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="18" cy="10" rx="2.5" ry="3" fill="#c97b5a"/></svg>
+      <h2>Run an agent</h2>
+    </div>
+  </div>
+  <div class="box">
+    <div id="api-status-strip" class="api-status-strip">
+      <span class="api-status-label">API keys</span>
+      <span id="chip-claude" class="api-chip missing" onclick="openSettings()" title="Click to add your Anthropic key in Settings"><span class="chip-dot"></span>Claude — not set</span>
+      <span id="chip-or" class="api-chip missing" onclick="openSettings()" title="Click to add your OpenRouter key in Settings"><span class="chip-dot"></span>OpenRouter — not set</span>
+      <a class="api-strip-action" onclick="openSettings()">Open Settings ⚙</a>
+    </div>
+    <div class="agent-row">
+      <div class="agent-field">
+        <label for="a-story">Story</label>
+        <select class="sel" id="a-story"></select>
+      </div>
+      <div class="agent-field">
+        <label for="a-skill">Skill</label>
+        <select class="sel" id="a-skill">
+          <option value="driver">✍️ Continue drafting</option>
+          <option value="line-editor">✏️ Line edit</option>
+          <option value="dialogue-polish">💬 Dialogue polish</option>
+          <option value="crutch-inspector">🚨 Crutch inspector</option>
+          <option value="proofreader">🔍 Proofread</option>
+          <option value="dev-editor">🏗 Developmental edit</option>
+          <option value="brainstorm">💡 Brainstorm new story</option>
+          <option value="custom">✏ Custom prompt…</option>
+        </select>
+      </div>
+      <div class="agent-field">
+        <label for="a-model">Model</label>
+        <select class="sel" id="a-model">
+          <option value="claude-sonnet-4-6">Claude Sonnet 4.6</option>
+          <option value="claude-opus-4-7">Claude Opus 4.7</option>
+          <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5</option>
+          <option value="openrouter">OpenRouter (custom)</option>
+        </select>
+      </div>
+      <button class="primary" id="run-btn" onclick="runAgent()" style="align-self:flex-end">Run →</button>
+    </div>
+    <div id="custom-wrap" style="display:none;margin-bottom:12px">
+      <textarea class="fta" id="custom-prompt" rows="4" placeholder="Describe what you want, or paste text to edit…" style="font-size:13px"></textarea>
+    </div>
+    <div id="response-wrap" style="display:none">
+      <div class="response-header">
+        <span id="resp-label">Response</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span id="resp-streaming" style="display:none"><span class="dot"></span>Writing…</span>
+          <button class="small" id="copy-btn" onclick="copyResp()" style="display:none">Copy</button>
+        </div>
+      </div>
+      <div class="response-body" id="resp-body"></div>
+      <div class="response-footer" id="resp-foot" style="display:none">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="small primary" onclick="queueProposal()" title="Save this response as a proposed file change to review and approve later">📋 Queue as proposed change</button>
+          <button class="small" onclick="saveRespToFile()">Save to file…</button>
+        </div>
+        <button class="small danger" onclick="clearResp()">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Manuscript editor -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-left">
+      <svg class="paw" viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="6" ry="5" fill="#c97b5a"/><ellipse cx="6" cy="10" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="12" cy="6" rx="2.5" ry="3" fill="#c97b5a"/><ellipse cx="18" cy="10" rx="2.5" ry="3" fill="#c97b5a"/></svg>
+      <h2>Manuscript editor</h2>
+    </div>
+    <button class="small" onclick="openFile()">Open file…</button>
+  </div>
+  <div class="editor-wrap">
+    <div class="empty" id="editor-empty">No file open. Click "Open file…" to load a manuscript or draft (.md or .txt).</div>
+    <div id="editor-main" style="display:none">
+      <div class="editor-toolbar">
+        <span class="editor-filename" id="editor-fname">—</span>
+        <span class="editor-status" id="editor-status"></span>
+        <button class="small" onclick="openFile()">Open…</button>
+        <button class="small" onclick="sendEditorToAgent()" id="send-to-agent-btn">Send to agent ↑</button>
+        <button class="small primary" id="save-btn" onclick="saveFile()" disabled>Save</button>
+      </div>
+      <textarea class="editor-ta" id="editor-ta" spellcheck="true" oninput="onEdit()"></textarea>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- Settings modal -->
+<div class="overlay" id="settings-modal" style="display:none" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <div class="mhead"><h3>⚙ Settings</h3><button class="xbtn" onclick="closeSettings()">✕</button></div>
+    <div class="mbody">
+      <div class="stitle">Default model</div>
+      <div class="fg">
+        <label class="fl" for="s-model">Model used when you click Run →</label>
+        <select class="fsel" id="s-model">
+          <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — fast, great for editing &amp; drafting</option>
+          <option value="claude-opus-4-7">Claude Opus 4.7 — most capable</option>
+          <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 — fastest</option>
+          <option value="openrouter">OpenRouter — any model via your key</option>
+        </select>
+      </div>
+      <div class="stitle">API keys — saved in this browser only, never leave your device</div>
+      <div class="fg">
+        <label class="fl" for="s-akey">Anthropic API key</label>
+        <input class="fi" type="password" id="s-akey" placeholder="sk-ant-…" autocomplete="off">
+        <span class="fh">Get yours at console.anthropic.com — your Max subscription includes API access.</span>
+      </div>
+      <div class="fg">
+        <label class="fl" for="s-orkey">OpenRouter API key</label>
+        <input class="fi" type="password" id="s-orkey" placeholder="sk-or-v1-…" autocomplete="off">
+      </div>
+      <div class="fg">
+        <label class="fl" for="s-ormodel">OpenRouter model ID</label>
+        <input class="fi" type="text" id="s-ormodel" placeholder="e.g. openai/gpt-4o or google/gemini-2.5-pro">
+        <span class="fh">Full ID from openrouter.ai/models</span>
+      </div>
+      <div class="stitle">Author</div>
+      <div class="fg">
+        <label class="fl" for="s-name">Your name (included in prompts)</label>
+        <input class="fi" type="text" id="s-name" placeholder="e.g. Xtine">
+      </div>
+    </div>
+    <div class="mfoot">
+      <button onclick="closeSettings()">Cancel</button>
+      <button class="primary" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add story modal -->
+<div class="overlay" id="story-modal" style="display:none" onclick="if(event.target===this)closeAddStory()">
+  <div class="modal wide">
+    <div class="mhead"><h3>+ Add a story</h3><button class="xbtn" onclick="closeAddStory()">✕</button></div>
+    <div class="mbody">
+      <div class="fg">
+        <label class="fl" for="n-title">Title *</label>
+        <input class="fi" type="text" id="n-title" placeholder="e.g. The Stars Between Us">
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="fl" for="n-genre">Genre</label>
+          <select class="fsel" id="n-genre">
+            <option>Paranormal romance</option><option>Contemporary romance</option>
+            <option>Fantasy romance</option><option>Dark romance</option>
+            <option>Urban fantasy</option><option>Cozy mystery</option>
+            <option>Thriller</option><option>Literary fiction</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl" for="n-status">Status</label>
+          <select class="fsel" id="n-status">
+            <option value="idle">Idea / not started</option>
+            <option value="drafting">Drafting</option>
+            <option value="editing">Editing</option>
+            <option value="revision">Revision</option>
+            <option value="complete">Complete</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="fl" for="n-series">Series / standalone</label>
+          <input class="fi" type="text" id="n-series" placeholder="e.g. Standalone or Book 1 of …">
+        </div>
+        <div class="fg">
+          <label class="fl" for="n-target">Target word count</label>
+          <input class="fi" type="number" id="n-target" value="80000" step="5000">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl" for="n-wc">Current word count</label>
+        <input class="fi" type="number" id="n-wc" value="0" step="500">
+      </div>
+      <div class="fg">
+        <label class="fl" for="n-logline">Logline</label>
+        <textarea class="fta" id="n-logline" placeholder="One sentence premise."></textarea>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button onclick="closeAddStory()">Cancel</button>
+      <button class="primary" onclick="submitStory()">Add story</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit story modal -->
+<div class="overlay" id="edit-modal" style="display:none" onclick="if(event.target===this)closeEditStory()">
+  <div class="modal wide">
+    <div class="mhead"><h3>Edit story</h3><button class="xbtn" onclick="closeEditStory()">✕</button></div>
+    <div class="mbody">
+      <input type="hidden" id="e-idx">
+      <div class="fg">
+        <label class="fl" for="e-title">Title</label>
+        <input class="fi" type="text" id="e-title">
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="fl" for="e-status">Status</label>
+          <select class="fsel" id="e-status">
+            <option value="idle">Idea / not started</option>
+            <option value="drafting">Drafting</option>
+            <option value="editing">Editing</option>
+            <option value="revision">Revision</option>
+            <option value="complete">Complete</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl" for="e-wc">Current word count</label>
+          <input class="fi" type="number" id="e-wc" step="500">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl" for="e-logline">Logline</label>
+        <textarea class="fta" id="e-logline"></textarea>
+      </div>
+      <div class="fg">
+        <label class="fl" for="e-next">Next step</label>
+        <input class="fi" type="text" id="e-next" placeholder="What needs to happen next?">
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="danger small" onclick="deleteStory()">Delete</button>
+      <button onclick="closeEditStory()">Cancel</button>
+      <button class="primary" onclick="saveEditStory()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Reader modal ──────────────────────────────────────── -->
+<div id="reader-modal">
+  <!-- File sidebar (slide-in) -->
+  <div class="rfile-sidebar" id="rfile-sidebar">
+    <div class="rsidebar-header">
+      <h4>📁 Files</h4>
+      <button class="xbtn" onclick="toggleSidebar()" title="Close">✕</button>
+    </div>
+    <div id="rfile-list"></div>
+  </div>
+
+  <!-- Top bar -->
+  <div class="rtopbar">
+    <button class="rsidebar-toggle" onclick="toggleSidebar()" title="Browse files">☰</button>
+    <span class="rtopbar-title" id="r-book-title">—</span>
+    <div class="rtopbar-nav">
+      <span id="r-file-name" style="font-family:var(--mono);font-size:11px;color:var(--ink-muted);background:var(--paper);border:1px solid var(--rule);padding:3px 8px;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px"></span>
+      <select class="sel" id="chapter-nav-sel" onchange="jumpToChapter()" style="font-size:12px;padding:5px 10px;display:none" title="Jump to chapter or scene">
+        <option value="">Jump to…</option>
+      </select>
+    </div>
+    <div class="rtopbar-actions">
+      <span class="rnote-count" id="r-note-count"></span>
+      <button class="small primary" id="send-notes-btn" style="display:none" onclick="sendNotesToAgent()">Send notes to chat ↑</button>
+      <button class="small" onclick="exportReaderNotes()" title="Download notes as JSON">⬇</button>
+      <label class="small" style="cursor:pointer;border:1.5px solid #d4c0a0;background:#fff;color:#5a3a25;padding:6px 12px;border-radius:10px;font-size:12px;font-weight:600" title="Load notes from another device">⬆<input type="file" accept=".json" style="display:none" onchange="importReaderNotes(event)"></label>
+      <button class="xbtn" onclick="closeReader()" title="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="rscroll" id="rscroll">
+    <div class="rinner" id="reader-inner">
+      <div style="color:var(--ink-muted);font-style:italic;padding:48px;text-align:center">Select a file from ☰ to start reading.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Proposal review modal -->
+<div class="overlay" id="proposal-modal" style="display:none" onclick="if(event.target===this)closeProposalReview()">
+  <div class="modal review-modal">
+    <div class="mhead" style="flex-direction:column;align-items:flex-start;gap:4px">
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+        <h3 id="pm-title">Review AI changes</h3>
+        <button class="xbtn" onclick="closeProposalReview()">✕</button>
+      </div>
+      <div id="pm-meta" style="font-size:12px;color:var(--ink-muted)"></div>
+    </div>
+    <div class="mbody" style="gap:10px;padding:16px 24px">
+      <div style="font-size:13px;color:var(--ink-soft)">
+        Review the proposed changes below. Paragraphs highlighted in <span style="background:#fff8e0;border-left:3px solid #d4a574;padding:1px 6px;border-radius:4px;font-size:12px">amber</span> are modified; <span style="background:#eaf4e8;border-left:3px solid #7ab07a;padding:1px 6px;border-radius:4px;font-size:12px">green</span> are new. When ready, choose an action below.
+      </div>
+      <div id="pm-diff-area"></div>
+    </div>
+    <div class="mfoot" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="small danger" id="pm-reject-btn" onclick="rejectCurrentProposal()">✗ Reject</button>
+        <button class="small" onclick="copyProposalText()">Copy text</button>
+        <button class="small" onclick="sendProposalToEditor()">Open in editor</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="small" onclick="sendApprovalToClaude()" title="Copy a structured instruction prompt and open Claude — or send directly if running inside Cowork">📤 Send to Claude</button>
+        <button class="small" onclick="writeProposalToFile()" title="Write directly to the book folder (if connected) or open a save dialog">💾 Write to file</button>
+        <button class="primary small" id="pm-approve-btn" onclick="approveCurrentProposal()" title="Mark approved and write the file in one click">✓ Approve &amp; write</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ================================================================
+// STORAGE
+// ================================================================
+const SK = 'bm-settings-v2';
+const PK = 'bm-projects-v2';
+
+function getSettings() { try { return JSON.parse(localStorage.getItem(SK)||'{}'); } catch { return {}; } }
+function getProjects() { try { return JSON.parse(localStorage.getItem(PK)||'[]'); } catch { return []; } }
+function saveProjects(a) { localStorage.setItem(PK, JSON.stringify(a)); }
+
+// ================================================================
+// SETTINGS
+// ================================================================
+function openSettings() {
+  const s = getSettings();
+  document.getElementById('s-model').value   = s.preferredModel || 'claude-sonnet-4-6';
+  document.getElementById('s-akey').value    = s.anthropicKey || '';
+  document.getElementById('s-orkey').value   = s.openrouterKey || '';
+  document.getElementById('s-ormodel').value = s.openrouterModel || '';
+  document.getElementById('s-name').value    = s.authorName || '';
+  show('settings-modal');
+}
+function closeSettings() { hide('settings-modal'); }
+function saveSettings() {
+  const s = {
+    preferredModel: v('s-model'),
+    anthropicKey:   v('s-akey').trim(),
+    openrouterKey:  v('s-orkey').trim(),
+    openrouterModel:v('s-ormodel').trim(),
+    authorName:     v('s-name').trim(),
+  };
+  localStorage.setItem(SK, JSON.stringify(s));
+  updateBadge();
+  const am = document.getElementById('a-model');
+  if (am) am.value = s.preferredModel;
+  closeSettings();
+  renderApiKeyStatus();
+  toast('Settings saved ✓');
+}
+function updateBadge() {
+  const s = getSettings();
+  const map = {
+    'claude-opus-4-7':'Claude Opus 4.7',
+    'claude-sonnet-4-6':'Claude Sonnet 4.6',
+    'claude-haiku-4-5-20251001':'Claude Haiku 4.5',
+    'openrouter': s.openrouterModel ? 'OR: '+s.openrouterModel.split('/').pop() : 'OpenRouter',
+  };
+  const el = document.getElementById('model-badge');
+  if (el) el.textContent = map[s.preferredModel||'claude-sonnet-4-6'] || 'Claude Sonnet 4.6';
+}
+
+// ================================================================
+// FOLDER ACCESS
+// ================================================================
+let rootDir = null;
+
+async function connectFolder() {
+  if (!window.showDirectoryPicker) {
+    alert('File System Access API requires Chrome or Edge. Try a different browser.');
+    return;
+  }
+  try {
+    rootDir = await window.showDirectoryPicker({ id:'book-machine', mode:'readwrite', startIn:'documents' });
+    setFolderConnected(rootDir.name);
+    toast('Connected — scanning books…');
+    await scanBooksFolder();
+  } catch(e) { if (e.name !== 'AbortError') console.error(e); }
+}
+
+function setFolderConnected(name) {
+  document.getElementById('folder-path').textContent = name;
+  document.getElementById('folder-path').style.display = 'block';
+  document.getElementById('folder-icon').textContent = '✅';
+  document.getElementById('folder-banner').classList.add('connected');
+  document.getElementById('folder-btn').textContent = 'Change folder';
+  document.getElementById('folder-msg').innerHTML = '<strong>Book Machine folder connected.</strong> Stories are read from your <code>books/</code> folder.';
+  document.getElementById('rescan-btn').style.display = 'inline-flex';
+}
+
+// ================================================================
+// BOOK SCANNER
+// ================================================================
+async function scanBooksFolder() {
+  if (!rootDir) { alert('Connect your Book Machine folder first.'); return; }
+
+  let booksDir;
+  try {
+    booksDir = await rootDir.getDirectoryHandle('books');
+  } catch {
+    toast('No "books" subfolder found. Make sure you connected the Book Machine root folder, not a subfolder inside it.');
+    return;
+  }
+
+  const discovered = [];
+  for await (const [name, handle] of booksDir.entries()) {
+    if (handle.kind !== 'directory') continue;
+    const book = await readBookFromFolder(handle, name);
+    if (book) discovered.push(book);
+  }
+
+  // Filter out template/placeholder books
+  const filtered = discovered.filter(b => !b.title.includes('[') && !b.title.includes('{') && !b.title.startsWith('Template'));
+  if (!filtered.length) { toast('No real book folders found inside books/. (Template folders are skipped.)'); return; }
+  const discovered_real = filtered;
+
+  // Keep any manually-added projects (no folderName), replace scanned ones
+  const manual = getProjects().filter(p => !p.fromScan);
+  saveProjects([...manual, ...discovered_real]);
+  renderStories();
+  populateStorySelector();
+  populatePipelineSelect();
+  renderPendingChanges();
+  toast(`Found ${discovered_real.length} book${discovered_real.length !== 1 ? 's' : ''} ✓`);
+}
+
+async function readBookFromFolder(dirHandle, folderName) {
+  const book = {
+    folderName,
+    title: folderNameToTitle(folderName),
+    fromScan: true,
+    status: 'idle',
+    wordsCurrent: 0,
+    wordsTarget: 80000,
+    genre: '',
+    series: '',
+    logline: '',
+    next: '',
+    lastTouched: '',
+  };
+
+  // 1. book-order.md — title, genre, target WC, series
+  try {
+    const f = await dirHandle.getFileHandle('book-order.md');
+    parseBookOrder(await (await f.getFile()).text(), book);
+  } catch {}
+
+  // 2. SESSION_REPORT.md — status, word count, open items, last date
+  try {
+    const f = await dirHandle.getFileHandle('SESSION_REPORT.md');
+    parseSessionReport(await (await f.getFile()).text(), book);
+  } catch {}
+
+  // 3. Word count from clean manuscript (most accurate)
+  try {
+    const draftsDir = await dirHandle.getDirectoryHandle('drafts');
+    let mHandle;
+    try { mHandle = await draftsDir.getFileHandle('_FULL_MANUSCRIPT_CLEAN.md'); } catch {}
+    if (!mHandle) { try { mHandle = await draftsDir.getFileHandle('_FULL_MANUSCRIPT.md'); } catch {} }
+    if (mHandle) {
+      const text = await (await mHandle.getFile()).text();
+      book.wordsCurrent = text.split(/\s+/).filter(Boolean).length;
+    }
+  } catch {}
+
+  // 4. Logline from story-dossier.md if not found yet
+  if (!book.logline) {
+    try {
+      const stateDir = await dirHandle.getDirectoryHandle('state');
+      const f = await stateDir.getFileHandle('story-dossier.md');
+      const text = await (await f.getFile()).text();
+      const m = text.match(/(?:logline|premise|one.line)[^\n]*\n+([^\n]{20,200})/i);
+      if (m) book.logline = m[1].trim().replace(/^\*+|\*+$/g, '');
+    } catch {}
+  }
+
+  return book;
+}
+
+function parseBookOrder(text, book) {
+  const titleM = text.match(/^#\s+(?:Book Order\s*[-–—]\s*)?(.+)/im);
+  if (titleM) book.title = titleM[1].trim();
+
+  const genreM = text.match(/\*\*Genre:\*\*\s*(.+)/i);
+  if (genreM) book.genre = genreM[1].trim();
+
+  const targetM = text.match(/\*\*Target word count:\*\*\s*([\d,]+)/i);
+  if (targetM) book.wordsTarget = parseInt(targetM[1].replace(/,/g, ''));
+
+  const seriesM = text.match(/\*\*Series or standalone:\*\*\s*(.+)/i);
+  if (seriesM) book.series = seriesM[1].split('.')[0].trim();
+
+  // Grab the core question as logline fallback
+  const cqM = text.match(/\*\*Core question[^*]*\*\*\s*(.+)/i);
+  if (cqM && !book.logline) book.logline = cqM[1].trim();
+}
+
+function parseSessionReport(text, book) {
+  // Last touched date
+  const dateM = text.match(/\*\*Date:\*\*\s*(.+)/i);
+  if (dateM) book.lastTouched = dateM[1].trim();
+
+  // Word count — prefer "Manuscript length" from Key Numbers section
+  const wcM = text.match(/\*\*Manuscript length:\*\*\s*([\d,]+)/i);
+  if (wcM) book.wordsCurrent = parseInt(wcM[1].replace(/,/g, ''));
+  if (!book.wordsCurrent) {
+    const wcM2 = text.match(/([\d,]+)\s+prose\s+words/i);
+    if (wcM2) book.wordsCurrent = parseInt(wcM2[1].replace(/,/g, ''));
+  }
+
+  // Status/stage from content
+  if (/open items for revision/i.test(text) || /parc.ferm[eé].*complete|inspection complete/i.test(text)) {
+    book.status = 'revision';
+  } else if (/parc.ferm[eé]/i.test(text)) {
+    book.status = 'editing';
+  } else if (/## the race|driver loop|laps drafted/i.test(text)) {
+    book.status = 'drafting';
+  }
+
+  // Next steps — pull numbered items from Open Items section
+  const openM = text.match(/##\s*Open Items[^\n]*\n([\s\S]+?)(?=\n##|\n---|\Z)/i);
+  if (openM) {
+    const items = [];
+    const lines = openM[1].split('\n');
+    for (const line of lines) {
+      const m = line.match(/^\d+\.\s+\*\*(.+?)\*\*/);
+      if (m) items.push(m[1]);
+      if (items.length >= 3) break;
+    }
+    if (items.length) book.next = items.join(' · ');
+  }
+}
+
+function folderNameToTitle(s) {
+  return s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+// ================================================================
+// STORIES
+// ================================================================
+function renderStories() {
+  const grid = document.getElementById('stories-grid');
+  const projects = getProjects();
+  if (!projects.length) {
+    grid.innerHTML = '<div class="empty">No stories yet — connect your Book Machine folder to scan automatically, or click "+ Add story".</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  projects.forEach((p, i) => {
+    const pct = p.wordsTarget > 0 ? Math.min(100, Math.round((p.wordsCurrent||0) / p.wordsTarget * 100)) : 0;
+    const stageNames = ['','Setup','Drafting','Quality Control','Polish','Delivery'];
+    const stage = p.pipelineStage ? `Stage ${p.pipelineStage}: ${stageNames[p.pipelineStage]||''}` : '';
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <span class="badge ${p.status||'idle'}">${statusLabel(p.status)}</span>
+      <h3>${esc(p.title)}</h3>
+      <div class="meta">${esc(p.genre||'')}${p.series?' · '+esc(p.series):''}${p.lastTouched?' · '+esc(p.lastTouched):''}</div>
+      ${p.logline?`<div style="font-size:13px;color:#5a4a38;margin-bottom:10px;font-style:italic">${esc(p.logline)}</div>`:''}
+      ${stage?`<div style="font-size:12px;color:var(--rust-deep);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">${esc(stage)}</div>`:''}
+      <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+      <div class="progress-text">${(p.wordsCurrent||0).toLocaleString()} / ${(p.wordsTarget||80000).toLocaleString()} words · ${pct}%</div>
+      ${p.next?`<div style="font-size:13px;color:#5a4a38;margin-top:12px;padding-top:10px;border-top:1.5px dashed var(--rule)"><strong style="color:var(--rust-deep)">Next:</strong> ${esc(p.next)}</div>`:''}
+      <div class="card-actions">
+        ${p.folderName?`<button class="small primary" onclick="openReader('${esc(p.folderName)}','${esc(p.title)}')">Read &amp; annotate</button>`:''}
+        ${p.fromScan?`<button class="small" onclick="showPipelineForBook(${i})" title="See pipeline &amp; next steps">🏎 Pipeline</button>`:''}
+        <button class="small" onclick="openEditStory(${i})">Edit</button>
+        ${p.fromScan?`<span style="font-size:11px;color:var(--ink-muted);padding:4px 6px">📂 from files</span>`:''}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function statusLabel(s) {
+  return ({idle:'Idea',drafting:'Drafting',editing:'Editing',revision:'Revision',awaiting:'Waiting',complete:'Complete'})[s] || s || 'Idea';
+}
+
+function openAddStory() {
+  ['n-title','n-series','n-logline'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('n-wc').value = '0';
+  document.getElementById('n-target').value = '80000';
+  document.getElementById('n-status').value = 'idle';
+  show('story-modal');
+}
+function closeAddStory() { hide('story-modal'); }
+function submitStory() {
+  const title = v('n-title').trim();
+  if (!title) { alert('Title required.'); return; }
+  const projects = getProjects();
+  projects.push({
+    title,
+    genre: v('n-genre'),
+    series: v('n-series').trim(),
+    status: v('n-status'),
+    wordsTarget: parseInt(v('n-target'))||80000,
+    wordsCurrent: parseInt(v('n-wc'))||0,
+    logline: v('n-logline').trim(),
+    addedDate: new Date().toISOString().slice(0,10),
+  });
+  saveProjects(projects);
+  closeAddStory();
+  renderStories();
+  populateStorySelector();
+  toast(`"${title}" added ✓`);
+}
+
+let editingIdx = null;
+function openEditStory(i) {
+  const p = getProjects()[i];
+  if (!p) return;
+  editingIdx = i;
+  document.getElementById('e-idx').value = i;
+  document.getElementById('e-title').value = p.title||'';
+  document.getElementById('e-status').value = p.status||'idle';
+  document.getElementById('e-wc').value = p.wordsCurrent||0;
+  document.getElementById('e-logline').value = p.logline||'';
+  document.getElementById('e-next').value = p.next||'';
+  show('edit-modal');
+}
+function closeEditStory() { hide('edit-modal'); editingIdx = null; }
+function saveEditStory() {
+  const i = parseInt(document.getElementById('e-idx').value);
+  const projects = getProjects();
+  if (!projects[i]) return;
+  projects[i] = { ...projects[i],
+    title: v('e-title').trim() || projects[i].title,
+    status: v('e-status'),
+    wordsCurrent: parseInt(v('e-wc'))||projects[i].wordsCurrent,
+    logline: v('e-logline').trim(),
+    next: v('e-next').trim(),
+  };
+  saveProjects(projects);
+  closeEditStory();
+  renderStories();
+  populateStorySelector();
+  toast('Updated ✓');
+}
+function deleteStory() {
+  const i = parseInt(document.getElementById('e-idx').value);
+  const projects = getProjects();
+  if (!confirm(`Remove "${projects[i]?.title}"? (Files are not deleted.)`)) return;
+  projects.splice(i, 1);
+  saveProjects(projects);
+  closeEditStory();
+  renderStories();
+  populateStorySelector();
+}
+
+// ================================================================
+// AGENT RUNNER
+// ================================================================
+function populateStorySelector() {
+  const sel = document.getElementById('a-story');
+  const projects = getProjects();
+  sel.innerHTML = projects.length
+    ? projects.map((p,i)=>`<option value="${i}">${esc(p.title)}</option>`).join('')
+    : '<option value="">— add a story first —</option>';
+}
+
+document.getElementById('a-skill').addEventListener('change', function() {
+  document.getElementById('custom-wrap').style.display = this.value==='custom' ? 'block' : 'none';
+});
+
+async function runAgent() {
+  const s = getSettings();
+  const model = v('a-model');
+  if (model !== 'openrouter' && !s.anthropicKey) {
+    alert('No Anthropic API key. Open Settings (⚙) and paste your key from console.anthropic.com.');
+    return;
+  }
+  if (model === 'openrouter' && !s.openrouterKey) {
+    alert('No OpenRouter key. Open Settings (⚙) and add it.');
+    return;
+  }
+
+  const skill = v('a-skill');
+  const storyIdx = parseInt(v('a-story'));
+  const story = getProjects()[storyIdx];
+  const editorText = openFileHandle ? document.getElementById('editor-ta').value.slice(0, 40000) : '';
+
+  let prompt;
+  if (skill === 'custom') {
+    prompt = v('custom-prompt').trim();
+    if (!prompt) { alert('Enter a prompt.'); return; }
+    if (editorText) prompt += '\n\n---\n\nText to work on:\n\n' + editorText;
+  } else {
+    prompt = buildPrompt(skill, story, editorText, s.authorName);
+  }
+
+  // Show response
+  show('response-wrap');
+  document.getElementById('resp-body').textContent = '';
+  hide('resp-foot'); hide('copy-btn');
+  show('resp-streaming');
+  document.getElementById('resp-label').textContent = skillLabel(skill) + (story ? ' — ' + story.title : '');
+  document.getElementById('run-btn').disabled = true;
+
+  try {
+    if (model === 'openrouter') {
+      await callOpenRouter(prompt, s.openrouterKey, s.openrouterModel || 'openai/gpt-4o');
+    } else {
+      await callClaude(prompt, s.anthropicKey, model);
+    }
+  } catch(e) {
+    document.getElementById('resp-body').textContent += '\n\n[Error: ' + e.message + ']';
+  } finally {
+    hide('resp-streaming');
+    show('resp-foot');
+    show('copy-btn');
+    document.getElementById('run-btn').disabled = false;
+  }
+}
+
+function buildPrompt(skill, story, editorText, authorName) {
+  const who = authorName ? `Author: ${authorName}. ` : '';
+  const ctx = story ? `Story: "${story.title}" (${story.genre||'romance'}${story.logline?', '+story.logline:''}, ${(story.wordsCurrent||0).toLocaleString()} words written so far).` : '';
+  const textBlock = editorText ? '\n\n---\n\nText to work on:\n\n' + editorText : '';
+  const prompts = {
+    'driver':         `${who}${ctx}\n\nYou are the Driver — a skilled scene-level fiction writer. Continue drafting from where we left off. Write the next scene, maintaining the voice and continuity. Aim for at least 1,500 words before pausing to check in.${textBlock}`,
+    'line-editor':    `${who}${ctx}\n\nYou are a professional line editor. Improve the text below at the sentence level: show don't tell, active voice, rhythm, word choice, filter words, tight dialogue. Return the full improved text with brief notes on significant changes.${textBlock}`,
+    'dialogue-polish':`${who}${ctx}\n\nPolish the dialogue below. Each character should sound distinct, subtext should land, nothing on-the-nose. Return the improved text.${textBlock}`,
+    'crutch-inspector':`${who}${ctx}\n\nYou are the Crutch Inspector. Analyze the text for overused words and phrases. Return: (1) ranked crutch list with counts, (2) the 5 worst offenders with examples and suggested rewrites.${textBlock}`,
+    'proofreader':    `${who}${ctx}\n\nProofread the text below. Fix typos, grammar, punctuation, inconsistencies. Return the corrected text with a summary of changes.${textBlock}`,
+    'dev-editor':     `${who}${ctx}\n\nYou are a developmental editor. Analyze for: structure, pacing, character arc, promise/payoff, POV consistency. Write a structured developmental report with specific recommendations. Do not rewrite — diagnose.${textBlock}`,
+    'brainstorm':     `${who}You are a genre fiction brainstorm partner who thinks both creatively and commercially. Help me develop a new story concept. Ask me what I'm drawn to — subgenre, vibe, tropes — and build a premise, cast, and reader promise together. Start with one focused question.`,
+  };
+  return prompts[skill] || `${who}${ctx}\n\nHelp with: ${skill}.${textBlock}`;
+}
+
+function skillLabel(s) {
+  return ({driver:'Drafting','line-editor':'Line edit','dialogue-polish':'Dialogue polish','crutch-inspector':'Crutch inspector',proofreader:'Proofread','dev-editor':'Dev edit',brainstorm:'Brainstorm',custom:'Custom'})[s]||s;
+}
+
+async function callClaude(prompt, apiKey, model) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'x-api-key': apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+      'content-type':'application/json',
+    },
+    body: JSON.stringify({ model, max_tokens:8096, stream:true, messages:[{role:'user',content:prompt}] }),
+  });
+  if (!res.ok) throw new Error('Anthropic API ' + res.status + ': ' + await res.text());
+  await readSSE(res, obj => {
+    if (obj.type==='content_block_delta' && obj.delta?.text) appendResp(obj.delta.text);
+  });
+}
+
+async function callOpenRouter(prompt, apiKey, model) {
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method:'POST',
+    headers:{
+      'Authorization':'Bearer '+apiKey,
+      'Content-Type':'application/json',
+      'HTTP-Referer':'https://bookmachine.local',
+      'X-Title':'Book Machine Dashboard',
+    },
+    body: JSON.stringify({ model, stream:true, messages:[{role:'user',content:prompt}] }),
+  });
+  if (!res.ok) throw new Error('OpenRouter API ' + res.status + ': ' + await res.text());
+  await readSSE(res, obj => {
+    const text = obj.choices?.[0]?.delta?.content;
+    if (text) appendResp(text);
+  });
+}
+
+async function readSSE(res, onData) {
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  while (true) {
+    const {done, value} = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, {stream:true});
+    const lines = buf.split('\n');
+    buf = lines.pop();
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const d = line.slice(6).trim();
+      if (d === '[DONE]') return;
+      try { onData(JSON.parse(d)); } catch {}
+    }
+  }
+}
+
+function appendResp(text) {
+  const el = document.getElementById('resp-body');
+  el.textContent += text;
+  el.scrollTop = el.scrollHeight;
+}
+
+function copyResp() {
+  navigator.clipboard.writeText(document.getElementById('resp-body').textContent)
+    .then(() => toast('Copied ✓'));
+}
+function clearResp() { hide('response-wrap'); document.getElementById('resp-body').textContent = ''; }
+
+async function saveRespToFile() {
+  if (!window.showSaveFilePicker) { copyResp(); toast('Copied (save picker not available in this browser)'); return; }
+  try {
+    const h = await window.showSaveFilePicker({ suggestedName:'agent-output.md', types:[{description:'Markdown',accept:{'text/markdown':['.md']}}] });
+    const w = await h.createWritable();
+    await w.write(document.getElementById('resp-body').textContent);
+    await w.close();
+    toast('Saved ✓');
+  } catch(e) { if (e.name!=='AbortError') toast('Save failed: '+e.message); }
+}
+
+// ================================================================
+// MANUSCRIPT EDITOR
+// ================================================================
+let openFileHandle = null;
+let editorDirty = false;
+
+async function openFile() {
+  if (!window.showOpenFilePicker) { alert('Use Chrome or Edge for file access.'); return; }
+  if (editorDirty && !confirm('Unsaved changes. Open new file anyway?')) return;
+  try {
+    const [h] = await window.showOpenFilePicker({
+      types:[{description:'Markdown / text',accept:{'text/plain':['.md','.txt','.markdown']}}]
+    });
+    openFileHandle = h;
+    const file = await h.getFile();
+    const text = await file.text();
+    document.getElementById('editor-ta').value = text;
+    document.getElementById('editor-fname').textContent = h.name;
+    document.getElementById('editor-status').textContent = wordCount(text).toLocaleString() + ' words';
+    hide('editor-empty');
+    show('editor-main');
+    document.getElementById('save-btn').disabled = true;
+    editorDirty = false;
+  } catch(e) { if (e.name!=='AbortError') console.error(e); }
+}
+
+function onEdit() {
+  editorDirty = true;
+  document.getElementById('save-btn').disabled = false;
+  document.getElementById('editor-status').textContent = wordCount(document.getElementById('editor-ta').value).toLocaleString() + ' words · unsaved';
+}
+
+async function saveFile() {
+  if (!openFileHandle) return;
+  try {
+    const w = await openFileHandle.createWritable();
+    await w.write(document.getElementById('editor-ta').value);
+    await w.close();
+    editorDirty = false;
+    document.getElementById('save-btn').disabled = true;
+    document.getElementById('editor-status').textContent = wordCount(document.getElementById('editor-ta').value).toLocaleString() + ' words · saved ✓';
+    toast('Saved ✓');
+  } catch(e) { toast('Save failed: ' + e.message); }
+}
+
+function sendEditorToAgent() {
+  document.getElementById('a-skill').value = 'custom';
+  document.getElementById('custom-wrap').style.display = 'block';
+  const text = document.getElementById('editor-ta').value.slice(0, 40000);
+  document.getElementById('custom-prompt').value = 'Please edit and improve the following text:\n\n' + text;
+  document.getElementById('a-skill').scrollIntoView({behavior:'smooth', block:'nearest'});
+  toast('Text sent to agent prompt ✓');
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key==='s' && openFileHandle) { e.preventDefault(); saveFile(); }
+});
+
+// ================================================================
+// UTILS
+// ================================================================
+function wordCount(s) { return s.split(/\s+/).filter(Boolean).length; }
+function v(id) { return document.getElementById(id)?.value || ''; }
+function show(id) { const el = document.getElementById(id); if (el) el.style.display='block'; }
+function hide(id) { const el = document.getElementById(id); if (el) el.style.display='none'; }
+function esc(s) { return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.style.display='none'; }, 2500);
+}
+
+// ================================================================
+// READER
+// ================================================================
+let rBookDir = null;
+let rBookFolder = '';
+let rBookTitle = '';
+let rFilePath = '';
+let rActivePIdx = null;
+let rSidebarOpen = false;
+
+async function openReader(folderName, title) {
+  if (!rootDir) { alert('Connect your Book Machine folder first (folder banner at the top).'); return; }
+  try {
+    const booksDir = await rootDir.getDirectoryHandle('books');
+    rBookDir = await booksDir.getDirectoryHandle(folderName);
+  } catch(e) { alert('Could not open folder: ' + folderName + '\n' + e.message); return; }
+
+  rBookFolder = folderName;
+  rBookTitle = title;
+  document.getElementById('r-book-title').textContent = title;
+  document.getElementById('reader-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  await buildFileSidebar();
+  // Auto-load best first file: full clean manuscript or session report
+  const firstPath = await pickFirstFile();
+  if (firstPath) await loadFile(firstPath);
+}
+
+async function pickFirstFile() {
+  // Prefer full clean manuscript, then session report
+  const candidates = ['drafts/_FULL_MANUSCRIPT_CLEAN.md','SESSION_REPORT.md','drafts/_FULL_MANUSCRIPT.md','book-order.md'];
+  for (const c of candidates) {
+    try {
+      const parts = c.split('/');
+      let h = rBookDir;
+      for (let i=0;i<parts.length-1;i++) h = await h.getDirectoryHandle(parts[i]);
+      await h.getFileHandle(parts[parts.length-1]);
+      return c;
+    } catch {}
+  }
+  return null;
+}
+
+async function buildFileSidebar() {
+  const list = document.getElementById('rfile-list');
+  list.innerHTML = '';
+
+  const sections = [
+    { label: 'Overview', files: ['SESSION_REPORT.md','book-order.md'] },
+    { label: 'Drafts', dir: 'drafts' },
+    { label: 'State', dir: 'state' },
+    { label: 'Cast', dir: 'cast' },
+    { label: 'Samples', dir: 'samples' },
+  ];
+
+  for (const sec of sections) {
+    const items = [];
+    if (sec.files) {
+      for (const fname of sec.files) {
+        try { await rBookDir.getFileHandle(fname); items.push({ label: fLabel(fname), path: fname }); } catch {}
+      }
+    }
+    if (sec.dir) {
+      try {
+        const d = await rBookDir.getDirectoryHandle(sec.dir);
+        const names = [];
+        for await (const [n, h] of d.entries()) {
+          if (h.kind==='file' && n.endsWith('.md')) names.push(n);
+        }
+        names.sort((a,b) => {
+          // _FULL files first, then alphabetical
+          if (a.startsWith('_') && !b.startsWith('_')) return -1;
+          if (!a.startsWith('_') && b.startsWith('_')) return 1;
+          return a.localeCompare(b);
+        });
+        names.forEach(n => items.push({ label: fLabel(n, sec.dir), path: `${sec.dir}/${n}` }));
+      } catch {}
+    }
+    if (!items.length) continue;
+
+    const grp = document.createElement('div');
+    grp.className = 'rfile-group';
+    grp.innerHTML = `<div class="rfile-group-label">${sec.label}</div>`;
+    items.forEach(item => {
+      const btn = document.createElement('button');
+      btn.className = 'rfile-item';
+      btn.dataset.path = item.path;
+      btn.textContent = item.label;
+      btn.onclick = () => { loadFile(item.path); if (window.innerWidth < 700) toggleSidebar(); };
+      grp.appendChild(btn);
+    });
+    list.appendChild(grp);
+  }
+}
+
+function fLabel(fname, dir) {
+  const n = fname.replace('.md','');
+  if (n === '_FULL_MANUSCRIPT_CLEAN') return '📖 Full manuscript';
+  if (n === '_FULL_MANUSCRIPT') return '📝 Full manuscript (annotated)';
+  if (n === 'SESSION_REPORT') return '📋 Session report';
+  if (n === 'book-order') return '📌 Book order';
+  if (n === 'story-dossier') return '📚 Story dossier';
+  if (n === 'voice-anchor') return '🎙 Voice anchor';
+  if (n === 'manuscript-bible') return '📖 Manuscript bible';
+  if (n === 'promise-register') return '✅ Promise register';
+  if (n === 'race-log') return '🏁 Race log';
+  // scene / chapter files
+  return n.replace(/-/g,' ').replace(/\b\w/g, c=>c.toUpperCase());
+}
+
+async function loadFile(filePath) {
+  // Mark active in sidebar
+  document.querySelectorAll('.rfile-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.path === filePath);
+  });
+  rFilePath = filePath;
+  rActivePIdx = null;
+  document.querySelectorAll('.rinline-ed').forEach(e=>e.remove());
+
+  try {
+    const parts = filePath.split('/');
+    let h = rBookDir;
+    for (let i=0;i<parts.length-1;i++) h = await h.getDirectoryHandle(parts[i]);
+    const fh = await h.getFileHandle(parts[parts.length-1]);
+    const text = await (await fh.getFile()).text();
+
+    document.getElementById('r-file-name').textContent = parts[parts.length-1];
+    document.getElementById('rscroll').scrollTop = 0;
+    renderReaderContent(text);
+    buildChapterNav(text);
+    updateNoteCount();
+  } catch(e) {
+    document.getElementById('reader-inner').innerHTML = `<div style="color:#8a3a3a;padding:24px;font-family:var(--sans)">Could not load <code>${filePath}</code><br><small>${e.message}</small></div>`;
+  }
+}
+
+function renderReaderContent(md) {
+  const inner = document.getElementById('reader-inner');
+  inner.innerHTML = '';
+  const lines = md.split('\n');
+  let buf = [], pidx = 0, heading = '';
+
+  const flush = () => {
+    if (!buf.length) return;
+    const orig = buf.join(' ').trim();
+    if (!orig) { buf=[]; return; }
+    const idx = pidx++;
+    const edit = rGetEdit(idx), note = rGetNote(idx);
+    const display = edit ? edit.editedText : orig;
+    const p = document.createElement('div');
+    p.className = 'rp';
+    p.dataset.idx = idx; p.dataset.orig = orig; p.dataset.heading = heading;
+    if (edit) p.classList.add('has-edit');
+    if (note) p.classList.add('has-note');
+    const badge = edit ? '<span class="redit-badge">edited</span>' : '';
+    p.innerHTML = badge + rMd(display);
+    p.addEventListener('click', ()=>onRPClick(idx, p));
+    inner.appendChild(p);
+    if (note) {
+      const nd = document.createElement('div');
+      nd.className='rnote-display'; nd.id=`rnote-${idx}`;
+      nd.innerHTML=`<span class="nlbl">Your note</span>${esc(note.text)}`;
+      inner.appendChild(nd);
+    }
+    buf=[];
+  };
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) { flush(); continue; }
+    if (/^#{1,6} /.test(line)) {
+      flush();
+      const level = line.match(/^(#+)/)[1].length;
+      const text = line.replace(/^#+\s+/,'').trim();
+      heading = text;
+      // anchor for jump-to
+      const anchor = document.createElement('div');
+      anchor.id = 'ra-' + rSlug(text);
+      anchor.className = 'ranchor';
+      inner.appendChild(anchor);
+      const h = document.createElement('div');
+      h.className = level<=1?'rh1':level===2?'rh2':'rh3';
+      h.textContent = text;
+      inner.appendChild(h);
+      continue;
+    }
+    if (/^(\*{3}|-{3}|_{3})$/.test(line)) {
+      flush();
+      const hr = document.createElement('div');
+      hr.className='rhr'; hr.textContent='* * *';
+      inner.appendChild(hr);
+      continue;
+    }
+    buf.push(line);
+  }
+  flush();
+}
+
+function buildChapterNav(md) {
+  const sel = document.getElementById('chapter-nav-sel');
+  sel.innerHTML = '<option value="">Jump to…</option>';
+  const headings = [];
+  for (const line of md.split('\n')) {
+    if (/^#{1,2} /.test(line)) headings.push(line.replace(/^#+\s+/,'').trim());
+  }
+  headings.forEach(h => {
+    const o = document.createElement('option');
+    o.value = rSlug(h); o.textContent = h.length>44?h.slice(0,42)+'…':h;
+    sel.appendChild(o);
+  });
+  sel.style.display = headings.length > 1 ? 'block' : 'none';
+}
+
+function jumpToChapter() {
+  const id = document.getElementById('chapter-nav-sel').value;
+  if (!id) return;
+  const el = document.getElementById('ra-'+id);
+  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('chapter-nav-sel').value='';
+}
+
+function rMd(text) {
+  let s = esc(text);
+  s = s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  s = s.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  s = s.replace(/`(.+?)`/g,'<code>$1</code>');
+  return s;
+}
+function rSlug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+
+// ── Paragraph editing ────────────────────────────────────
+function onRPClick(idx, p) {
+  document.querySelectorAll('.rinline-ed').forEach(e=>e.remove());
+  document.querySelectorAll('.rp.active').forEach(e=>e.classList.remove('active'));
+  if (rActivePIdx===idx){ rActivePIdx=null; return; }
+  rActivePIdx=idx;
+  p.classList.add('active');
+
+  const orig = p.dataset.orig||'';
+  const existEdit = rGetEdit(idx), existNote = rGetNote(idx);
+  const curText = existEdit ? existEdit.editedText : orig;
+
+  const ed = document.createElement('div');
+  ed.className='rinline-ed';
+  ed.innerHTML=`
+    <div style="margin-bottom:12px">
+      <div class="rfield-label">
+        Edit text <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-muted)">— rewrite this paragraph directly</span>
+        ${existEdit?`<button type="button" class="rrevert" onclick="rRevert(${idx})">↩ revert</button>`:''}
+      </div>
+      <textarea id="re-ta-${idx}" rows="4">${escAttr(curText)}</textarea>
+    </div>
+    <div>
+      <div class="rfield-label">Note for agent <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-muted)">— question, flag, or instruction</span></div>
+      <textarea id="rn-ta-${idx}" rows="2" placeholder="e.g. "pacing feels slow here" or "cut the last line — too on the nose"">${existNote?escAttr(existNote.text):''}</textarea>
+    </div>
+    <div class="rinline-ed-actions">
+      ${(existEdit||existNote)?`<button class="small danger" onclick="rClearP(${idx})">Clear</button>`:''}
+      <button class="small" onclick="rCancel(${idx})">Cancel</button>
+      <button class="small primary" onclick="rSave(${idx})">Save</button>
+    </div>`;
+  p.insertAdjacentElement('afterend', ed);
+  document.getElementById(`rnote-${idx}`)?.remove();
+
+  const ta = document.getElementById(`re-ta-${idx}`);
+  ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px';
+  ta.addEventListener('input', ()=>{ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; });
+  document.getElementById(`rn-ta-${idx}`).focus() || ta.focus();
+  ta.focus();
+}
+
+function rSave(idx) {
+  const p = document.querySelector(`.rp[data-idx="${idx}"]`);
+  const orig = p?.dataset.orig||'';
+  const newText = document.getElementById(`re-ta-${idx}`)?.value.trim();
+  const newNote = document.getElementById(`rn-ta-${idx}`)?.value.trim();
+  const existEdit = rGetEdit(idx);
+  if (newText && newText!==orig) rSetEdit(idx,{originalText:orig,editedText:newText,heading:p?.dataset.heading});
+  else if (existEdit && (!newText||newText===orig)) rDelEdit(idx);
+  if (newNote) rSetNote(idx,{text:newNote,snippet:orig.slice(0,120),heading:p?.dataset.heading});
+  else rDelNote(idx);
+  rRefreshP(idx);
+}
+function rCancel(idx){ rRefreshP(idx, false); }
+function rRevert(idx){
+  const p=document.querySelector(`.rp[data-idx="${idx}"]`);
+  const ta=document.getElementById(`re-ta-${idx}`);
+  if(ta&&p){ ta.value=p.dataset.orig; ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
+}
+function rClearP(idx){ rDelEdit(idx); rDelNote(idx); rRefreshP(idx); }
+
+function rRefreshP(idx) {
+  document.querySelectorAll('.rinline-ed').forEach(e=>e.remove());
+  rActivePIdx=null;
+  const p=document.querySelector(`.rp[data-idx="${idx}"]`);
+  if(!p) return;
+  p.classList.remove('active');
+  const edit=rGetEdit(idx), note=rGetNote(idx);
+  const display=edit?edit.editedText:p.dataset.orig;
+  const badge=edit?'<span class="redit-badge">edited</span>':'';
+  p.innerHTML=badge+rMd(display);
+  p.className='rp'+(edit?' has-edit':'')+(note?' has-note':'');
+  p.addEventListener('click',()=>onRPClick(idx,p));
+  document.getElementById(`rnote-${idx}`)?.remove();
+  if(note){
+    const nd=document.createElement('div');
+    nd.className='rnote-display'; nd.id=`rnote-${idx}`;
+    nd.innerHTML=`<span class="nlbl">Your note</span>${esc(note.text)}`;
+    p.insertAdjacentElement('afterend',nd);
+  }
+  updateNoteCount();
+}
+
+// ── Note/edit storage ────────────────────────────────────
+function rNoteKey(){ return `bm-notes2-${rBookFolder}-${rFilePath.replace(/\//g,'-')}`; }
+function rEditKey(){ return `bm-edits2-${rBookFolder}-${rFilePath.replace(/\//g,'-')}`; }
+function rGetAllNotes(){ try{return JSON.parse(localStorage.getItem(rNoteKey())||'{}')}catch{return{}} }
+function rGetAllEdits(){ try{return JSON.parse(localStorage.getItem(rEditKey())||'{}')}catch{return{}} }
+function rGetNote(i){ return rGetAllNotes()[i]||null; }
+function rGetEdit(i){ return rGetAllEdits()[i]||null; }
+function rSetNote(i,d){ const a=rGetAllNotes(); a[i]={...d,ts:new Date().toISOString()}; localStorage.setItem(rNoteKey(),JSON.stringify(a)); }
+function rSetEdit(i,d){ const a=rGetAllEdits(); a[i]={...d,ts:new Date().toISOString()}; localStorage.setItem(rEditKey(),JSON.stringify(a)); }
+function rDelNote(i){ const a=rGetAllNotes(); delete a[i]; localStorage.setItem(rNoteKey(),JSON.stringify(a)); }
+function rDelEdit(i){ const a=rGetAllEdits(); delete a[i]; localStorage.setItem(rEditKey(),JSON.stringify(a)); }
+
+function updateNoteCount() {
+  const nN=Object.keys(rGetAllNotes()).length;
+  const nE=Object.keys(rGetAllEdits()).length;
+  const parts=[];
+  if(nN) parts.push(`${nN} note${nN!==1?'s':''}`);
+  if(nE) parts.push(`${nE} edit${nE!==1?'s':''}`);
+  document.getElementById('r-note-count').textContent=parts.join(' · ');
+  document.getElementById('send-notes-btn').style.display=nN+nE>0?'inline-flex':'none';
+}
+
+// ── Send notes to agent ──────────────────────────────────
+function sendNotesToAgent() {
+  const notes=rGetAllNotes(), edits=rGetAllEdits();
+  const nN=Object.keys(notes).length, nE=Object.keys(edits).length;
+  if(!nN&&!nE) return;
+  const fname=rFilePath.split('/').pop();
+  let msg=`Notes and edits from my read of **${rBookTitle}** — \`${fname}\`\n`;
+  msg+=`(${nE} edit${nE!==1?'s':''}, ${nN} note${nN!==1?'s':''})\n\n`;
+  msg+=`**File path:** \`books/${rBookFolder}/${rFilePath}\`\n\n`;
+
+  if(nE>0){
+    msg+=`## Edits to apply\n\nFor each edit below, find the original text in the file and replace it with the new version.\n\n`;
+    Object.entries(edits).sort((a,b)=>+a[0]-+b[0]).forEach(([i,e],n)=>{
+      msg+=`### Edit ${n+1}${e.heading?' ('+e.heading+')':''}\n\n`;
+      msg+=`**Original:**\n> ${e.originalText.replace(/\n/g,'\n> ')}\n\n`;
+      msg+=`**Replace with:**\n> ${e.editedText.replace(/\n/g,'\n> ')}\n\n---\n\n`;
+    });
+  }
+  if(nN>0){
+    msg+=`## Notes to address\n\n`;
+    Object.entries(notes).sort((a,b)=>+a[0]-+b[0]).forEach(([i,n],num)=>{
+      msg+=`### Note ${num+1}${n.heading?' ('+n.heading+')':''}\n\n`;
+      if(n.snippet) msg+=`> ${n.snippet}${n.snippet.length>=119?'…':''}\n\n`;
+      msg+=`**Comment:** ${n.text}\n\n---\n\n`;
+    });
+  }
+
+  closeReader();
+  if(typeof sendPrompt==='function') sendPrompt(msg);
+  else navigator.clipboard.writeText(msg).then(()=>toast('Notes copied — paste into your Claude chat ✓'));
+}
+
+// ── Export / import notes ────────────────────────────────
+function exportReaderNotes() {
+  const data={bookFolder:rBookFolder,filePath:rFilePath,exportDate:new Date().toISOString(),notes:rGetAllNotes(),edits:rGetAllEdits()};
+  const nN=Object.keys(data.notes).length, nE=Object.keys(data.edits).length;
+  if(!nN&&!nE){ toast('Nothing to export yet.'); return; }
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`bm-notes-${rBookFolder}-${rFilePath.replace(/\//g,'-').replace('.md','')}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importReaderNotes(evt) {
+  const file=evt.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.bookFolder||!data.filePath){ toast('Not a valid Book Machine notes file.'); return; }
+      const nN=Object.keys(data.notes||{}).length, nE=Object.keys(data.edits||{}).length;
+      if(!confirm(`Import ${nE} edit${nE!==1?'s':''} and ${nN} note${nN!==1?'s':''} for ${data.filePath}?`)) return;
+      const nk=`bm-notes2-${data.bookFolder}-${data.filePath.replace(/\//g,'-')}`;
+      const ek=`bm-edits2-${data.bookFolder}-${data.filePath.replace(/\//g,'-')}`;
+      const en=JSON.parse(localStorage.getItem(nk)||'{}');
+      const ee=JSON.parse(localStorage.getItem(ek)||'{}');
+      localStorage.setItem(nk,JSON.stringify({...en,...(data.notes||{})}));
+      localStorage.setItem(ek,JSON.stringify({...ee,...(data.edits||{})}));
+      if(rBookFolder===data.bookFolder&&rFilePath===data.filePath&&document.getElementById('reader-inner').children.length>1){
+        // Re-render current file
+        loadFile(rFilePath);
+      }
+      toast(`Imported ✓`);
+    }catch{ toast('Could not read notes file.'); }
+  };
+  reader.readAsText(file);
+  evt.target.value='';
+}
+
+// ── Sidebar toggle ────────────────────────────────────────
+function toggleSidebar() {
+  rSidebarOpen=!rSidebarOpen;
+  document.getElementById('rfile-sidebar').classList.toggle('open', rSidebarOpen);
+  document.getElementById('rscroll').style.marginLeft=rSidebarOpen?'260px':'0';
+}
+
+function closeReader() {
+  document.getElementById('reader-modal').style.display='none';
+  document.body.style.overflow='';
+  rActivePIdx=null;
+  rSidebarOpen=false;
+  document.getElementById('rfile-sidebar').classList.remove('open');
+  document.getElementById('rscroll').style.marginLeft='0';
+  document.querySelectorAll('.rinline-ed').forEach(e=>e.remove());
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.getElementById('reader-modal').style.display==='flex') closeReader();
+});
+
+function escAttr(s){ return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ================================================================
+// GITHUB SAVE
+// ================================================================
+function saveToGitHub() {
+  const cmd = 'cd "' + bookMachineRoot() + '" && git add . && git commit -m "Save: ' + new Date().toISOString().slice(0,16).replace('T',' ') + '" && git push';
+  navigator.clipboard.writeText(cmd).then(() => {
+    toast('Git command copied — paste it into Terminal / Command Prompt ✓');
+  }).catch(() => {
+    prompt('Copy this command and run it in Terminal:', cmd);
+  });
+}
+function bookMachineRoot() {
+  // Best guess — user can update this if their path differs
+  const isWin = navigator.platform.startsWith('Win');
+  return isWin
+    ? 'C:\\Users\\cschi\\OneDrive\\Book Machine'
+    : '/Users/cschi/OneDrive/Book Machine';
+}
+
+// ================================================================
+// PIPELINE FLOWCHART
+// ================================================================
+const PIPELINE_STAGES = [
+  {
+    id: 1, name: 'Setup', icon: '🏗',
+    desc: 'Dossier · rules · voice',
+    agents: ['Story Engineer','Character Lead','World Eng'],
+    statuses: ['idle']
+  },
+  {
+    id: 2, name: 'The Race', icon: '🏎',
+    desc: 'Scene drafting passes',
+    agents: ['Driver','Stewards','Pit Crew'],
+    statuses: ['drafting']
+  },
+  {
+    id: 3, name: 'Parc Fermé', icon: '🔍',
+    desc: 'Full manuscript inspection',
+    agents: ['Craft Editor','Grammar','Crutch','Pacing','Payoff','Reader Sim'],
+    statuses: ['editing']
+  },
+  {
+    id: 4, name: 'Polish', icon: '✨',
+    desc: 'Line edit · dialogue · proof',
+    agents: ['Line Editor','Dialogue Polish','Proofreader'],
+    statuses: ['revision']
+  },
+  {
+    id: 5, name: 'Delivery', icon: '🏆',
+    desc: 'Clean MS · session report',
+    agents: ['Delivery'],
+    statuses: ['complete']
+  }
+];
+
+function stageFromStatus(status) {
+  for (const s of PIPELINE_STAGES) {
+    if (s.statuses.includes(status)) return s.id;
+  }
+  return 1;
+}
+
+function populatePipelineSelect() {
+  const sel = document.getElementById('pipe-book-sel');
+  if (!sel) return;
+  const projects = getProjects().filter(p => p.fromScan);
+  if (!projects.length) return;
+  sel.innerHTML = projects.map((p,i) => `<option value="${i}">${esc(p.title)}</option>`).join('');
+  renderPipeline(0);
+}
+
+function renderPipeline(idxOrVal) {
+  const idx = parseInt(idxOrVal);
+  const projects = getProjects();
+  const book = projects[idx];
+  if (!book) return;
+
+  const activeStage = stageFromStatus(book.status);
+  const track = document.getElementById('pipeline-track');
+  track.innerHTML = '';
+
+  PIPELINE_STAGES.forEach((stage, i) => {
+    const isDone   = stage.id < activeStage;
+    const isActive = stage.id === activeStage;
+    const isLocked = stage.id > activeStage;
+
+    const node = document.createElement('div');
+    node.className = 'pipe-node' + (isDone?' done':isActive?' active':isLocked?' locked':'');
+    node.innerHTML = `
+      <span class="pipe-stage-num">${stage.id}</span>
+      ${isDone ? '<span class="pipe-done-check">✓</span>' : ''}
+      <span class="pipe-icon">${stage.icon}</span>
+      <span class="pipe-title">${stage.name}</span>
+      <span class="pipe-desc">${stage.desc}</span>
+      <div class="pipe-agents">${stage.agents.map(a=>`<span class="pipe-agent-pill">${a}</span>`).join('')}</div>
+      ${isActive ? '<span class="pipe-current-badge">YOU ARE HERE</span>' : ''}
+    `;
+    track.appendChild(node);
+
+    if (i < PIPELINE_STAGES.length - 1) {
+      const conn = document.createElement('div');
+      conn.className = 'pipe-connector';
+      conn.innerHTML = '<span class="pipe-connector-line">→</span>';
+      track.appendChild(conn);
+    }
+  });
+
+  // Also update command centre when pipeline changes
+  renderCommandCentre(idx);
+  document.getElementById('pipeline-section').style.display = 'block';
+  document.getElementById('command-centre').style.display = 'block';
+}
+
+function focusPipelineSelect() {
+  const sel = document.getElementById('pipe-book-sel');
+  if (sel) sel.focus();
+}
+
+function showPipelineForBook(idx) {
+  const sel = document.getElementById('pipe-book-sel');
+  if (sel) sel.value = idx;
+  renderPipeline(idx);
+  document.getElementById('pipeline-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ================================================================
+// NEXT-UP ITEM STATUS
+// ================================================================
+function getNextStatuses(folderName) {
+  try { return JSON.parse(localStorage.getItem(`bm-nextstatus-${folderName||'_'}`)||'{}'); } catch { return {}; }
+}
+function saveNextStatuses(folderName, obj) {
+  localStorage.setItem(`bm-nextstatus-${folderName||'_'}`, JSON.stringify(obj));
+}
+function nextKey(text) {
+  // Stable short key from item text (alphanumeric + underscore, max 60 chars)
+  return text.trim().slice(0, 60).replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g,'_');
+}
+function toggleNextDone(folderName, key) {
+  const s = getNextStatuses(folderName);
+  if (s[key]?.status === 'done') delete s[key];
+  else s[key] = { status: 'done', ts: new Date().toISOString() };
+  saveNextStatuses(folderName, s);
+  const sel = document.getElementById('pipe-book-sel');
+  if (sel) renderCommandCentre(sel.value);
+}
+function toggleNextDefer(folderName, key) {
+  const s = getNextStatuses(folderName);
+  if (s[key]?.status === 'deferred') delete s[key];
+  else s[key] = { status: 'deferred', ts: new Date().toISOString() };
+  saveNextStatuses(folderName, s);
+  const sel = document.getElementById('pipe-book-sel');
+  if (sel) renderCommandCentre(sel.value);
+}
+function clearNextStatuses(folderName) {
+  localStorage.removeItem(`bm-nextstatus-${folderName||'_'}`);
+  const sel = document.getElementById('pipe-book-sel');
+  if (sel) renderCommandCentre(sel.value);
+}
+
+// ================================================================
+// COMMAND CENTRE
+// ================================================================
+function renderCommandCentre(bookIdx) {
+  const projects = getProjects();
+  const book = projects[parseInt(bookIdx)];
+  if (!book) return;
+
+  const folder = book.folderName || '_';
+  const statuses = getNextStatuses(folder);
+
+  // Update badge
+  const badge = document.getElementById('cc-book-badge');
+  if (badge) badge.textContent = book.title;
+
+  // ── Next Up ──
+  const nextEl = document.getElementById('cc-next');
+  const nextItems = [];
+
+  // Pull open items from book.next (dot-separated list from session report)
+  if (book.next) {
+    book.next.split(' · ').filter(Boolean).forEach(item => {
+      nextItems.push({ icon: '📌', title: item.trim(), sub: 'From session report', fromReport: true });
+    });
+  }
+
+  // Stage-specific default if nothing from report
+  const stageNext = {
+    idle:     { icon: '🏗', title: 'Set up story dossier & rules', sub: 'Run Story Engineer to scaffold your project' },
+    drafting: { icon: '✍️', title: 'Continue drafting scenes', sub: 'Run Driver + Stewards for the next lap' },
+    editing:  { icon: '🔍', title: 'Run Parc Fermé inspection', sub: 'Run all 6 inspection agents on full manuscript' },
+    revision: { icon: '✨', title: 'Polish passes', sub: 'Line edit → dialogue → AI decontam → proofread' },
+    complete: { icon: '🏆', title: 'Book is complete!', sub: 'Archive or begin your next story' },
+  };
+  if (!nextItems.length && stageNext[book.status]) {
+    nextItems.push(stageNext[book.status]);
+  }
+
+  // Separate into active and deferred
+  const active = nextItems.filter(it => statuses[nextKey(it.title)]?.status !== 'deferred');
+  const deferred = nextItems.filter(it => statuses[nextKey(it.title)]?.status === 'deferred');
+  const allItems = [...active, ...deferred];
+  const doneCount = nextItems.filter(it => statuses[nextKey(it.title)]?.status === 'done').length;
+  const totalFromReport = nextItems.filter(it => it.fromReport).length;
+
+  if (allItems.length) {
+    const html = allItems.map(it => {
+      const key = nextKey(it.title);
+      const st = statuses[key]?.status || 'pending';
+      const isDone = st === 'done';
+      const isDeferred = st === 'deferred';
+      return `
+        <div class="cc-item ${isDone?'done-item':''} ${isDeferred?'deferred-item':''}">
+          <button class="cc-check-btn ${isDone?'done':''}" onclick="toggleNextDone('${esc(folder)}','${esc(key)}')" title="${isDone?'Mark not done':'Mark done'}">
+            ${isDone?'✓':'○'}
+          </button>
+          <div class="cc-item-body">
+            <div class="cc-item-title">${esc(it.title)}</div>
+            <div class="cc-item-sub">${esc(it.sub)}${isDeferred?' · <em>deferred</em>':''}</div>
+          </div>
+          ${!isDone ? `<button class="cc-defer-btn small ${isDeferred?'active':''}" onclick="toggleNextDefer('${esc(folder)}','${esc(key)}')" title="${isDeferred?'Un-defer':'Defer for later'}">→</button>` : ''}
+        </div>`;
+    }).join('');
+    const footerParts = [];
+    if (doneCount) footerParts.push(`${doneCount} done`);
+    if (deferred.length) footerParts.push(`${deferred.length} deferred`);
+    const footer = footerParts.length
+      ? `<div class="cc-section-footer"><span>${footerParts.join(' · ')}</span>${totalFromReport?`<a onclick="clearNextStatuses('${esc(folder)}')">Reset all</a>`:''}</div>`
+      : (totalFromReport ? `<div class="cc-section-footer"><span></span><a onclick="clearNextStatuses('${esc(folder)}')">Reset</a></div>` : '');
+    nextEl.innerHTML = html + footer;
+  } else {
+    nextEl.innerHTML = '<div class="cc-empty">Nothing found — rescan to refresh open items.</div>';
+  }
+
+  // ── Waiting on You ──
+  const waitEl = document.getElementById('cc-waiting');
+  const waitItems = [];
+
+  const pendingProps = getProposals().filter(p => p.status === 'pending');
+  if (pendingProps.length) {
+    waitItems.push({ cls:'action', icon:'📋',
+      title: `${pendingProps.length} pending AI change${pendingProps.length>1?'s':''} to review`,
+      sub: 'Scroll to Pending AI Changes → Review & apply',
+    });
+  }
+
+  // Unreviewed reader notes for this book
+  let noteCount = 0;
+  if (book.folderName) {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(`bm-notes2-${book.folderName}`)) {
+        try { noteCount += Object.keys(JSON.parse(localStorage.getItem(k)||'{}')).length; } catch {}
+      }
+    }
+  }
+  if (noteCount) {
+    waitItems.push({ cls:'action', icon:'📝',
+      title: `${noteCount} reader note${noteCount>1?'s':''} not yet sent to agent`,
+      sub: 'Open the reader → "Send notes to chat ↑"',
+    });
+  }
+
+  if (editorDirty) {
+    waitItems.push({ cls:'urgent', icon:'⚠️',
+      title: 'Editor has unsaved changes', sub: 'Press Ctrl+S or click Save',
+    });
+  }
+
+  if (book.status === 'revision') {
+    waitItems.push({ cls:'', icon:'✏️',
+      title: 'Your approval needed before revision',
+      sub: 'Queue agent output as a proposed change, then review & approve it',
+    });
+  }
+
+  waitEl.innerHTML = waitItems.length
+    ? waitItems.map(it=>`
+        <div class="cc-item ${it.cls||''}">
+          <span class="cc-item-icon">${it.icon}</span>
+          <div class="cc-item-body">
+            <div class="cc-item-title">${esc(it.title)}</div>
+            <div class="cc-item-sub">${esc(it.sub)}</div>
+          </div>
+        </div>`).join('')
+    : '<div class="cc-empty">Nothing waiting — you\'re all clear 🎉</div>';
+}
+
+// ================================================================
+// API KEY STATUS
+// ================================================================
+function renderApiKeyStatus() {
+  const s = getSettings();
+  const cc = document.getElementById('chip-claude');
+  const co = document.getElementById('chip-or');
+  if (!cc || !co) return;
+
+  if (s.anthropicKey) {
+    cc.className = 'api-chip ok';
+    cc.innerHTML = '<span class="chip-dot"></span>Claude ✓';
+    cc.onclick = openSettings;
+    cc.title = 'Anthropic key set — click to change in Settings';
+  } else {
+    cc.className = 'api-chip missing';
+    cc.innerHTML = '<span class="chip-dot"></span>Claude — click to add key';
+    cc.onclick = openSettings;
+    cc.title = 'Add your Anthropic API key in Settings (console.anthropic.com)';
+  }
+
+  if (s.openrouterKey) {
+    const model = s.openrouterModel ? s.openrouterModel.split('/').pop() : 'configured';
+    co.className = 'api-chip ok';
+    co.innerHTML = `<span class="chip-dot"></span>OpenRouter · ${esc(model)} ✓`;
+    co.onclick = openSettings;
+    co.title = 'OpenRouter key set — click to change in Settings';
+  } else {
+    co.className = 'api-chip missing';
+    co.innerHTML = '<span class="chip-dot"></span>OpenRouter — click to add key';
+    co.onclick = openSettings;
+    co.title = 'Add your OpenRouter API key in Settings (openrouter.ai/keys)';
+  }
+}
+
+// ================================================================
+// PROPOSAL QUEUE
+// ================================================================
+const PROP_KEY = 'bm-proposals-v1';
+
+function getProposals() {
+  try { return JSON.parse(localStorage.getItem(PROP_KEY)||'[]'); } catch { return []; }
+}
+function saveProposals(arr) { localStorage.setItem(PROP_KEY, JSON.stringify(arr)); }
+
+let _currentProposalId = null;
+let _proposalFilter = 'pending'; // 'pending' | 'all'
+
+function setPropFilter(f) {
+  _proposalFilter = f;
+  document.getElementById('pf-pending').className = 'prop-filter-btn' + (f==='pending'?' active':'');
+  document.getElementById('pf-all').className    = 'prop-filter-btn' + (f==='all'?' active':'');
+  renderPendingChanges();
+}
+
+function queueProposal() {
+  const responseText = document.getElementById('resp-body')?.textContent?.trim();
+  if (!responseText) { toast('Nothing to queue — run an agent first.'); return; }
+
+  const storyIdx = parseInt(v('a-story'));
+  const story    = getProjects()[storyIdx] || {};
+  const skill    = v('a-skill');
+  const model    = v('a-model');
+
+  // Snapshot editor content if a file is open
+  const fileContent      = openFileHandle ? document.getElementById('editor-ta').value : null;
+  const filePathSnap     = openFileHandle ? document.getElementById('editor-fname').textContent : null;
+
+  // Capture reader context if available — gives us the full routable path
+  // rBookFolder = e.g. "paint-me-like-your-fae-prince"
+  // rFilePath   = e.g. "drafts/_FULL_MANUSCRIPT_CLEAN.md"
+  const bookFolderName   = story.folderName || rBookFolder || null;
+  const bookRelativePath = rFilePath || null;   // relative to book folder root
+
+  const proposal = {
+    id:             Date.now(),
+    storyTitle:     story.title || 'Unknown story',
+    folderName:     bookFolderName,
+    skill,
+    skillLabel:     skillLabel(skill),
+    model,
+    responseText,
+    fileContent,
+    filePath:       bookRelativePath || filePathSnap,  // best path we have
+    bookFolderName,
+    bookRelativePath,
+    status:         'pending',
+    createdAt:      new Date().toISOString(),
+  };
+
+  const proposals = getProposals();
+  proposals.unshift(proposal);
+  saveProposals(proposals);
+  renderPendingChanges();
+  refreshCommandCentreWaiting();
+  toast('Queued as pending change ✓ — scroll down to review');
+  document.getElementById('proposals-section').style.display = 'block';
+
+  // Smooth scroll to proposals section
+  setTimeout(() => {
+    document.getElementById('proposals-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
+}
+
+function renderPendingChanges() {
+  const allProposals = getProposals();
+  const list = document.getElementById('proposals-list');
+  if (!list) return;
+
+  // Update count badge
+  const pending = allProposals.filter(p => p.status === 'pending').length;
+  const badge = document.getElementById('prop-count-badge');
+  if (badge) badge.textContent = pending > 0
+    ? `${pending} pending · ${allProposals.length} total`
+    : `${allProposals.length} total`;
+
+  document.getElementById('proposals-section').style.display = 'block';
+  if (!allProposals.length) {
+    list.innerHTML = `<div style="background:#fff;border:1.5px dashed var(--rule);border-radius:16px;padding:28px 24px;text-align:center">
+      <div style="font-size:24px;margin-bottom:10px">📋</div>
+      <div style="font-weight:700;color:#5a3a25;margin-bottom:6px">No proposed changes yet</div>
+      <div style="font-size:13px;color:var(--ink-muted);line-height:1.6">
+        Run an agent below → get a response → click <strong>"Queue as proposed change"</strong>.<br>
+        The change sits here for you to review and approve before anything touches your files.
+      </div>
+    </div>`;
+    return;
+  }
+
+  const proposals = _proposalFilter === 'pending'
+    ? allProposals.filter(p => p.status === 'pending')
+    : allProposals;
+
+  if (!proposals.length) {
+    list.innerHTML = '<div class="empty" style="padding:20px;text-align:center;font-style:italic;color:var(--ink-muted)">No pending changes. <span class="cc-link" onclick="setPropFilter(\'all\')">Show all →</span></div>';
+    return;
+  }
+
+  list.innerHTML = proposals.map(p => {
+    const preview = p.responseText.replace(/\n+/g,' ').slice(0,120);
+    const ts = new Date(p.createdAt).toLocaleDateString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    const fileInfo = p.filePath ? ` · <code>${esc(p.filePath)}</code>` : '';
+    return `
+      <div class="proposal-card ${p.status}" id="prop-${p.id}">
+        <div class="prop-body">
+          <div class="prop-title">
+            <span class="prop-status-badge ${p.status}">${p.status}</span>
+            ${esc(p.storyTitle)} — ${esc(p.skillLabel)}
+          </div>
+          <div class="prop-meta">${ts}${fileInfo}</div>
+          <div class="prop-preview">${esc(preview)}…</div>
+          <div class="prop-actions">
+            ${p.status==='pending' ? `
+              <button class="small primary" onclick="openProposalReview(${p.id})">Review &amp; apply</button>
+              <button class="small" onclick="sendApprovalToClaude(${p.id})" title="Format a Claude prompt and copy it (or send directly in Cowork)">📤 Send to Claude</button>
+              <button class="small" onclick="copyProposalById(${p.id})">Copy text</button>
+              <button class="small danger" onclick="rejectProposalById(${p.id})">✗ Reject</button>
+            ` : p.status==='approved' ? `
+              <button class="small primary" onclick="writeProposalToFileById(${p.id})" title="Write this approved change to the file">💾 Write to file</button>
+              <button class="small" onclick="sendApprovalToClaude(${p.id})">📤 Send to Claude</button>
+              <button class="small" onclick="openProposalReview(${p.id})">View</button>
+              <button class="small danger" onclick="deleteProposalById(${p.id})">Remove</button>
+            ` : `
+              <button class="small" onclick="reopenProposalById(${p.id})">Restore to pending</button>
+              <button class="small danger" onclick="deleteProposalById(${p.id})">Remove</button>
+            `}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openProposalReview(id) {
+  const proposals = getProposals();
+  const p = proposals.find(x => x.id === id);
+  if (!p) return;
+  _currentProposalId = id;
+
+  document.getElementById('pm-title').textContent = `${p.storyTitle} — ${p.skillLabel}`;
+  const ts = new Date(p.createdAt).toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const fileInfo = p.filePath ? ` · target file: ${p.filePath}` : ' · no file attached';
+  document.getElementById('pm-meta').textContent = `${ts}${fileInfo} · ${p.model}`;
+
+  const approveBtn = document.getElementById('pm-approve-btn');
+  const rejectBtn  = document.getElementById('pm-reject-btn');
+  if (p.status === 'approved') {
+    approveBtn.textContent = '✓ Already approved';
+    approveBtn.disabled = true;
+    rejectBtn.textContent = '↩ Un-approve';
+  } else if (p.status === 'rejected') {
+    rejectBtn.textContent = '↩ Restore';
+    approveBtn.textContent = '✓ Approve & apply';
+    approveBtn.disabled = false;
+  } else {
+    approveBtn.textContent = '✓ Approve & apply';
+    approveBtn.disabled = false;
+    rejectBtn.textContent = '✗ Reject';
+  }
+
+  const area = document.getElementById('pm-diff-area');
+  if (p.fileContent) {
+    // Show two-column diff
+    const diff = computeSimpleDiff(p.fileContent, p.responseText);
+    area.innerHTML = `
+      <div class="diff-wrap">
+        <div class="diff-col">
+          <div class="diff-col-head original">📄 Original file</div>
+          <div class="diff-body orig-body">${diff.origParas.map(x=>`<div class="diff-para ${x.status}">${esc(x.text)}</div>`).join('')}</div>
+        </div>
+        <div class="diff-col">
+          <div class="diff-col-head proposed">✨ AI proposed</div>
+          <div class="diff-body prop-body">${diff.propParas.map(x=>`<div class="diff-para ${x.status}">${esc(x.text)}</div>`).join('')}</div>
+        </div>
+      </div>`;
+  } else {
+    // Just show the response
+    area.innerHTML = `<div class="review-no-file">${esc(p.responseText)}</div>`;
+  }
+
+  show('proposal-modal');
+}
+
+function closeProposalReview() {
+  hide('proposal-modal');
+  _currentProposalId = null;
+}
+
+async function approveCurrentProposal() {
+  const id = _currentProposalId;
+  if (!id) return;
+  const proposals = getProposals();
+  const p = proposals.find(x => x.id === id);
+  if (!p) return;
+
+  // Mark approved first
+  p.status = 'approved';
+  saveProposals(proposals);
+  renderPendingChanges();
+  refreshCommandCentreWaiting();
+
+  // Try direct write → fall back to save-picker
+  const didWrite = await writeProposalToFile(p);
+  if (!didWrite) {
+    toast('Approved. Use "Send to Claude" or "Write to file…" to apply the change.');
+  }
+  closeProposalReview();
+}
+
+function rejectCurrentProposal() {
+  const id = _currentProposalId;
+  if (!id) return;
+  const proposals = getProposals();
+  const p = proposals.find(x => x.id === id);
+  if (!p) return;
+  if (p.status === 'rejected') { p.status = 'pending'; }
+  else { p.status = 'rejected'; }
+  saveProposals(proposals);
+  renderPendingChanges();
+  refreshCommandCentreWaiting();
+  closeProposalReview();
+  toast(p.status === 'rejected' ? 'Rejected.' : 'Restored to pending.');
+}
+
+function copyProposalText() {
+  const id = _currentProposalId;
+  if (!id) return;
+  const p = getProposals().find(x => x.id === id);
+  if (!p) return;
+  navigator.clipboard.writeText(p.responseText).then(() => toast('Copied ✓'));
+}
+
+function sendProposalToEditor() {
+  const id = _currentProposalId;
+  if (!id) return;
+  const p = getProposals().find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('editor-ta').value = p.responseText;
+  document.getElementById('editor-fname').textContent = p.filePath || 'ai-draft.md';
+  document.getElementById('editor-status').textContent = wordCount(p.responseText).toLocaleString() + ' words · unsaved';
+  hide('editor-empty');
+  show('editor-main');
+  editorDirty = true;
+  document.getElementById('save-btn').disabled = false;
+  openFileHandle = null; // clear old handle — needs new save
+  closeProposalReview();
+  toast('Opened in editor. Review then Ctrl+S to save a new file.');
+  document.getElementById('editor-ta').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Direct write to connected book folder ────────────────────
+async function writeToBookFile(bookFolderName, relativePath, content) {
+  // Requires rootDir to be connected (connectFolder() already called)
+  if (!rootDir || !bookFolderName || !relativePath) return false;
+  try {
+    const booksDir = await rootDir.getDirectoryHandle('books');
+    const bookDir  = await booksDir.getDirectoryHandle(bookFolderName);
+    const parts    = relativePath.split('/');
+    let   dir      = bookDir;
+    // Navigate subdirectories (e.g., "drafts/" in "drafts/_FULL_MANUSCRIPT_CLEAN.md")
+    for (let i = 0; i < parts.length - 1; i++) {
+      dir = await dir.getDirectoryHandle(parts[i]);
+    }
+    const fh = await dir.getFileHandle(parts[parts.length - 1]);
+    const w  = await fh.createWritable();
+    await w.write(content);
+    await w.close();
+    return true;
+  } catch(e) {
+    console.error('writeToBookFile failed:', e);
+    return false;
+  }
+}
+
+async function writeProposalToFile(proposalArg) {
+  const p = proposalArg || (()=>{
+    const id = _currentProposalId;
+    return id ? getProposals().find(x=>x.id===id) : null;
+  })();
+  if (!p) return false;
+
+  // ── Path A: direct write into connected folder ────────────
+  if (rootDir && p.bookFolderName && p.bookRelativePath) {
+    const wc_before = p.fileContent ? p.fileContent.split(/\s+/).filter(Boolean).length : 0;
+    const wc_after  = p.responseText.split(/\s+/).filter(Boolean).length;
+    const ok = await writeToBookFile(p.bookFolderName, p.bookRelativePath, p.responseText);
+    if (ok) {
+      const delta = wc_after - wc_before;
+      const sign  = delta >= 0 ? '+' : '';
+      toast(`✓ Written to ${p.bookRelativePath.split('/').pop()} · ${wc_after.toLocaleString()} words (${sign}${delta.toLocaleString()})`);
+      // Also refresh the editor status if that file is currently open
+      if (openFileHandle && document.getElementById('editor-fname').textContent === p.bookRelativePath.split('/').pop()) {
+        document.getElementById('editor-ta').value = p.responseText;
+        document.getElementById('editor-status').textContent = wc_after.toLocaleString() + ' words · saved ✓';
+        editorDirty = false;
+        document.getElementById('save-btn').disabled = true;
+      }
+      return true;
+    }
+  }
+
+  // ── Path B: save-picker (user picks location) ─────────────
+  if (!window.showSaveFilePicker) {
+    navigator.clipboard.writeText(p.responseText).then(() => toast('Copied — paste into your file'));
+    return false;
+  }
+  try {
+    const fname = p.bookRelativePath
+      ? p.bookRelativePath.split('/').pop()
+      : (p.filePath ? p.filePath.split('/').pop() : null);
+    const suggested = fname
+      ? fname.replace('.md','') + '-revised.md'
+      : `${p.storyTitle.replace(/\s+/g,'-').toLowerCase()}-${p.skillLabel.replace(/\s+/g,'-').toLowerCase()}.md`;
+    const h = await window.showSaveFilePicker({
+      suggestedName: suggested,
+      types: [{ description: 'Markdown', accept: { 'text/markdown': ['.md'] } }]
+    });
+    const w = await h.createWritable();
+    await w.write(p.responseText);
+    await w.close();
+    toast('Written to file ✓');
+    return true;
+  } catch(e) {
+    if (e.name !== 'AbortError') toast('Write failed: ' + e.message);
+    return false;
+  }
+}
+
+// ── Send approved change to Claude Cowork ───────────────────
+function sendApprovalToClaude(idArg) {
+  const id = idArg || _currentProposalId;
+  if (!id) return;
+  const p = getProposals().find(x => x.id === id);
+  if (!p) return;
+
+  const fileLine = p.bookFolderName && p.bookRelativePath
+    ? `books/${p.bookFolderName}/${p.bookRelativePath}`
+    : (p.filePath || '(no file specified — check folder name manually)');
+
+  const wc = p.responseText.split(/\s+/).filter(Boolean).length;
+
+  const prompt =
+`Please apply this approved manuscript change to my Book Machine files.
+
+**Story:** ${p.storyTitle}
+**Change type:** ${p.skillLabel}
+**Target file:** \`${fileLine}\`
+**Word count of new version:** ${wc.toLocaleString()} words
+
+---
+
+Overwrite the target file with the following content exactly as written:
+
+${p.responseText}
+
+---
+
+After writing:
+1. Confirm the file was saved and note the word count
+2. If the word count changed significantly, mention it
+3. If there are any open items from a SESSION_REPORT.md that this change addresses, flag them`;
+
+  // In Cowork: sendPrompt is injected → sends directly to chat
+  if (typeof sendPrompt === 'function') {
+    sendPrompt(prompt);
+    toast('Sent to Claude ✓');
+    closeProposalReview();
+    return;
+  }
+
+  // Outside Cowork: copy prompt + open claude.ai
+  navigator.clipboard.writeText(prompt).then(() => {
+    window.open('https://claude.ai', '_blank');
+    toast('Prompt copied! Paste it into Claude — it will write the file for you.');
+  }).catch(() => {
+    // Fallback: show in a dialog
+    const ta = document.createElement('textarea');
+    ta.value = prompt;
+    ta.style.cssText = 'position:fixed;top:10%;left:10%;width:80%;height:60%;z-index:9999;padding:16px;font:13px monospace';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    window.open('https://claude.ai', '_blank');
+    toast('Prompt copied! Paste into Claude.');
+  });
+}
+
+// Bulk actions
+function rejectProposalById(id) {
+  const proposals = getProposals();
+  const p = proposals.find(x => x.id === id);
+  if (!p) return;
+  p.status = 'rejected';
+  saveProposals(proposals);
+  renderPendingChanges();
+  refreshCommandCentreWaiting();
+  toast('Rejected.');
+}
+function copyProposalById(id) {
+  const p = getProposals().find(x => x.id === id);
+  if (!p) return;
+  navigator.clipboard.writeText(p.responseText).then(() => toast('Copied ✓'));
+}
+async function writeProposalToFileById(id) {
+  const p = getProposals().find(x => x.id === id);
+  if (!p) return;
+  await writeProposalToFile(p);
+}
+function deleteProposalById(id) {
+  if (!confirm('Remove this proposal? This cannot be undone.')) return;
+  const arr = getProposals().filter(x => x.id !== id);
+  saveProposals(arr);
+  renderPendingChanges();
+  refreshCommandCentreWaiting();
+}
+function reopenProposalById(id) {
+  const proposals = getProposals();
+  const p = proposals.find(x => x.id === id);
+  if (!p) return;
+  p.status = 'pending';
+  saveProposals(proposals);
+  renderPendingChanges();
+  refreshCommandCentreWaiting();
+  toast('Restored to pending.');
+}
+function clearOldProposals() {
+  if (!confirm('Remove all rejected and approved proposals? Pending ones stay.')) return;
+  saveProposals(getProposals().filter(p => p.status === 'pending'));
+  renderPendingChanges();
+  refreshCommandCentreWaiting();
+  toast('Cleared old proposals ✓');
+}
+
+function refreshCommandCentreWaiting() {
+  const sel = document.getElementById('pipe-book-sel');
+  if (sel && sel.value !== '') renderCommandCentre(sel.value);
+}
+
+// ================================================================
+// DIFF UTILITY
+// ================================================================
+function computeSimpleDiff(original, proposed) {
+  const splitParas = t => t.split(/\n\n+/).map(p=>p.trim()).filter(Boolean);
+  const origParas = splitParas(original);
+  const propParas = splitParas(proposed);
+
+  // Build a set of original paragraphs for fast lookup
+  const origSet = new Set(origParas);
+  // Build a set of proposed paragraphs for fast lookup
+  const propSet = new Set(propParas);
+
+  const taggedOrig = origParas.map(p => ({
+    text: p,
+    status: propSet.has(p) ? 'same' : 'removed'
+  }));
+  const taggedProp = propParas.map(p => ({
+    text: p,
+    status: origSet.has(p) ? 'same' : (origParas.length > 0 ? 'changed' : 'added')
+  }));
+
+  return { origParas: taggedOrig, propParas: taggedProp };
+}
+
+// ================================================================
+// LOCAL SERVER INTEGRATION
+// ================================================================
+const SERVER_URL = 'http://localhost:7842';
+let serverConnected = false;
+let _serverCheckTimer = null;
+
+async function checkServerConnection() {
+  const badge = document.getElementById('server-badge');
+  if (badge) { badge.className = 'server-badge checking'; badge.textContent = '⚡ Checking…'; }
+  try {
+    const r = await fetch(SERVER_URL + '/api/status', {
+      signal: AbortSignal.timeout(2500),
+      cache: 'no-store',
+    });
+    const data = await r.json();
+    serverConnected = data.ok === true;
+    if (serverConnected) {
+      if (badge) {
+        badge.className = 'server-badge online';
+        const bookCount = data.books?.length || 0;
+        badge.textContent = `⚡ Server · ${bookCount} book${bookCount!==1?'s':''}`;
+        badge.title = `Connected to localhost:${SERVER_URL.split(':').pop()}\nRoot: ${data.root}\nClick to refresh`;
+      }
+      // If server scanned books and we don't have any yet, pull from server
+      if (data.books?.length && !getProjects().filter(p=>p.fromScan).length) {
+        await pullBooksFromServer();
+      }
+    } else {
+      throw new Error('Server returned ok:false');
+    }
+  } catch {
+    serverConnected = false;
+    if (badge) {
+      badge.className = 'server-badge offline';
+      badge.textContent = '⚡ Server offline';
+      badge.title = 'Local server not running. Double-click tools/start-server.bat to start it.';
+    }
+  }
+  // Re-check every 30 s
+  clearTimeout(_serverCheckTimer);
+  _serverCheckTimer = setTimeout(checkServerConnection, 30000);
+}
+
+async function pullBooksFromServer() {
+  try {
+    const r = await fetch(SERVER_URL + '/api/scan', { cache: 'no-store' });
+    const { books } = await r.json();
+    if (!books?.length) return;
+    const manual = getProjects().filter(p => !p.fromScan);
+    saveProjects([...manual, ...books]);
+    renderStories();
+    populateStorySelector();
+    populatePipelineSelect();
+    toast(`Loaded ${books.length} book${books.length!==1?'s':''} from server ✓`);
+  } catch(e) { console.warn('pullBooksFromServer:', e.message); }
+}
+
+// ── Server-side SSE agent call ────────────────────────────────
+async function callServer(body) {
+  const res = await fetch(SERVER_URL + '/api/run', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('Server /api/run returned ' + res.status);
+
+  // Re-use the existing SSE reader — server emits {text:…} or {error:…} or {done:true}
+  await readSSE(res, obj => {
+    if (obj.text)  appendResp(obj.text);
+    if (obj.error) throw new Error(obj.error);
+  });
+}
+
+// ── Server-side file write ────────────────────────────────────
+async function serverWriteFile(bookFolder, filePath, content) {
+  const r = await fetch(SERVER_URL + '/api/write', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ bookFolder, filePath, content }),
+  });
+  const data = await r.json();
+  if (!data.ok) throw new Error(data.error || 'Write failed');
+  return data; // { ok, wordCount, wordCountBefore, delta }
+}
+
+// ── Override runAgent to prefer server ───────────────────────
+// (Patch applied at call time — we wrap the original callClaude / callOpenRouter logic)
+const _origRunAgent = runAgent; // preserve reference if needed
+
+// Patch into the existing runAgent flow by overriding how we send:
+// runAgent() checks serverConnected and calls callServer() first.
+// We do this by replacing the call sites rather than the whole function.
+// (See updated runAgent below — we re-declare it here to shadow the original.)
+async function runAgent() {
+  const s = getSettings();
+  const model = v('a-model');
+  if (!serverConnected) {
+    // Browser-direct path (existing logic)
+    if (model !== 'openrouter' && !s.anthropicKey) {
+      alert('No Anthropic API key set, and the local server is not running.\n\nEither:\n① Start the server (double-click tools/start-server.bat)\n② Add your API key in ⚙ Settings'); return;
+    }
+    if (model === 'openrouter' && !s.openrouterKey) { alert('No OpenRouter key. Open Settings (⚙).'); return; }
+  }
+
+  const skill    = v('a-skill');
+  const storyIdx = parseInt(v('a-story'));
+  const story    = getProjects()[storyIdx];
+
+  let prompt;
+  if (!serverConnected) {
+    const editorText = openFileHandle ? document.getElementById('editor-ta').value.slice(0,40000) : '';
+    if (skill === 'custom') {
+      prompt = v('custom-prompt').trim();
+      if (!prompt) { alert('Enter a prompt.'); return; }
+      if (editorText) prompt += '\n\n---\n\nText to work on:\n\n' + editorText;
+    } else {
+      prompt = buildPrompt(skill, story, editorText, s.authorName);
+    }
+  }
+
+  // Show response area
+  show('response-wrap');
+  document.getElementById('resp-body').textContent = '';
+  hide('resp-foot'); hide('copy-btn');
+  show('resp-streaming');
+  document.getElementById('resp-label').textContent = skillLabel(skill) + (story ? ' — ' + story.title : '') + (serverConnected ? ' [server]' : '');
+  document.getElementById('run-btn').disabled = true;
+
+  try {
+    if (serverConnected) {
+      const customPromptVal = skill === 'custom' ? v('custom-prompt').trim() : null;
+      const isOR = model === 'openrouter';
+      await callServer({
+        skill,
+        storyFolder:      story?.folderName || null,
+        filePath:         rFilePath || null,
+        model:            isOR ? (s.openrouterModel || 'openai/gpt-4o') : model,
+        useOpenRouter:    isOR,
+        openrouterKey:    isOR ? s.openrouterKey  : null,
+        openrouterModel:  isOR ? (s.openrouterModel || 'openai/gpt-4o') : null,
+        customPrompt:     customPromptVal,
+        authorName:       s.authorName || null,
+      });
+    } else if (model === 'openrouter') {
+      await callOpenRouter(prompt, s.openrouterKey, s.openrouterModel || 'openai/gpt-4o');
+    } else {
+      await callClaude(prompt, s.anthropicKey, model);
+    }
+  } catch(e) {
+    document.getElementById('resp-body').textContent += '\n\n[Error: ' + e.message + ']';
+  } finally {
+    hide('resp-streaming'); show('resp-foot'); show('copy-btn');
+    document.getElementById('run-btn').disabled = false;
+  }
+}
+
+// ── Override writeToBookFile to prefer server ─────────────────
+const _origWriteToBookFile = writeToBookFile;
+async function writeToBookFile(bookFolderName, relativePath, content) {
+  if (serverConnected && bookFolderName && relativePath) {
+    try {
+      const data = await serverWriteFile(bookFolderName, relativePath, content);
+      const sign = data.delta >= 0 ? '+' : '';
+      toast(`✓ Saved via server: ${relativePath.split('/').pop()} · ${data.wordCount.toLocaleString()} words (${sign}${data.delta})`);
+      return true;
+    } catch(e) {
+      console.warn('Server write failed, trying browser fallback:', e.message);
+    }
+  }
+  // Fallback to original browser-based write
+  return _origWriteToBookFile(bookFolderName, relativePath, content);
+}
+
+// ================================================================
+// INIT
+// ================================================================
+updateBadge();
+renderApiKeyStatus();
+renderStories();
+populateStorySelector();
+populatePipelineSelect();
+renderPendingChanges();
+document.getElementById('proposals-section').style.display = 'block';
+(function(){
+  const s = getSettings();
+  const el = document.getElementById('a-model');
+  if (el && s.preferredModel) el.value = s.preferredModel;
+})();
+// Start server connection check (non-blocking)
+checkServerConnection();
+</script>
+</body>
+</html>
