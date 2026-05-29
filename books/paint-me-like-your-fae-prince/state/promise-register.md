@@ -47,6 +47,7 @@
 | Why Felix's composure broke for Cai | Ch 1 s3, Ch 2 s1 | Ch 7 (Cai's 31-count revealed; depth of Felix-Cai friendship) | OPEN |
 | Vael's institutional case against Bianca | Ch 3 (planned introduction) | Ch 15 (formal court acknowledgment) | NOT YET PLANTED |
 | Anwyll's story (Felix's mortal mother, murdered by Evander) | Ch 7 (planned reveal) | Ch 12 (Bianca uses it as Evander's only Anwyll-portrait, refusing to draw Felix or Idris) | NOT YET PLANTED |
+| Three "neutral-vote" Evander purchases (insurance against council reshuffling / trophies) | Ch 7 s2 (Felix's aside) | Ch 13 (neutrals completed during deliberate-channel work) | PAID — resolved Ch 13 (Composer ruling, 2026-05-29 dress rehearsal) |
 
 ---
 
@@ -54,11 +55,11 @@
 
 *(Payoff Auditor fills in Parc Fermé)*
 
-**Open promises at manuscript end:** *(to be filled at end of race)*
+**Open promises at manuscript end:** none — 12 of 12 micro-promises paid (the neutral-vote thread closed in Ch 13, 2026-05-29 dress-rehearsal pass).
 
-**Promises with no payoff:** *(to be filled)*
+**Promises with no payoff:** none.
 
-**Payoffs with no setup:** *(to be filled)*
+**Payoffs with no setup:** none.
 
 ---
-*Last updated: 2026-05-26 · Updated by: Team Principal (seed from dossier + author samples)*
+*Last updated: 2026-05-29 · by the Librarian (dress-rehearsal pass: neutral-vote micro-promise marked PAID; 12 of 12)*

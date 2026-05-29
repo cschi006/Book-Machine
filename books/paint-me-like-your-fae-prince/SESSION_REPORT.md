@@ -204,9 +204,9 @@ Plus the **Anwyll-at-six discovery drift** (Ch 6) — ratified, integrated downs
 
 ## Open Items for Revision
 
-1. **`as if` reduction** — 16 instances manuscript-wide, target ≤6. Easy candidates: descriptive *as if filtered through water* → *filtered through water*. Voice-bearing *as if* lines (where the comparison earns the construction) can stay.
-2. **One unresolved micro-promise** — the three "neutral vote" Evander purchases mentioned in Ch 7 Scene 2 (Felix's aside about *insurance against the council reshuffling or trophies*) is never specifically resolved. Either add one Ch 13 line about completing the neutrals during deliberate-channel work, or leave as background noise (acceptable for genre).
-3. **`closed/shut eyes` ×4** manuscript-wide — cut one or two to keep within anchor limits.
+1. **`as if` reduction** — DONE (2026-05-29 dress-rehearsal pass): cut 16 → 6. Voice-bearing instances kept.
+2. **One unresolved micro-promise** — DONE (2026-05-29 dress-rehearsal pass): the three "neutral vote" Evander purchases (Ch 7 Scene 2) resolved by a Ch 13 line about completing the neutrals during deliberate-channel work. 12 of 12 micro-promises now paid.
+3. **`closed/shut eyes`** — DONE (2026-05-29 dress-rehearsal pass): cut 6 → 4, within anchor limits.
 4. **Word count is 90% of target** (45,027 / 50,000). Acceptable for paranormal romance KU but if you want to hit 50k, the easiest expansion targets are: the convention scene (Ch 11 Scene 1), Mara's introduction (Ch 10 Scene 2), and any romance beat that wants more breathing room.
 5. **Title decision is locked** as *Paint Me Like Your Fae Prince.* The dossier had *True Names* as working title — make sure this propagates to any marketing or cover materials.
 
@@ -230,14 +230,15 @@ For revision work, the relevant skills are: `voice-self-edit` (your seven patter
 
 - **Total laps drafted:** 24 scenes across 13 chapters (Ch 3-15)
 - **Author samples:** 2 chapters (Ch 1-2)
-- **Manuscript length:** 45,027 prose words clean / 46,800 with annotations
+- **Manuscript length:** 43,766 prose words clean (the file was re-cleaned — the old 45,027 figure included Driver notes that were wrongly left in)
 - **Voice anchor amendments during race:** 2 (Bianca and Felix Signature Move 7)
 - **Drift events:** 1 discovery (Anwyll-at-six), 0 reverts
 - **Steward flag escalations:** 1 investigation (`The` opener), resolved as voice
 - **Pit stops:** 0
 - **Lap invalidations:** 0
 - **Back-to-garage calls:** 0
-- **Promises paid:** 3 of 3 reader promises, 11 of 12 micro-promises
-- **Critical Parc Fermé findings:** 1 (`as if` accumulation, ~10 cuts needed)
+- **Promises paid:** 3 of 3 reader promises, 12 of 12 micro-promises (neutral-vote thread closed in Ch 13, 2026-05-29 dress-rehearsal pass)
+- **Critical Parc Fermé findings:** 1 (`as if` accumulation, ~10 cuts needed) — resolved 2026-05-29 (cut 16 → 6)
+- **Pacing correction (2026-05-29):** midpoint is Ch 7 @ 53% and the dark moment ~73% (correcting the earlier Ch 8 / 78% labels).
 
 The machine worked.

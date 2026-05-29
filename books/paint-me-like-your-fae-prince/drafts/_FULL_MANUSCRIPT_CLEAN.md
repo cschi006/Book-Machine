@@ -2,8 +2,6 @@
 
 *A paranormal romance*
 
----
-
 # Chapter 1 — Bianca
 
 A phone alert buzzing through my desk woke me up. My fingers were sticky with ink and there was a finished portrait under my face. Neither detail was ideal.
@@ -440,7 +438,7 @@ Bianca made a short, incredulous sound. "Jesus Christ."
 
 "I have a job," she said. "I have—"
 
-One moment the wall existed. The next, a vertical seam of light had replaced part of it, thin as a blade at first, then widening until the room beyond it stood in view. Cold stone. Carved arches. Light moving across the floor as if filtered through water or glass. The corridor was empty, but it carried the watchful stillness of a place built for power and kept under it for a very long time.
+One moment the wall existed. The next, a vertical seam of light had replaced part of it, thin as a blade at first, then widening until the room beyond it stood in view. Cold stone. Carved arches. Light moving across the floor, filtered through water or glass. The corridor was empty, but it carried the watchful stillness of a place built for power and kept under it for a very long time.
 
 I expected the vision of a portal to stop her annoying prattle. What I did not expect was her serene face. She was focused, curious even.
 
@@ -455,10 +453,6 @@ She looked from the corridor to the desk, to the corridor again, and when she sp
 I came here believing I would find the mortal with information about the breach to our world. Instead, I found the breach to our world in the mortal.
 
 # Chapter 3 — Bianca
-
-**Word count target:** 1,500 (±200)
-
----
 
 The cold hit me first. Then the recognition.
 
@@ -563,22 +557,7 @@ She turned and walked to the sideboard. Cai's hand closed around the edge of the
 The room narrowed around the page Vael was about to put on the table.
 
 I did not yet know what was on it. I knew it was already what mattered.
-
----
-
-**Driver notes to Team Principal:**
-- Word count: 1,201 actual vs. 1,500 target — under by ~300. Scene reached its natural close at the page-being-placed moment. Adding 300 words would have padded.
-- Tension exit: delivered 7 vs. target 6–7 — clean, slight elevation earned by Vael's introduction.
-- Seeds used: 4 of 5 — *unspool* (stomach), *heel* (twice — Felix's on stone, then her own skid), *pine* (the resinous smell), *lancet* (the metallic-throat sensation). *Wrack* not used; flag to Team Principal — defaulting on one seed at low-tension point.
-- Self-check findings: One filter word candidate ("read as wound") — left in as voice; not a filter in the camera-distance sense, it's a register call. Pattern 1 honored (no backstory exposition in opening). Pattern 3 honored (no extended metaphors during high-threat beats — pop refs stay short). Pattern 7 honored (the *ancient-grievance-with-furniture* line lands after the threat is established, not during).
-- Drift note: NONE — scene executed brief faithfully.
-- Anything Team Principal should know: Voice anchor felt strict here. Bianca's hospitality reflex is absent because the setting denies her any object to offer — flag for whether Driver should construct an opportunity in Scene 2.
-
 * * *
-
-**Word count target:** 1,500 (±200)
-
----
 
 She came back with a shallow bronze dish, not a page.
 
@@ -789,22 +768,7 @@ She turned toward the door without waiting to be agreed with.
 The page in the dish had stopped being a page some time ago. The ash inside the bronze did not have the courtesy to retain a shape. Felix did not look at the dish again. He did not look at me. He looked at Cai for one beat that contained more than the room had seen so far in this conversation, and Cai's mouth did a small thing that was not relief and not exhaustion but something fae had a word for and I did not.
 
 Then he followed Vael out.
-
----
-
-**Driver notes to Team Principal:**
-- Word count: 1,615 actual vs. 1,500 target — within tolerance (+115).
-- Tension exit: delivered 8 vs. target 8 — clean. The lie-by-omission lands and Cai's silent registration of it elevates appropriately.
-- Seeds used: 2 of 5 (minimum threshold) — *virga* (the shimmer over the dish), *rubatosis* (Bianca's pulse-awareness after the burn). *Mare's tail / foehn / pine* not used; the scene's setting in a stone chamber did not give them entry points.
-- Self-check findings: Cai-compulsion stayed subtextual per author ratification. Bianca observed the change; no one named it. The internal-monologue interior-paragraph where she lists Cai's accommodations and chooses not to think about them yet is the load-bearing voice beat for this scene.
-- Drift note: NONE.
-- Anything Team Principal should know: Felix's last beat — looking at Cai for "one beat that contained more than the room had seen so far in this conversation" — is a deliberate Felix-Cai friendship signal in Bianca POV. Watch whether it lands or feels too declarative on author read.
-
 * * *
-
-**Word count target:** 1,300 (±200)
-
----
 
 The portal opened into my kitchen and my house did not feel like mine.
 
@@ -913,17 +877,6 @@ Felix did not look at them. He looked at me. The cold authority I had clocked on
 The lie I had carried in the chamber was already in the past tense. The new sentence had to belong to a person who could still survive this room.
 
 "Hundreds," I said.
-
----
-
-**Driver notes to Team Principal:**
-- Word count: 1,265 actual vs. 1,300 target — within tolerance (-35).
-- Tension exit: 9 delivered. Chapter close on the single word *Hundreds.*
-- Seeds used: 2 of 5 — *brad* (the chest-hit comparison), *cotter pin* (the printout clip), *instep* (her own foot ache on the stairs). Three seeds landed. *Spigot, ossuary* did not — the scene's space didn't admit them.
-- Self-check findings: `The` opener density addressed by varied paragraph openers and intentional anaphora ("The contents of my business were...") used as voice not crutch. Filter words: none. Backstory exposition in opening: none — opens with sensory present.
-- Drift note: NONE.
-- Anything Team Principal should know: Chapter 3 closes here. Next chapter natural opening is Felix POV (per dossier rotation: Ch 4 was Bianca → Ch 5 is Felix in original). With three Bianca POVs running (her Ch 1, our Ch 3) and one Felix (her Ch 2), the next scene should be Felix POV for rotation balance. The Etsy-revelation lap is also the natural moment for Felix's interiority — he is the one who has to decide what to do now.
-
 # Chapter 4 — Felix
 
 *Hundreds* sat in the air long enough to require a containment decision.
@@ -1027,22 +980,7 @@ She came back to the laptop. The work began.
 I kept my attention on the screen and not on the small recalibration occurring under my ribs.
 
 The number on the page was four hundred and twelve. The number in the room was still her.
-
----
-
-**Driver notes to Team Principal:**
-- Word count: 1,184 actual vs. 1,300 target — under by 116. Acceptable; Felix runs lean per voice anchor.
-- Tension exit: delivered 8 vs. target 8 — clean. Pivot from external crisis to internal recalibration without externalizing the romance pivot.
-- Seeds used: 3 of 5 — *incandescent* (laptop screen), *oscillate* (the sales-count numbers), *falter* (the grid not faltering as he scrolls). *Liget, pepper* not used.
-- Self-check findings: Voice-self-edit pattern 6 honored — cut at the revelation (the interior label cracking), not at the analysis after. Felix's diminutive labels are present early and then explicitly named as the working category that broke. He does not yet think "Bianca" in interior — that's saved for later. The conscious-art beat lands as the pivot.
-- Drift note: NONE — the dossier's Ch 5 "Felix sees difference between gift and conscious art" beat moved up to Ch 4 Scene 1, but this matches the natural sequencing post-Etsy-reveal.
-- Anything Team Principal should know: First romance-axis movement in Felix POV (1 → 2). His internal categorization cracked. He registered the conscious art as art. He did not perform on this; he clicked away from it. This is the dev-fix mandate's "romance-first scene allocation" being honored — a quiet pivot inside a plot scene.
-
 * * *
-
-**Word count target:** 1,300 (±200)
-
----
 
 The export took eleven minutes.
 
@@ -1161,22 +1099,7 @@ I had not yet decided what kind of problem.
 But the problem was no longer *the breach.*
 
 It was *Bianca.*
-
----
-
-**Driver notes to Team Principal:**
-- Word count: 1,353 actual vs. 1,300 target — within tolerance (+53).
-- Tension exit: 7 delivered (operational pivot to action; internal pivot complete).
-- Seeds used: 3 of 5 — *calloused* (graphite drifts at her wrist), *baluster* (her keychain ornament), *unspool* not used this scene. *Hiraeth, cordite* not used.
-- Self-check findings: Voice-self-edit pattern 6 honored — chapter ends at the moment the working framework cracks (*It was Bianca.*), not at the analysis after. Anchor Signature Move 8 (assessment-stacking) used naturally (*Inert. Local first. Glamour over the replacement. Local first.*). Diminutive interior labels SOFTENED but not eliminated — Felix still uses *the mortal* in one place but the closing word of the scene is her name, italicized. Romance pivot landed without externalizing.
-- Drift note: NONE.
-- Anything Team Principal should know: This scene completed the dossier's "gift vs. conscious art" pivot across Laps 4 and 5. The replacement protocol is now operational. The next scene (4-03) is the first field test — the actual recovery from the local buyer. That should run in Felix POV for chapter rotation, OR shift back to Bianca POV for the inside-view of the lie-on-her-feet customer service moment. Flagging for Team Principal call.
-
 * * *
-
-**Word count target:** 1,400 (±200) — chapter close
-
----
 
 The building was beige.
 
@@ -1250,7 +1173,7 @@ In the stairwell, none of us spoke. In the parking lot, Bianca shook once — no
 
 I led us around to the side of the building where a strip of crushed gravel ran beside the dumpster enclosure. I raised a containment ward narrow enough to fit the three of us. Cai handed me the folio. I drew the original out by the dry edge. The name at the bottom was — for a beat — present, then absent. I burned it in the ward. The ash did not stain the gravel.
 
-Cai exhaled. Their shoulders dropped by another fraction. I watched them put both palms briefly against the brick of the dumpster enclosure as if testing whether they were still standing.
+Cai exhaled. Their shoulders dropped by another fraction. I watched them put both palms briefly against the brick of the dumpster enclosure, testing whether they were still standing.
 
 "How much," I asked.
 
@@ -1301,17 +1224,6 @@ Bianca opened the driver's-side door. The sound of mortal traffic resumed in the
 She did.
 
 The first recovery had taken ninety seconds. The next four hundred and eleven were going to take longer, and a portion of them belonged to a person who already knew what they were collecting.
-
----
-
-**Driver notes to Team Principal:**
-- Word count: 1,438 actual vs. 1,400 target — +38, within tolerance. Chapter close.
-- Tension exit: 8 delivered — chapter ends on the P.O. box pattern reveal, lifting toward Chapter 5.
-- Seeds used: 4 of 5 — *yield* (the buyer's commitment), *slew* (the glamour motion), *pine* (holiday garland on doorframe), *grained* (corridor wall texture). *Breach* not used (avoided the word in interior to keep Felix's vocabulary varied — he says "breach" earlier in the chapter; once is enough).
-- Self-check findings: Felix's diminutive interior labels for Bianca FURTHER softened. He says *Bianca* in interior once (the keychain beat) without ceremony. Anchor signature move 7 (assessment-stacking) appears at the pre-recovery briefing (*"You speak first. I follow." / "If she asks me a question, I will not answer it." / "Cai stands behind me on the right."*). Cai-Felix shorthand active in the post-burn exchange. The buyer-side scene is rendered through Felix's outside-observer lens — he watches Bianca operate without commentary that would condescend or sentimentalize.
-- Drift note: NONE — chapter closed at dossier-aligned beat (P.O. box pattern recognition).
-- Anything Team Principal should know: Chapter 4 closes at 3 scenes / ~4,000 prose words — under dossier 5k average for Felix-dominant chapters but earned. Next chapter (5) is Bianca POV per rotation, with the recovery-as-labor montage + Cai's "when did the gift begin" question + the targeting pattern getting confirmed against the exile-vote roster. Suggest opening Ch 5 with morning-after, second-day recoveries already in motion.
-
 # Chapter 5 — Bianca
 
 By the second house, I was good at it.
@@ -1418,7 +1330,7 @@ We drove.
 
 We did the last stop without anything happening.
 
-A small artist co-op on the wrong side of a strip mall that had let one of my originals end up on a consignment shelf marked $90. The shop owner thanked me for catching the materials issue and asked if I would be doing the fall craft show this year. I told her I would have to get back to her. The original came out of its frame, the replacement went in, Cai held the folio, Felix burned the original in the back alley under a ward that did not even discolor the asphalt.
+A small artist co-op on the wrong side of a strip mall that had let one of my originals end up on a consignment shelf marked $90. The shop owner thanked me for catching the materials issue and asked if I would be doing the fall craft show this year. I told her I would have to get back to her. The swap went the way the others had gone by now — fast, unremarkable, the kind of thing my hands could do while my mouth handled the small talk.
 
 That made eight for the day.
 
@@ -1428,7 +1340,7 @@ I expected Felix to make us go inside somewhere. He did not.
 
 He turned the engine off and walked to a bench.
 
-Cai followed slower. They sat with both palms flat to the wood and looked at the trees as if testing whether the trees were a kind of room.
+Cai followed slower. They sat with both palms flat to the wood and looked at the trees, weighing whether the trees were a kind of room.
 
 I sat.
 
@@ -1522,7 +1434,7 @@ The folio was on the floor of the car. The ash in the small ward dish was scatte
 
 "It is going to be enough," Cai said. "Eventually. *Less bad,* enough times in a row, becomes *good.*"
 
-I almost laughed. I did not. I leaned my temple against the bench back and closed my eyes for one breath. The park made park sounds.
+I almost laughed. I did not. I leaned my temple against the bench back and let the air out slow. The park made park sounds.
 
 We sat there until the sprinkler stopped.
 
@@ -1646,7 +1558,7 @@ She did not bend her register. She did not soften the geometry of her face.
 
 "This is not your fault," she said.
 
-It was not absolution. It was a procedural statement, made for the record, by a woman who had assessed me as a hazard yesterday and was issuing today's revised assessment with the same evenness she had used for the first one.
+It was not absolution. It was a procedural statement, entered into the account, by a woman who had assessed me as a hazard yesterday and was issuing today's revised assessment with the same evenness she had used for the first one.
 
 "I know," I said.
 
@@ -1714,9 +1626,9 @@ I did not move. The argument was sound. It had been sound when I overruled it th
 
 A slew of silence. The chamber had a habit of holding silences the way carved stone held cold. Vael did not need to extend the silence; it extended itself.
 
-"For the record," she said. "I advised removal."
+"Let it be entered," she said. "I advised removal."
 
-"For the record. You did."
+"It is entered. You did."
 
 "My prince."
 
@@ -2526,7 +2438,7 @@ I closed the order export. I stood. I went to the kitchen for the warded tin I k
 
 "Tomorrow," Bianca said, "we move."
 
-She did not finish the listing immediately. She closed the laptop and sat for a beat with her hands flat on the table and her shoulders set, looking at the small warded tin between us as if it were a door rather than an object.
+She did not finish the listing immediately. She closed the laptop and sat for a beat with her hands flat on the table and her shoulders set, looking at the small warded tin between us like a door rather than an object.
 
 "Felix."
 
@@ -2938,13 +2850,13 @@ She thought.
 
 She turned back to Bianca. "The convention."
 
-Bianca closed her eyes.
+Bianca dropped her head.
 
 I had not seen the listing yet. I did not yet know that Bianca had spent four years not going to the convention Mara was about to name. I had spent two days not yet meeting the part of Bianca's mortal life that would, when she opened her eyes, have to look directly at the venue she had specifically built a life shaped against attending.
 
 "The Eastside Artist & Fan Expo," Mara said. "Three weeks from now. Artist alley. They've been begging her to take a table for six years."
 
-"I have not been ignoring those emails *that much,*" Bianca said. Without opening her eyes.
+"I have not been ignoring those emails *that much,*" Bianca said. To the floor.
 
 "You have been ignoring them exactly that much."
 
@@ -2958,7 +2870,7 @@ I had not seen the listing yet. I did not yet know that Bianca had spent four ye
 
 I waited.
 
-Bianca opened her eyes.
+Bianca lifted her head.
 
 She looked at me. Then at Cai. Then at Mara.
 
@@ -3348,7 +3260,7 @@ Not loud. Not theatrical. Worse for being intimate. Directed downward with the c
 
 He had been here the entire time.
 
-Mara shut the rear door behind us and kept the broken pane turned from the street. Cai leaned a hand against the counter, face gone pale beneath the stolen human lines, and lifted two fingers toward the ceiling as if listening through bone.
+Mara shut the rear door behind us and kept the broken pane turned from the street. Cai leaned a hand against the counter, face gone pale beneath the stolen human lines, and lifted two fingers toward the ceiling, listening through bone.
 
 A scrape of chair legs from below.
 
@@ -3368,7 +3280,7 @@ By the time I reached the last stair, Anwyll looked up from every scattered shee
 
 Not one page. Dozens.
 
-Bianca sat strapped to a metal chair beneath a low lamp, head tipped slightly forward, black mask still hiding the lower half of her face. One wrist had rubbed raw against the restraint. Ink marked two fingers. Her hand still held the pen, fingers locked around it as if the drug had not yet loosened its grip. Evander stood beside the table, one hand braced near the paper, his human face loosened now at the edges so the older thing beneath it showed through.
+Bianca sat strapped to a metal chair beneath a low lamp, head tipped slightly forward, black mask still hiding the lower half of her face. One wrist had rubbed raw against the restraint. Ink marked two fingers. Her hand still held the pen, fingers locked around it, the drug not yet loosened from its grip. Evander stood beside the table, one hand braced near the paper, his human face loosened now at the edges so the older thing beneath it showed through.
 
 He turned at the sound of my step.
 
@@ -3470,7 +3382,7 @@ There was an empty metal wash basin under the utility sink. I drew it onto the c
 
 The first portrait caught fire cleanly.
 
-The change in the house was immediate if one knew the shape of what had been imposed. The pressure in the stairwell loosened. The muffled quality that had sat over the rooms above us thinned. Cai's shoulders dropped by a degree, as if some weight attached to the foundation had shifted off them.
+The change in the house was immediate if one knew the shape of what had been imposed. The pressure in the stairwell loosened. The muffled quality that had sat over the rooms above us thinned. Cai's shoulders dropped by a degree, some weight attached to the foundation shifting off them.
 
 "Again," they said quietly.
 
@@ -3506,7 +3418,7 @@ I looked once more through the room to be certain we had not missed anything act
 
 No false ending presented itself. Bianca was recovered. Evander was not anonymous. The network still existed beyond this house in every portrait we had not yet found.
 
-Mara helped Bianca sit more upright. The cheap cloak had slipped from one shoulder, exposing the angry red band around her wrist where the restraint had rubbed. Bianca's breathing had evened somewhat. Her eyes had not. She tracked the room as if each object had to be identified from scratch before it could be trusted.
+Mara helped Bianca sit more upright. The cheap cloak had slipped from one shoulder, exposing the angry red band around her wrist where the restraint had rubbed. Bianca's breathing had evened somewhat. Her eyes had not. She tracked the room, each object identified from scratch before it could be trusted.
 
 "I'm getting her upstairs," Mara said.
 
@@ -3782,7 +3694,7 @@ Cai crossed to the basin and lowered the sketch into the waiting flame with the 
 
 Cai did not move for several seconds after it was done.
 
-Then they lifted one hand and flexed their fingers as if testing a joint that had been wrong for months and had only just clicked back into place. Their glamour stopped looking like effort. Their shoulders dropped.
+Then they lifted one hand and flexed their fingers — a joint that had been wrong for months and had only just clicked back into place. Their glamour stopped looking like effort. Their shoulders dropped.
 
 "I had forgotten what this felt like," they said quietly.
 
@@ -3798,13 +3710,15 @@ He looked at me once. I nodded.
 
 He burned it.
 
+"And the three neutrals," Felix said, setting the tongs down with the finality of a man closing a column he had carried too long, "were among the last recovered and are now ash; whatever my uncle intended them for, he will not have it."
+
 Vael's slate sparked once at the edge and then cleared. In the corridor, voices changed register — still hushed, but no longer carrying that long habit of carefulness. Cai looked toward the nearer door before any of us spoke.
 
 A few minutes later it opened.
 
 Everyone in the chamber turned.
 
-Idris entered without herald and without the hush that had always gone before him in recent weeks — the hush of people preparing to pretend a king was not fragile. He was not fully restored. No one with functioning eyesight would have mistaken him for untouched. But he crossed the threshold under his own power in a dark coat heavy with Loren's particular version of understatement, and the room adjusted around him as if remembering a shape it preferred.
+Idris entered without herald and without the hush that had always gone before him in recent weeks — the hush of people preparing to pretend a king was not fragile. He was not fully restored. No one with functioning eyesight would have mistaken him for untouched. But he crossed the threshold under his own power in a dark coat heavy with Loren's particular version of understatement, and the room adjusted around him like remembering a shape it preferred.
 
 His gaze went first to the basin, then to Vael's slates, then to Cai. Last of all he looked at me.
 
