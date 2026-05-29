@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Machine — Symphony Engine [ARCADE]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* base — dark aubergine so yellow/purple/teal all pop */
+  --bg:#1a1138;
+  --bg2:#241748;
+  --panel:#2e1d57;
+  --panel-lit:#3a2668;
+  --stage:#120a28;
+  /* the trio */
+  --gold:#ffd23f;          /* YELLOW — dominant accent */
+  --gold-deep:#c8920a;
+  --purple:#b07ad6;
+  --teal:#3fd0c0;
+  --rust:#e87ab0;          /* warm magenta for remove/danger */
+  --ink:#fdf6e3;           /* near-white text */
+  --ink-dim:#e2d2a8;       /* warm cream */
+  --line:#46336a;
+  --pix:'Press Start 2P',monospace;
+  --term:'VT323',monospace;
+  /* phase colors — shades of the trio */
+  --c-podium:#ffd23f;      /* yellow */
+  --c-tuning:#b07ad6;      /* purple */
+  --c-rehearsal:#3fd0c0;   /* teal */
+  --c-booth:#f0a81e;       /* amber/gold */
+  --c-principals:#9a7ae0;  /* violet */
+  --c-dress:#46c2a8;       /* deep teal */
+  --c-leads:#d98ad0;       /* orchid */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{image-rendering:pixelated}
+body{
+  font-family:var(--term);
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.6;
+  min-height:100vh;
+  font-size:26px;
+  letter-spacing:.7px;     /* VT323 packs tight — loosen it */
+  word-spacing:2px;
+  padding-bottom:60px;
+  overflow-x:hidden;
+  zoom:1.18;               /* global enlargement — Chrome/Edge */
+}
+svg{image-rendering:pixelated;shape-rendering:crispEdges;display:block}
+/* CRT overlay */
+#crt{position:fixed;inset:0;z-index:9000;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.07) 0px,rgba(0,0,0,.07) 1px,transparent 1px,transparent 4px);}
+#crt::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 130% 100% at 50% 50%,transparent 70%,rgba(0,0,0,.32) 100%);}
+
+/* pixel font helpers */
+.pix{font-family:var(--pix);letter-spacing:.5px;line-height:1.6}
+
+/* ── HUD bar ─────────────────────────────────────── */
+.hud{position:sticky;top:0;z-index:500;background:linear-gradient(180deg,#1c1326,#160e20);
+  border-bottom:3px solid var(--gold-deep);padding:14px 20px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  box-shadow:0 4px 0 rgba(0,0,0,.4);}
+.hud-logo{display:flex;align-items:center;gap:12px}
+.hud-title{font-family:var(--pix);font-size:13px;color:var(--gold);
+  text-shadow:2px 2px 0 #6e4a00,0 0 12px rgba(244,196,48,.4)}
+.hud-sub{font-family:var(--term);font-size:20px;color:var(--ink-dim)}
+.hud-spacer{flex:1}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{font-family:var(--pix);font-size:9px;color:var(--ink-dim);
+  background:var(--panel);border:2px solid var(--line);
+  padding:9px 12px;cursor:pointer;border-radius:0;
+  box-shadow:2px 2px 0 rgba(0,0,0,.4);transition:transform 80ms}
+.tab:hover{color:var(--ink);border-color:var(--gold-deep)}
+.tab.active{color:var(--bg);background:var(--gold);border-color:var(--gold);
+  box-shadow:2px 2px 0 var(--gold-deep)}
+.tab:active{transform:translate(2px,2px);box-shadow:none}
+.btn-link{font-family:var(--pix);font-size:9px;color:var(--c-rehearsal);
+  background:transparent;border:2px dashed var(--line);padding:9px 12px;
+  cursor:pointer;text-decoration:none;display:inline-block}
+.btn-link:hover{border-color:var(--c-rehearsal);color:#fff}
+
+.view{display:none;max-width:1160px;margin:0 auto;padding:24px 20px 0}
+.view.active{display:block}
+
+/* ── Stage scene ─────────────────────────────────── */
+.stage{position:relative;background:var(--stage);
+  border:3px solid var(--gold-deep);border-radius:0;
+  padding:0 0 14px;margin-bottom:26px;overflow:hidden;
+  box-shadow:0 0 0 3px #000, 0 8px 0 rgba(0,0,0,.5);}
+/* curtain */
+.curtain{height:30px;background:
+   repeating-linear-gradient(90deg,#5a2a86 0,#5a2a86 14px,#7340a8 14px,#7340a8 28px);
+   border-bottom:3px solid #3a1a5e;position:relative}
+.curtain::after{content:'';position:absolute;left:0;right:0;bottom:-9px;height:9px;
+   background:repeating-linear-gradient(90deg,#7340a8 0,#7340a8 10px,transparent 10px,transparent 28px)}
+.stage-inner{padding:34px 20px 8px;text-align:center;position:relative;
+   background:radial-gradient(ellipse 70% 80% at 50% 120%,rgba(244,196,48,.16),transparent 70%)}
+.podium-row{display:flex;justify-content:center;align-items:flex-end;gap:0;margin-bottom:6px}
+.podium-block{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.podium-base{width:70px;height:16px;background:#3a2a16;border:2px solid #1a1208;
+   box-shadow:0 4px 0 #0a0704}
+.podium-label{font-family:var(--pix);font-size:8px;color:var(--gold);margin-top:8px}
+.stage-tag{font-family:var(--term);font-size:20px;color:var(--ink);margin-top:2px}
+/* footlights */
+.footlights{display:flex;justify-content:center;gap:10px;margin-top:14px}
+.footlight{width:8px;height:8px;background:var(--gold);border-radius:0;
+   box-shadow:0 0 8px 2px rgba(244,196,48,.6);animation:glow 2s infinite alternate}
+.footlight:nth-child(even){animation-delay:.5s}
+@keyframes glow{from{opacity:.5}to{opacity:1}}
+
+/* ── Section / risers ────────────────────────────── */
+.section{margin-bottom:22px;border:2px solid var(--line);background:var(--bg2);
+  box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.sec-head{display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-bottom:2px solid var(--line);border-left:6px solid var(--accent)}
+.sec-badge{width:14px;height:14px;background:var(--accent);
+  box-shadow:0 0 0 2px #000}
+.sec-title{font-family:var(--pix);font-size:10px;color:var(--accent)}
+.sec-sub{font-family:var(--term);font-size:19px;color:var(--ink-dim);margin-left:auto}
+.players{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:12px;padding:16px 14px}
+.player{background:var(--panel);border:2px solid var(--line);
+  padding:12px 10px 10px;cursor:pointer;text-align:center;position:relative;
+  transition:transform 90ms,box-shadow 90ms;box-shadow:3px 3px 0 rgba(0,0,0,.4)}
+.player:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 rgba(0,0,0,.5);
+  border-color:var(--accent);background:var(--panel-lit)}
+.player:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.4)}
+.player .sprite{margin:0 auto 8px;width:60px;height:60px;display:flex;
+  align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.06),transparent 70%)}
+.player .pname{font-family:var(--pix);font-size:8px;color:var(--ink);line-height:1.5}
+.player .prole{font-family:var(--term);font-size:18px;color:var(--ink-dim);margin-top:4px}
+.player .lvl{position:absolute;top:4px;right:5px;font-family:var(--pix);font-size:6px;
+  color:var(--accent);opacity:.8}
+
+/* ── Game loop band ──────────────────────────────── */
+.loop{margin:6px 0 26px;border:2px dashed var(--gold-deep);background:rgba(244,196,48,.05);
+  padding:16px 14px}
+.loop-title{font-family:var(--pix);font-size:9px;color:var(--gold);margin-bottom:14px;text-align:center}
+.loop-track{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.loop-node{font-family:var(--pix);font-size:8px;color:var(--ink);
+  background:var(--panel);border:2px solid var(--line);padding:8px 10px;white-space:nowrap}
+.loop-arrow{color:var(--gold);font-family:var(--pix);font-size:10px}
+.loop-note{font-family:var(--term);font-size:20px;color:var(--ink-dim);text-align:center;margin-top:12px}
+
+/* entry points */
+.paths{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:26px}
+@media(max-width:680px){.paths{grid-template-columns:1fr}}
+.path{border:2px solid var(--line);background:var(--bg2);padding:14px 16px;box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.path h4{font-family:var(--pix);font-size:9px;color:var(--c-rehearsal);margin-bottom:10px}
+.path.alt h4{color:var(--c-dress)}
+.path p{font-family:var(--term);font-size:21px;color:var(--ink-dim)}
+.path .chain{font-family:var(--pix);font-size:7px;color:var(--ink);margin-top:10px;line-height:2}
+
+/* ── Stats modal ─────────────────────────────────── */
+.overlay{position:fixed;inset:0;z-index:1000;background:rgba(8,4,12,.82);
+  display:none;align-items:center;justify-content:center;padding:24px}
+.overlay.open{display:flex}
+.card{background:var(--panel);border:3px solid var(--accent);max-width:560px;width:100%;
+  box-shadow:0 0 0 3px #000,8px 8px 0 rgba(0,0,0,.6);max-height:90vh;overflow-y:auto}
+.card-head{display:flex;align-items:center;gap:16px;padding:18px;
+  border-bottom:3px solid var(--accent);background:var(--panel-lit)}
+.card-sprite{width:72px;height:72px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:var(--stage);border:2px solid var(--line)}
+.card-titles{flex:1}
+.card-name{font-family:var(--pix);font-size:13px;color:var(--ink);text-shadow:2px 2px 0 #000}
+.card-class{font-family:var(--pix);font-size:8px;color:var(--accent);margin-top:8px}
+.card-x{font-family:var(--pix);font-size:12px;color:var(--ink-dim);cursor:pointer;
+  background:none;border:none;align-self:flex-start}
+.card-x:hover{color:var(--rust)}
+.card-body{padding:18px}
+.stat{margin-bottom:16px}
+.stat-label{font-family:var(--pix);font-size:8px;color:var(--accent);margin-bottom:6px;
+  display:flex;align-items:center;gap:6px}
+.stat-label::before{content:'';width:8px;height:8px;background:var(--accent)}
+.stat-val{font-family:var(--term);font-size:22px;color:var(--ink);line-height:1.4}
+.summon{font-family:var(--term);font-size:18px;color:var(--c-rehearsal);
+  background:var(--stage);border:2px solid var(--line);padding:8px 12px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px}
+.copy-btn{font-family:var(--pix);font-size:7px;color:var(--bg);background:var(--gold);
+  border:none;padding:6px 8px;cursor:pointer;flex-shrink:0}
+.copy-btn:active{transform:translate(1px,1px)}
+.flavor{font-family:var(--term);font-size:21px;color:var(--ink-dim);font-style:italic;
+  border-left:3px solid var(--accent);padding-left:12px;margin-top:6px}
+
+/* ── Performance Log ─────────────────────────────── */
+.log-intro{font-family:var(--term);font-size:19px;color:var(--ink-dim);margin-bottom:18px;
+  border-left:4px solid var(--gold);padding-left:14px}
+.log-form{background:var(--bg2);border:2px solid var(--line);padding:16px;
+  margin-bottom:24px;box-shadow:4px 4px 0 rgba(0,0,0,.4);
+  display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:680px){.log-form{grid-template-columns:1fr}}
+.log-form .full{grid-column:1/-1}
+.f-label{font-family:var(--pix);font-size:8px;color:var(--gold);margin-bottom:6px;display:block}
+.f-in,.f-sel{font-family:var(--term);font-size:19px;width:100%;
+  background:var(--stage);border:2px solid var(--line);color:var(--ink);padding:8px 10px}
+.f-in:focus,.f-sel:focus{outline:none;border-color:var(--gold)}
+.f-btn{font-family:var(--pix);font-size:9px;color:var(--bg);background:var(--gold);
+  border:none;padding:11px 16px;cursor:pointer;box-shadow:3px 3px 0 var(--gold-deep)}
+.f-btn:active{transform:translate(2px,2px);box-shadow:none}
+
+.book-log{margin-bottom:24px;border:2px solid var(--line);background:var(--bg2);
+  box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.book-log-head{display:flex;align-items:center;gap:10px;padding:12px 14px;
+  border-bottom:2px solid var(--line);background:var(--panel-lit)}
+.book-log-title{font-family:var(--pix);font-size:11px;color:var(--gold)}
+.book-log-count{font-family:var(--pix);font-size:7px;color:var(--ink-dim);margin-left:auto}
+.book-del{font-family:var(--pix);font-size:7px;color:var(--rust);background:none;
+  border:2px solid var(--line);padding:6px 8px;cursor:pointer}
+.book-del:hover{border-color:var(--rust)}
+.quest{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line);align-items:flex-start}
+.quest:last-child{border-bottom:none}
+.quest-check{font-family:var(--pix);font-size:11px;color:var(--c-rehearsal);flex-shrink:0;margin-top:2px}
+.quest-body{flex:1}
+.quest-pass{font-family:var(--pix);font-size:9px;color:var(--ink)}
+.quest-note{font-family:var(--term);font-size:20px;color:var(--ink-dim);margin-top:3px}
+.quest-date{font-family:var(--term);font-size:15px;color:var(--ink-dim);opacity:.7;flex-shrink:0}
+.quest-rm{font-family:var(--term);font-size:16px;color:var(--rust);cursor:pointer;background:none;border:none;flex-shrink:0}
+.empty-log{font-family:var(--term);font-size:19px;color:var(--ink-dim);text-align:center;padding:30px;font-style:italic}
+
+/* ── Now Playing status board ────────────────────── */
+.board-title{font-family:var(--pix);font-size:13px;color:var(--gold);margin:6px 0 16px;
+  letter-spacing:1px;text-shadow:2px 2px 0 #6e4a00}
+.folder-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;
+  background:var(--bg2);border:2px solid var(--line);padding:14px 16px;box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.folder-bar.connected{border-color:var(--c-rehearsal)}
+.fb-icon{font-size:26px;flex-shrink:0}
+.fb-text{font-family:var(--term);font-size:20px;color:var(--ink-dim);flex:1;min-width:160px;letter-spacing:.6px}
+.fb-text b{color:var(--ink)}
+.fb-path{font-family:var(--term);font-size:17px;color:var(--c-rehearsal);letter-spacing:.6px}
+.board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:30px}
+.bcard{background:var(--bg2);border:2px solid var(--line);border-left:8px solid var(--accent);
+  padding:16px 18px;box-shadow:5px 5px 0 rgba(0,0,0,.4)}
+.bcard-cover{width:100%;height:104px;margin-bottom:14px;border:2px solid var(--line);
+  background:var(--stage);overflow:hidden;display:block;position:relative}
+.bcard-cover img,.bcard-cover svg{width:100%;height:100%;object-fit:cover;display:block;image-rendering:pixelated}
+.bcard-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.bcard-name{font-family:var(--pix);font-size:12px;color:var(--ink);line-height:1.6;flex:1;letter-spacing:.5px}
+.bcard-badge{font-family:var(--pix);font-size:8px;color:#1a1208;background:var(--accent);
+  padding:5px 8px;white-space:nowrap;letter-spacing:.5px}
+.bcard-meta{font-family:var(--term);font-size:19px;color:var(--ink-dim);margin-bottom:8px;letter-spacing:.6px}
+.bcard-stats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.stat-chip{font-family:var(--pix);font-size:7px;color:var(--ink-dim);background:var(--stage);
+  border:2px solid var(--line);padding:5px 8px;letter-spacing:.5px}
+.bcard-logline{font-family:var(--term);font-size:19px;color:var(--ink-dim);font-style:italic;
+  margin-bottom:14px;line-height:1.5;letter-spacing:.6px}
+/* XP / progress bar */
+.xp-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.xp-label{font-family:var(--pix);font-size:8px;color:var(--accent);letter-spacing:.5px}
+.xp-num{font-family:var(--term);font-size:18px;color:var(--ink-dim);margin-left:auto;letter-spacing:.6px}
+.xp-bar{height:18px;background:var(--stage);border:2px solid var(--line);padding:2px;
+  display:flex;gap:2px;overflow:hidden;margin-bottom:14px}
+.xp-seg{flex:1;background:var(--line)}
+.xp-seg.on{background:var(--accent);box-shadow:0 0 6px rgba(244,196,48,.3)}
+.bcard-next{font-family:var(--term);font-size:19px;color:var(--ink);
+  border-top:1px solid var(--line);padding-top:12px;letter-spacing:.6px}
+.bcard-next b{font-family:var(--pix);font-size:8px;color:var(--gold);display:block;margin-bottom:5px;letter-spacing:.5px}
+.board-empty{font-family:var(--term);font-size:21px;color:var(--ink-dim);text-align:center;
+  padding:34px;border:2px dashed var(--line);background:var(--bg2);line-height:1.5;letter-spacing:.6px}
+.board-empty a{color:var(--c-rehearsal)}
+.sub-head{font-family:var(--pix);font-size:11px;color:var(--c-rehearsal);margin:8px 0 14px;
+  letter-spacing:1px;border-bottom:2px solid var(--line);padding-bottom:10px}
+
+/* HELP */
+.help-block{font-family:var(--term);font-size:22px;color:var(--ink);max-width:760px;margin-bottom:20px;line-height:1.45}
+.help-block h3{font-family:var(--pix);font-size:11px;color:var(--gold);margin:24px 0 12px}
+.help-block p{margin-bottom:12px;color:var(--ink-dim)}
+.help-block code{font-family:var(--term);font-size:18px;color:var(--c-rehearsal);
+  background:var(--stage);padding:1px 7px;border:1px solid var(--line)}
+.kbd{font-family:var(--pix);font-size:8px;color:var(--ink);background:var(--panel);
+  border:2px solid var(--line);padding:4px 7px;box-shadow:2px 2px 0 rgba(0,0,0,.4)}
+
+/* ── Run Agent + Settings ────────────────────────── */
+.run-intro{font-family:var(--term);font-size:21px;color:var(--ink-dim);margin-bottom:18px;
+  border-left:4px solid var(--gold);padding-left:14px;letter-spacing:.6px}
+.api-chips{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px;
+  background:var(--bg2);border:2px solid var(--line);padding:12px 16px;box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.api-chips .lbl{font-family:var(--pix);font-size:8px;color:var(--ink-dim);letter-spacing:.5px}
+.chip{font-family:var(--pix);font-size:8px;padding:6px 10px;border:2px solid;display:inline-flex;
+  align-items:center;gap:6px;letter-spacing:.5px;cursor:pointer}
+.chip.ok{color:var(--teal);border-color:var(--teal)}
+.chip.no{color:var(--rust);border-color:var(--rust)}
+.chip .d{width:8px;height:8px}.chip.ok .d{background:var(--teal)}.chip.no .d{background:var(--rust)}
+.chip-action{font-family:var(--pix);font-size:8px;color:var(--gold);cursor:pointer;margin-left:auto;letter-spacing:.5px}
+.run-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+@media(max-width:680px){.run-grid{grid-template-columns:1fr}}
+.run-how{background:var(--bg2);border:2px solid var(--line);border-left:6px solid var(--teal);
+  padding:14px 16px;margin-bottom:20px;font-family:var(--term);font-size:19px;color:var(--ink-dim);
+  letter-spacing:.5px;line-height:1.5}
+.run-how b{color:var(--teal)}
+.run-how .step{color:var(--gold);font-family:var(--pix);font-size:8px;margin-right:6px}
+.trigger-line{font-family:var(--term);font-size:20px;color:var(--gold);background:var(--stage);
+  border:2px solid var(--gold-deep);padding:8px 12px;display:inline-block;margin-top:6px;letter-spacing:.6px}
+.run-ta{font-family:var(--term);font-size:20px;width:100%;min-height:150px;background:var(--stage);
+  border:2px solid var(--line);color:var(--ink);padding:12px 14px;resize:vertical;letter-spacing:.5px;line-height:1.5}
+.run-ta:focus{outline:none;border-color:var(--gold)}
+.run-textsrc{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 14px}
+.run-srclabel{font-family:var(--term);font-size:18px;color:var(--ink-dim);letter-spacing:.6px}
+.run-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.resp-box{background:var(--stage);border:2px solid var(--gold-deep);margin-top:6px;
+  box-shadow:5px 5px 0 rgba(0,0,0,.4)}
+.resp-head{font-family:var(--pix);font-size:9px;color:var(--gold);padding:12px 16px;
+  border-bottom:2px solid var(--line);display:flex;align-items:center;gap:10px;letter-spacing:.5px}
+.resp-stream{font-family:var(--term);font-size:18px;color:var(--teal);margin-left:auto;letter-spacing:.6px}
+.resp-out{font-family:var(--term);font-size:21px;color:var(--ink);padding:18px;max-height:50vh;
+  overflow-y:auto;white-space:pre-wrap;line-height:1.5;letter-spacing:.5px}
+.resp-foot{display:flex;gap:10px;padding:0 16px 16px;flex-wrap:wrap}
+.btn-ghost{font-family:var(--pix);font-size:8px;color:var(--ink-dim);background:var(--panel);
+  border:2px solid var(--line);padding:9px 12px;cursor:pointer;letter-spacing:.5px;box-shadow:2px 2px 0 rgba(0,0,0,.4)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--gold-deep)}
+.btn-ghost:active{transform:translate(2px,2px);box-shadow:none}
+/* modal */
+.mcard{background:var(--panel);border:3px solid var(--gold);max-width:540px;width:100%;
+  box-shadow:0 0 0 3px #000,8px 8px 0 rgba(0,0,0,.6);max-height:90vh;overflow-y:auto}
+.mcard-head{display:flex;align-items:center;padding:18px;border-bottom:3px solid var(--gold);
+  background:var(--panel-lit)}
+.mcard-head .t{font-family:var(--pix);font-size:13px;color:var(--gold);flex:1;letter-spacing:.5px;text-shadow:2px 2px 0 #000}
+.mcard-body{padding:18px;display:flex;flex-direction:column;gap:16px}
+.mfield label{font-family:var(--pix);font-size:8px;color:var(--gold);display:block;margin-bottom:7px;letter-spacing:.5px}
+.mfield .hint{font-family:var(--term);font-size:16px;color:var(--ink-dim);margin-top:5px;letter-spacing:.5px}
+.gear-btn{font-family:var(--pix);font-size:9px;color:var(--ink-dim);background:var(--panel);
+  border:2px solid var(--line);padding:9px 11px;cursor:pointer;letter-spacing:.5px;box-shadow:2px 2px 0 rgba(0,0,0,.4)}
+.gear-btn:hover{color:var(--gold);border-color:var(--gold-deep)}
+
+/* ── Conductor view ──────────────────────────────── */
+.pipe-ribbon{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.pr-node{flex:1;min-width:120px;background:var(--bg2);border:2px solid var(--line);padding:12px 10px;
+  text-align:center;position:relative;box-shadow:3px 3px 0 rgba(0,0,0,.4)}
+.pr-node .pn{font-family:var(--pix);font-size:8px;color:var(--ink-dim);letter-spacing:.5px;line-height:1.6}
+.pr-node .ps{font-family:var(--term);font-size:16px;color:var(--ink-dim);margin-top:4px;letter-spacing:.5px}
+.pr-node.done{border-color:var(--teal)}.pr-node.done .pn{color:var(--teal)}
+.pr-node.active{border-color:var(--gold);background:var(--panel-lit);box-shadow:3px 3px 0 var(--gold-deep)}
+.pr-node.active .pn{color:var(--gold)}
+.pr-arrow{display:flex;align-items:center;color:var(--gold-deep);font-family:var(--pix);font-size:10px}
+.cond-panel{background:var(--bg2);border:2px solid var(--line);padding:18px 20px;margin-bottom:18px;
+  box-shadow:4px 4px 0 rgba(0,0,0,.4)}
+.cond-panel.next{border-left:6px solid var(--gold)}
+.cond-panel.decide{border-left:6px solid var(--rust)}
+.cond-h{font-family:var(--pix);font-size:11px;margin-bottom:12px;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.cond-panel.next .cond-h{color:var(--gold)}
+.cond-panel.decide .cond-h{color:var(--rust)}
+.cond-now{font-family:var(--term);font-size:21px;color:var(--ink);margin-bottom:6px;letter-spacing:.5px}
+.cond-next-txt{font-family:var(--term);font-size:22px;color:var(--ink);margin-bottom:16px;letter-spacing:.5px;line-height:1.4}
+.cond-next-txt b{color:var(--gold)}
+.cond-actions{display:flex;gap:12px;flex-wrap:wrap}
+.dec-card{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line)}
+.dec-card:last-child{border-bottom:none}
+.dec-badge{font-family:var(--pix);font-size:8px;color:var(--rust);border:2px solid var(--rust);padding:5px 7px;flex-shrink:0;letter-spacing:.5px}
+.dec-body{flex:1}
+.dec-prob{font-family:var(--term);font-size:21px;color:var(--ink);letter-spacing:.5px;line-height:1.4}
+.dec-meta{font-family:var(--term);font-size:17px;color:var(--ink-dim);margin-top:3px;letter-spacing:.5px}
+.cond-note{font-family:var(--term);font-size:18px;color:var(--ink-dim);margin-top:14px;letter-spacing:.5px;line-height:1.45}
+.cond-empty{font-family:var(--term);font-size:20px;color:var(--ink-dim);font-style:italic;letter-spacing:.5px}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  font-family:var(--pix);font-size:9px;color:var(--bg);background:var(--gold);
+  padding:12px 18px;z-index:9999;display:none;box-shadow:4px 4px 0 var(--gold-deep)}
+.foot{text-align:center;font-family:var(--term);font-size:16px;color:var(--ink-dim);
+  opacity:.6;margin-top:30px;padding:20px}
+</style>
+</head>
+<body>
+<div id="crt"></div>
+
+<!-- HUD -->
+<div class="hud">
+  <div class="hud-logo">
+    <svg width="40" height="40" viewBox="0 0 10 10"></svg>
+    <div>
+      <div class="hud-title">&#9834; SYMPHONY ENGINE &#9834;</div>
+      <div class="hud-sub">Book Machine — the orchestra, as a game</div>
+    </div>
+  </div>
+  <div class="hud-spacer"></div>
+  <div class="tabs">
+    <button class="tab active" data-view="log" onclick="showView('log')">&#9835; MY WORK</button>
+    <button class="tab" data-view="conductor" onclick="showView('conductor')">&#127935; CONDUCTOR</button>
+    <button class="tab" data-view="run" onclick="showView('run')">&#9654; RUN AGENT</button>
+    <button class="tab" data-view="stage" onclick="showView('stage')">THE ORCHESTRA</button>
+    <button class="tab" data-view="help" onclick="showView('help')">HOW TO PLAY</button>
+    <button class="gear-btn" onclick="openSettings()" title="Settings &amp; API keys">&#9881; SETTINGS</button>
+  </div>
+</div>
+
+<!-- ════════ STAGE VIEW ════════ -->
+<div class="view" id="view-stage">
+
+  <div class="stage">
+    <div class="curtain"></div>
+    <div class="stage-inner">
+      <div class="podium-row">
+        <div class="podium-block" id="conductor-block">
+          <div id="conductor-sprite"></div>
+          <div class="podium-base"></div>
+        </div>
+      </div>
+      <div class="podium-label">THE CONDUCTOR</div>
+      <div class="stage-tag">click any musician for their stats &amp; summon command</div>
+      <div class="footlights">
+        <span class="footlight"></span><span class="footlight"></span><span class="footlight"></span>
+        <span class="footlight"></span><span class="footlight"></span><span class="footlight"></span>
+        <span class="footlight"></span><span class="footlight"></span><span class="footlight"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+
+  <!-- Game loop -->
+  <div class="loop">
+    <div class="loop-title">&#9654; THE REHEARSAL LOOP</div>
+    <div class="loop-track">
+      <span class="loop-node">PREMIERE</span><span class="loop-arrow">&#9654;</span>
+      <span class="loop-node">RECORD</span><span class="loop-arrow">&#9654;</span>
+      <span class="loop-node">BACKWARD WAVE</span><span class="loop-arrow">&#9654;</span>
+      <span class="loop-node">RECONCILE</span><span class="loop-arrow">&#9654;</span>
+      <span class="loop-node">CHECKPOINT</span><span class="loop-arrow">&#9654;</span>
+      <span class="loop-node">AUDIT</span><span class="loop-arrow">&#8635;</span>
+    </div>
+    <div class="loop-note">The Conductor runs this loop once per movement. A backward wave wakes only the movements the Ledger says were touched.</div>
+  </div>
+
+  <!-- Entry points -->
+  <div class="paths">
+    <div class="path">
+      <h4>&#9654; PATH A — FROM A BLANK PAGE</h4>
+      <p>Draft the whole book from nothing.</p>
+      <div class="chain">TUNING ROOM<br>&#8595;<br>REHEARSAL<br>&#8595;<br>DRESS REHEARSAL</div>
+    </div>
+    <div class="path alt">
+      <h4>&#9654; PATH B — EDIT EXISTING DRAFT</h4>
+      <p>Bring a finished manuscript; edit without drafting. Point the Conductor at it and call a Dress Rehearsal, or run any single pass alone.</p>
+      <div class="chain">LOAD MANUSCRIPT<br>&#8595;<br>PRINCIPALS + BOOTH + AUDIENCE</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════ LOG VIEW ════════ -->
+<div class="view active" id="view-log">
+  <div class="board-title">&#9835; NOW PLAYING &mdash; STATUS OF EVERY BOOK</div>
+  <div id="folder-bar" class="folder-bar"></div>
+  <div id="board"></div>
+
+  <div class="sub-head">&#9654; PERFORMANCE LOG &mdash; WHAT HAS BEEN DONE</div>
+  <div class="log-intro">Fills itself from each book&rsquo;s <code>state/rehearsal-log.md</code> &mdash; every premiere (&#10003;) and backward wave (&#8635;) Claude records shows up here. Nothing to log by hand. Hit <b>RESCAN</b> above after a session to refresh.</div>
+  <div id="logs"></div>
+</div>
+
+<!-- ════════ HELP VIEW ════════ -->
+<div class="view" id="view-help">
+  <div class="help-block">
+    <h3>WHAT THIS IS</h3>
+    <p>A cheat sheet for your whole Book Machine. The stage is your orchestra: each musician is one agent. Click any of them to see what they do, when to use them, and the exact words to summon them. Use it to figure out <em>what you need next</em> at a glance.</p>
+
+    <h3>THE CAST</h3>
+    <p><span class="kbd">CONDUCTOR</span> the lead session. Runs the loop, never plays or marks the score.</p>
+    <p><span class="kbd">PLAYERS</span> the agents — one job each, dispatched as subagents.</p>
+    <p><span class="kbd">SECTION LEADS</span> the Concertmaster (voice), Adjudicator (the villain critic), and Librarian (sole writer of shared state).</p>
+    <p><span class="kbd">THE BOOTH</span> deterministic gates. A movement that blows a budget bounces back before you ever read it.</p>
+
+    <h3>READING THE STAGE</h3>
+    <p>Sections are colour-coded by phase: <span style="color:var(--c-tuning)">Tuning Room</span>, <span style="color:var(--c-rehearsal)">Rehearsal</span>, <span style="color:var(--c-booth)">The Booth</span>, <span style="color:var(--c-principals)">Principals</span>, <span style="color:var(--c-dress)">Dress Rehearsal</span>, <span style="color:var(--c-leads)">Section Leads</span>. Everything is independently invocable &mdash; you can call one player on one chapter, or let the Conductor dispatch the whole panel.</p>
+
+    <h3>PERFORMANCE LOG</h3>
+    <p>The <span class="kbd">MY WORK</span> tab's Performance Log is your "what has been done" list &mdash; it reads each book's <code>state/rehearsal-log.md</code> automatically and shows every premiere and backward wave. No manual logging; just RESCAN after Claude has worked.</p>
+
+    <h3>CONDUCTOR — HANDING OVER THE BATON</h3>
+    <p>The <span class="kbd">CONDUCTOR</span> tab shows where a book sits in the pipeline and what&rsquo;s next. <b>RUN NEXT STEP</b> does the single next thing; <b>RUN NEXT BLOCK</b> does the whole next phase. Both build a brief &mdash; COPY it into Claude Code, or WRITE TO FOLDER and say &ldquo;run the brief.&rdquo;</p>
+    <p><b>Where you make decisions:</b> the Conductor tab&rsquo;s <span style="color:var(--rust)">DECISIONS</span> panel. It reads the Ledger&rsquo;s parked escalations. When Claude hits a call mid-run, it stops and asks you in the chat; longer-term calls wait for you here. <b>BRING THESE TO CLAUDE</b> walks you through them.</p>
+
+    <h3>THE RULES NO AGENT BREAKS</h3>
+    <p>One writer for state (the Librarian). Gates before edits, not after. Ration tics, never eliminate. Tune to the A. Commit every wave. Ten on stage max. Surface real decisions; handle the rest silently.</p>
+  </div>
+</div>
+
+<!-- ════════ RUN VIEW ════════ -->
+<div class="view" id="view-run">
+  <div class="run-intro">This machine is <b>Claude-only</b>. Pick a player and a target; it builds a <b>brief</b> for Claude. No API keys &mdash; it runs on your Claude Code session.</div>
+  <div class="run-how">
+    <div><span class="step">1</span>Build the brief below.</div>
+    <div><span class="step">2</span>Hit <b>COPY</b> (paste into your Claude Code chat) <b>or WRITE TO FOLDER</b> to drop it in your Book Machine folder.</div>
+    <div><span class="step">3</span>In Claude Code, just say:</div>
+    <div class="trigger-line">run the brief</div>
+  </div>
+
+  <div class="run-grid">
+    <div class="mfield">
+      <label>BOOK</label>
+      <select class="f-sel" id="run-book"></select>
+    </div>
+    <div class="mfield">
+      <label>PLAYER / PASS</label>
+      <select class="f-sel" id="run-skill" onchange="onRunSkillChange()"></select>
+    </div>
+  </div>
+
+  <div id="run-custom-wrap" style="display:none;margin-bottom:14px">
+    <div class="mfield"><label>WHAT DO YOU WANT DONE?</label>
+      <textarea class="run-ta" id="run-custom" placeholder="Describe the task in your own words…" style="min-height:90px"></textarea></div>
+  </div>
+
+  <div class="mfield"><label>TARGET FILE OR PASTED TEXT (optional)</label>
+    <textarea class="run-ta" id="run-text" placeholder="Paste a chapter, or name the file (e.g. drafts/chapter-07.md), or load a .md file…"></textarea></div>
+  <div class="run-textsrc">
+    <button class="btn-ghost" onclick="loadRunFile()">&#128193; LOAD .MD FILE</button>
+    <button class="btn-ghost" onclick="document.getElementById('run-text').value='';updateRunWC()">&#10005; CLEAR TEXT</button>
+    <span class="run-srclabel" id="run-wc">0 words</span>
+  </div>
+
+  <div class="run-actions">
+    <button class="f-btn" id="run-go" onclick="generateBrief()">&#9654; BUILD BRIEF</button>
+    <span class="run-srclabel" id="run-hint"></span>
+  </div>
+</div>
+
+<!-- ════════ CONDUCTOR VIEW ════════ -->
+<div class="view" id="view-conductor">
+  <div class="run-intro">Hand the baton to the <b>Conductor</b>. Pick a book; it tells you where it is, what&rsquo;s next, and builds the brief to run the next step &mdash; or the whole next block. Decisions that need you surface below.</div>
+  <div class="mfield" style="max-width:420px;margin-bottom:18px">
+    <label>BOOK</label>
+    <select class="f-sel" id="cond-book" onchange="renderConductor()"></select>
+  </div>
+  <div id="conductor-body"></div>
+</div>
+
+<!-- Brief modal (shared by RUN + CONDUCTOR) -->
+<div class="overlay" id="brief-overlay" onclick="if(event.target===this)closeBrief()">
+  <div class="mcard" style="max-width:700px">
+    <div class="mcard-head"><span class="t" id="brief-title">CLAUDE BRIEF</span>
+      <button class="card-x" onclick="closeBrief()">[X]</button></div>
+    <div class="mcard-body">
+      <div class="resp-out" id="brief-out" style="border:2px solid var(--line);max-height:46vh"></div>
+      <div class="resp-foot" style="display:flex;padding:0">
+        <button class="btn-ghost" onclick="copyBrief()">&#128203; COPY</button>
+        <button class="btn-ghost" onclick="writeBrief()">&#128190; WRITE TO FOLDER</button>
+        <button class="btn-ghost" onclick="closeBrief()">CLOSE</button>
+      </div>
+      <div class="trigger-line">then in Claude Code, say: run the brief</div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="overlay" id="settings-overlay" onclick="if(event.target===this)closeSettings()">
+  <div class="mcard">
+    <div class="mcard-head"><span class="t">&#9881; SETTINGS</span>
+      <button class="card-x" onclick="closeSettings()">[X]</button></div>
+    <div class="mcard-body">
+      <div class="mfield"><label>YOUR NAME (used in briefs)</label>
+        <input class="f-in" type="text" id="s-name" placeholder="e.g. Xtine">
+        <span class="hint">This machine is Claude-only and runs on your Claude Code session — no API keys needed.</span></div>
+      <button class="f-btn" onclick="saveSettings()">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<!-- Stats modal -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeCard()">
+  <div class="card" id="stat-card"></div>
+</div>
+
+<div id="toast"></div>
+<div class="foot">Book Machine · Symphony Engine · open in any browser, no server needed</div>
+
+<script>
+/* ── Pixel sprite renderer ──────────────────────────
+   Each sprite is a grid of strings. '#' = filled.
+   Rendered as an SVG of crisp rects, tinted by phase. */
+const SPRITES = {
+  baton:[
+    ".........#",
+    "........##",
+    ".......##.",
+    "......##..",
+    ".....##...",
+    "....##....",
+    "...##.....",
+    "..##......",
+    ".##.......",
+    "##........"],
+  violin:[
+    "....##....",
+    "....##....",
+    "...####...",
+    "..##..##..",
+    ".##....##.",
+    ".##....##.",
+    ".##....##.",
+    "..##..##..",
+    "...####...",
+    "....##...."],
+  book:[
+    "##########",
+    "#........#",
+    "#.######.#",
+    "#........#",
+    "#.######.#",
+    "#........#",
+    "#.######.#",
+    "#........#",
+    "#........#",
+    "##########"],
+  globe:[
+    "..######..",
+    ".#..##..#.",
+    "#..####..#",
+    "#.######.#",
+    "##########",
+    "##########",
+    "#.######.#",
+    "#..####..#",
+    ".#..##..#.",
+    "..######.."],
+  mask:[
+    ".########.",
+    "##########",
+    "#.##..##.#",
+    "#.##..##.#",
+    "##########",
+    "##########",
+    ".##....##.",
+    "..##..##..",
+    "...####...",
+    "....##...."],
+  lock:[
+    "...####...",
+    "..##..##..",
+    "..#....#..",
+    ".########.",
+    ".########.",
+    ".###..###.",
+    ".##....##.",
+    ".###..###.",
+    ".########.",
+    ".########."],
+  fork:[
+    ".##....##.",
+    ".##....##.",
+    ".##....##.",
+    ".##....##.",
+    "..######..",
+    "...####...",
+    "....##....",
+    "....##....",
+    "....##....",
+    "....##...."],
+  quill:[
+    "........##",
+    ".......##.",
+    "......##..",
+    ".....##...",
+    "....##....",
+    "...##.....",
+    "..##.##...",
+    ".##..##...",
+    "##...##...",
+    "....####.."],
+  glass:[
+    ".#####....",
+    "##...##...",
+    "#.....#...",
+    "#.....#...",
+    "##...##...",
+    ".#####.#..",
+    "......###.",
+    ".......###",
+    "........##",
+    ".........#"],
+  eye:[
+    "..........",
+    "..######..",
+    ".########.",
+    "##..##..##",
+    "##.####.##",
+    "##..##..##",
+    ".########.",
+    "..######..",
+    "..........",
+    ".........."],
+  gavel:[
+    ".......###",
+    "......####",
+    ".....####.",
+    "....####..",
+    "...####...",
+    "..####....",
+    ".####.....",
+    "####......",
+    "###.......",
+    "##........"],
+  metronome:[
+    "....#.....",
+    "....##....",
+    "...#.#....",
+    "...#..#...",
+    "..#...#...",
+    "..#...##..",
+    ".#######..",
+    ".#######..",
+    "#########.",
+    "#########."],
+  note:[
+    "......###.",
+    "......###.",
+    "......#.#.",
+    "......#.#.",
+    "......#.#.",
+    "..##..#.#.",
+    ".####.###.",
+    ".####.###.",
+    "..##......",
+    ".........."],
+  monitor:[
+    "##########",
+    "#........#",
+    "#.######.#",
+    "#.#....#.#",
+    "#.######.#",
+    "#........#",
+    "##########",
+    "...####...",
+    "..######..",
+    ".########."],
+  trophy:[
+    ".########.",
+    "##########",
+    "##########",
+    ".########.",
+    "..######..",
+    "...####...",
+    "....##....",
+    "...####...",
+    "..######..",
+    ".########."]
+};
+
+function spriteSVG(key,color,scale){
+  const g=SPRITES[key]||SPRITES.note, n=g.length, px=scale||5;
+  let rects='';
+  for(let y=0;y<n;y++)for(let x=0;x<g[y].length;x++)
+    if(g[y][x]==='#') rects+=`<rect x="${x}" y="${y}" width="1" height="1"/>`;
+  const w=g[0].length;
+  return `<svg width="${w*px}" height="${n*px}" viewBox="0 0 ${w} ${n}" fill="${color}">${rects}</svg>`;
+}
+
+/* ── The orchestra ──────────────────────────────────── */
+const PHASES={
+  podium:{label:"THE PODIUM",color:"var(--c-podium)",sub:"runs the show"},
+  tuning:{label:"ACT I · TUNING ROOM",color:"var(--c-tuning)",sub:"build the score before a note is played"},
+  rehearsal:{label:"ACT II · REHEARSAL",color:"var(--c-rehearsal)",sub:"premiere movements + backward waves"},
+  booth:{label:"THE BOOTH · GATES",color:"var(--c-booth)",sub:"deterministic — pass, or bounce back"},
+  principals:{label:"PRINCIPALS · PER-PASSAGE",color:"var(--c-principals)",sub:"audit each passage"},
+  dress:{label:"ACT III · DRESS REHEARSAL",color:"var(--c-dress)",sub:"whole-symphony passes"},
+  leads:{label:"SECTION LEADS",color:"var(--c-leads)",sub:"rule the hard calls · write the state"}
+};
+const RAWCOLOR={podium:"#ffd23f",tuning:"#b07ad6",rehearsal:"#3fd0c0",booth:"#f0a81e",principals:"#9a7ae0",dress:"#46c2a8",leads:"#d98ad0"};
+
+const AGENTS=[
+ // PODIUM
+ {id:"conductor",name:"Conductor",role:"Maestro",phase:"podium",sprite:"baton",
+  does:"The lead session itself. Runs the rehearsal loop and the backward wave, dispatches every other player, reconciles their reports. Never writes prose or marks the score.",
+  when:"Always on — it IS your session. At start it reads the Rehearsal Log, reports position, and asks what to do.",
+  summon:"It's the session you're already in.",
+  flavor:"Hands never touch an instrument; the whole sound is theirs."},
+
+ // TUNING ROOM
+ {id:"score-architect",name:"Score Architect",role:"Structure",phase:"tuning",sprite:"book",
+  does:"Setup lead. Lays out the dossier / NPE structure of the symphony — overall shape, the movement list, and the through-line.",
+  when:"At the very start of a new book, before any drafting.",
+  summon:"Dispatch the score-architect to lay out structure & movements.",
+  flavor:"Draws the staves before a single note exists."},
+ {id:"world-builder",name:"World Builder",role:"Setting",phase:"tuning",sprite:"globe",
+  does:"Builds the world dossier, the setting, and the target tension curve.",
+  when:"At setup, alongside the Score Architect.",
+  summon:"Dispatch the world-builder for the world dossier & tension curve.",
+  flavor:"Paints the hall the music will be played in."},
+ {id:"casting-director",name:"Casting Director",role:"The Cast",phase:"tuning",sprite:"mask",
+  does:"Builds the character truth vaults — the authoritative cast bibles every other agent checks behavior against.",
+  when:"At setup, once structure exists.",
+  summon:"Dispatch the casting-director to build the character truth vaults.",
+  flavor:"Knows each player's soul before they say a word."},
+ {id:"name-lock",name:"Name-Lock",role:"Namesmith",phase:"tuning",sprite:"lock",
+  does:"Generates, validates, and locks character names; guards against tell-tale AI-cluster names.",
+  when:"During casting, before names appear in prose.",
+  summon:"Dispatch name-lock to generate & lock character names.",
+  flavor:"A name, once locked, never drifts."},
+ {id:"tuning",name:"Tuning",role:"The A",phase:"tuning",sprite:"fork",
+  does:"Establishes the tuning A — builds the voice anchor and the crutch list from your author samples. The standard every draft is held to.",
+  when:"At setup, from sample chapters in your voice.",
+  summon:"Dispatch the tuning agent to build the voice anchor from samples.",
+  flavor:"Strike it once; the whole orchestra tunes to it."},
+
+ // REHEARSAL
+ {id:"soloist",name:"Soloist",role:"Drafter",phase:"rehearsal",sprite:"violin",
+  does:"Premieres (drafts) a fresh movement through the seven-step loop from the Conductor's brief.",
+  when:"Each time you draft a new chapter from scratch.",
+  summon:"Dispatch the soloist to premiere movement N.",
+  flavor:"Plays the part for the first time, live."},
+ {id:"tutti-player",name:"Tutti Player",role:"Reviser",phase:"rehearsal",sprite:"violin",
+  does:"Re-rehearses ONE existing movement during a backward wave — given the new movement, its own, and scoped state slices. Edits only its own file; usually reports 'no change needed.'",
+  when:"After a new movement lands, for each earlier movement the Ledger flags as touched.",
+  summon:"Dispatch a tutti-player on movement N during a wave.",
+  flavor:"One desk in the section, adjusting to what just changed."},
+ {id:"understudies",name:"Understudies",role:"Minor Cast",phase:"rehearsal",sprite:"mask",
+  does:"Builds a truth vault for a minor character who unexpectedly steps forward mid-rehearsal.",
+  when:"When a background character grows a real role mid-draft.",
+  summon:"Dispatch understudies to vault a minor character stepping forward.",
+  flavor:"Waiting in the wings, score already memorised."},
+ {id:"margin",name:"Margin",role:"Scribbler",phase:"rehearsal",sprite:"quill",
+  does:"Catches overflow ideas thrown off during drafting and routes them to the Librarian's Sidethought Archive.",
+  when:"Passively, during drafting — nothing gets lost.",
+  summon:"Dispatch margin to capture stray ideas to the archive.",
+  flavor:"Every good idea you had at 2am, written in the margin."},
+
+ // BOOTH
+ {id:"booth",name:"The Booth",role:"Gatekeeper",phase:"booth",sprite:"monitor",
+  does:"Runs the deterministic gates — tuning, crutch, repetition, redundancy, seam — against the Bowing Sheet budgets. A movement that blows a hard budget bounces back to its player. Measures, never rewrites.",
+  when:"As the last step of any premiere or wave edit.",
+  summon:"Dispatch the booth to run the gates on movement N.",
+  flavor:"The sound engineer who kills the take before you hear it."},
+ {id:"crutch-inspector",name:"Crutch Inspector",role:"Tic Hunter",phase:"booth",sprite:"glass",
+  does:"Deterministic crutch-density map across a movement or the manuscript (runs pattern_detector.py).",
+  when:"Inside the Booth, or by hand on any chapter you suspect is tic-heavy.",
+  summon:"Run the crutch check on chapter N.",
+  flavor:"Counts every 'just', every 'somehow', without mercy."},
+ {id:"rhythm-inspector",name:"Rhythm Inspector",role:"Cadence",phase:"booth",sprite:"glass",
+  does:"Deterministic sentence-opener variety and rhythm-monotony check (runs pattern_detector.py).",
+  when:"Inside the Booth, or by hand when prose feels samey.",
+  summon:"Run the rhythm check on chapter N.",
+  flavor:"Hears when every bar starts on the same beat."},
+
+ // PRINCIPALS
+ {id:"continuity",name:"Continuity",role:"Lorekeeper",phase:"principals",sprite:"glass",
+  does:"Per-passage audit of facts, POV knowledge-state, timeline, and spatial logic against the Score.",
+  when:"Per passage during rehearsal; whole-book at dress rehearsal.",
+  summon:"Have continuity audit chapter N.",
+  flavor:"Remembers which hand held the knife three chapters ago."},
+ {id:"character",name:"Character",role:"Truth Check",phase:"principals",sprite:"mask",
+  does:"Per-passage audit of behavior against the character truth vaults.",
+  when:"Per passage, whenever a character acts.",
+  summon:"Have the character agent audit chapter N.",
+  flavor:"Catches the moment someone stops being themselves."},
+ {id:"voice",name:"Voice",role:"Ear",phase:"principals",sprite:"note",
+  does:"Per-passage voice judgment against the A; escalates ambiguous signature-vs-crutch calls to the Concertmaster.",
+  when:"Per passage; the human-judgment partner to the Booth's meters.",
+  summon:"Have the voice agent judge chapter N against the A.",
+  flavor:"Knows your voice well enough to know when it slips."},
+ {id:"pacing-passage",name:"Pacing (Passage)",role:"Tempo",phase:"principals",sprite:"metronome",
+  does:"Per-passage pacing audit: word count, tension arc, and promise advancement.",
+  when:"Per passage during rehearsal.",
+  summon:"Have pacing-passage audit chapter N.",
+  flavor:"Feels the scene drag a half-beat before you do."},
+
+ // DRESS REHEARSAL
+ {id:"pacing-whole",name:"Pacing (Whole)",role:"Conductor's Tempo",phase:"dress",sprite:"metronome",
+  does:"Whole-symphony pacing: actual tension curve vs. target, drag zones, act structure.",
+  when:"At dress rehearsal, across the finished manuscript.",
+  summon:"Have the Pacing Principal read the whole book.",
+  flavor:"Steps back and hears the shape of the entire piece."},
+ {id:"audience",name:"Audience",role:"Cold Read",phase:"dress",sprite:"eye",
+  does:"The cold cover-to-cover read: engagement curve, drag zones, confusion, what landed. The most isolated agent — sees only the prose.",
+  when:"At dress rehearsal, or on any chapter for a fresh-eyes read.",
+  summon:"Give me the Audience's cold read of chapter N.",
+  flavor:"The stranger in row G who's never read a word of it."},
+ {id:"line-editor",name:"Line Editor",role:"Polish",phase:"dress",sprite:"quill",
+  does:"Prose-level craft pass: filter words, vague nouns, AI-isms, dialogue, opening and closing lines.",
+  when:"After structure is solid — line-level polish, chapter by chapter.",
+  summon:"Run the line editor on chapter N.",
+  flavor:"Tightens every sentence until it rings."},
+ {id:"payoff",name:"Payoff",role:"Debt Collector",phase:"dress",sprite:"trophy",
+  does:"Whole-manuscript payoff audit against the Leitmotif Ledger: every promise paid, every payoff set up.",
+  when:"At dress rehearsal, once the book is whole.",
+  summon:"Run the payoff audit against the ledger.",
+  flavor:"Makes sure every gun on the wall goes off."},
+
+ // SECTION LEADS
+ {id:"concertmaster",name:"Concertmaster",role:"Voice Lead",phase:"leads",sprite:"violin",
+  does:"Voice section-lead. Rules the ambiguous signature-vs-crutch calls the Booth escalates; coordinates the Tuning, Voice, and Line Editor when automation is on.",
+  when:"When a voice call is too close for the meters to settle.",
+  summon:"Escalate this voice call to the Concertmaster.",
+  flavor:"First chair. The final ear in the room."},
+ {id:"adjudicator",name:"Adjudicator",role:"The Villain",phase:"leads",sprite:"gavel",
+  does:"The adversarial guest critic — the pickiest acquisitions editor looking for a reason to pass. Diagnoses and rules; never rewrites. The opening sample isn't cleared until it would 'request the full.'",
+  when:"On the opening sample before it's cleared, at dress rehearsal, or to stress-test any movement.",
+  summon:"Send the opening sample to the Adjudicator.",
+  flavor:"Wants to say no. Make them say 'send me the rest.'"},
+ {id:"librarian",name:"Librarian",role:"Sole Scribe",phase:"leads",sprite:"book",
+  does:"The ONLY writer of shared state. Records facts, knowledge-state, threads, and the Movement Map after a draft; reconciles reports, commits agreed changes, parks escalations, writes the Wave Record after a wave.",
+  when:"After every movement is drafted and after every wave. Everyone else only proposes.",
+  summon:"Dispatch the librarian to record state / reconcile the wave.",
+  flavor:"One pen writes the canon. Everyone else petitions."}
+];
+
+/* ── Render the stage ───────────────────────────────── */
+function renderStage(){
+  // conductor on podium
+  document.getElementById('conductor-sprite').innerHTML=spriteSVG('baton',RAWCOLOR.podium,6);
+  document.getElementById('conductor-block').onclick=()=>openCard('conductor');
+
+  const order=['tuning','rehearsal','booth','principals','dress','leads'];
+  const host=document.getElementById('sections');
+  host.innerHTML='';
+  order.forEach(ph=>{
+    const meta=PHASES[ph];
+    const players=AGENTS.filter(a=>a.phase===ph);
+    const sec=document.createElement('div');
+    sec.className='section';
+    sec.style.setProperty('--accent',meta.color);
+    sec.innerHTML=`<div class="sec-head">
+        <span class="sec-badge"></span>
+        <span class="sec-title">${meta.label}</span>
+        <span class="sec-sub">${meta.sub}</span>
+      </div><div class="players"></div>`;
+    const grid=sec.querySelector('.players');
+    players.forEach(a=>{
+      const el=document.createElement('div');
+      el.className='player';
+      el.onclick=()=>openCard(a.id);
+      el.innerHTML=`<span class="lvl">${a.role.toUpperCase()}</span>
+        <div class="sprite">${spriteSVG(a.sprite,RAWCOLOR[ph],5)}</div>
+        <div class="pname">${a.name}</div>
+        <div class="prole">${a.role}</div>`;
+      grid.appendChild(el);
+    });
+    host.appendChild(sec);
+  });
+}
+
+function openCard(id){
+  const a=AGENTS.find(x=>x.id===id); if(!a)return;
+  const color=RAWCOLOR[a.phase];
+  const card=document.getElementById('stat-card');
+  card.style.setProperty('--accent',color);
+  card.innerHTML=`
+    <div class="card-head">
+      <div class="card-sprite">${spriteSVG(a.sprite,color,5)}</div>
+      <div class="card-titles">
+        <div class="card-name">${a.name}</div>
+        <div class="card-class">${PHASES[a.phase].label} &middot; ${a.role}</div>
+      </div>
+      <button class="card-x" onclick="closeCard()">[X]</button>
+    </div>
+    <div class="card-body">
+      <div class="stat"><div class="stat-label">WHAT IT DOES</div><div class="stat-val">${a.does}</div></div>
+      <div class="stat"><div class="stat-label">WHEN TO USE IT</div><div class="stat-val">${a.when}</div></div>
+      <div class="stat"><div class="stat-label">SUMMON</div>
+        <div class="summon"><span id="summon-text">${a.summon}</span>
+          <button class="copy-btn" onclick="copySummon('${a.id}')">COPY</button></div></div>
+      <div class="stat"><div class="flavor">&ldquo;${a.flavor}&rdquo;</div></div>
+    </div>`;
+  document.getElementById('overlay').classList.add('open');
+}
+function closeCard(){document.getElementById('overlay').classList.remove('open')}
+function copySummon(id){
+  const a=AGENTS.find(x=>x.id===id);
+  navigator.clipboard.writeText(a.summon).then(()=>toast('SUMMON COPIED'));
+}
+
+/* ── Views ──────────────────────────────────────────── */
+function showView(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
+  if(v==='log'){renderBoard();renderLogs();if(rootDir)scanBooksFolder(true);}
+  if(v==='run'){populateRunControls();}
+  if(v==='conductor'){renderConductor();}
+  window.scrollTo(0,0);
+}
+
+/* ── Performance Log — auto-derived from rehearsal-log.md ── */
+const AUTO_KEY='bm_perf_auto_v1';
+function loadAutoLogs(){try{return JSON.parse(localStorage.getItem(AUTO_KEY))||[]}catch(e){return[]}}
+function saveAutoLogs(a){localStorage.setItem(AUTO_KEY,JSON.stringify(a))}
+function fmtDate(iso){if(!iso)return '';const d=new Date(iso);return isNaN(d)?String(iso):d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}
+
+/* Pull the flows (premieres + backward waves) out of one rehearsal-log.md */
+function parseFlows(text){
+  const flows=[];
+  const lastUpd=(text.match(/Last updated:\s*([^\n·|]+)/i)||[])[1];
+  const date=lastUpd?lastUpd.trim().replace(/[\[\]]/g,''):'';
+  text.split(/\n(?=###\s)/).forEach(b=>{
+    const head=(b.match(/^###\s+(.+)/m)||[])[1]||''; let m;
+    if((m=head.match(/^Movement\s+(\d+)\s*[—–-]\s*(.+)$/i))){
+      const title=m[2].trim().replace(/[\[\]]/g,'');
+      if(!title||/^title/i.test(title))return;            // skip template
+      const words=(b.match(/Words:\**\s*([\d,]+)/i)||[])[1];
+      const call=((b.match(/Conductor'?s call:\**\s*([^\n]+)/i)||[])[1]||'').replace(/[\[\]*]/g,'').trim();
+      let note=title; if(words)note+=` · ${words}w`;
+      if(call&&!/clean \/ re-rehearse/i.test(call))note+=` · ${call}`;
+      flows.push({pass:`Movement ${m[1]} premiered`,note,date,kind:'premiere'});
+    }else if((m=head.match(/^Wave triggered by Movement\s+(\d+)/i))){
+      const woken=((b.match(/Players woken[^:]*:\**\s*([^\n]+)/i)||[])[1]||'').replace(/[*]/g,'').replace(/\([^)]*\)/g,'').replace(/\[[^\]]*\]/g,'').trim();
+      const conv=((b.match(/Convergence check:\**\s*([^\n]+)/i)||[])[1]||'').replace(/[\[\]*]/g,'').trim();
+      let note='';
+      if(woken&&!/e\.g\./i.test(woken)&&/\d/.test(woken))note+=`woke movements ${woken}`;
+      if(conv&&!/settling \/ oscillation/i.test(conv))note+=(note?' · ':'')+conv;
+      flows.push({pass:`Backward wave — from mvmt ${m[1]}`,note:note||'sweep run',date,kind:'wave'});
+    }
+  });
+  // Dress-rehearsal passes — from a "## Dress Rehearsal Log" section
+  // NB: terminator must be "## " (h2 + space) so the "### Pass" entries don't end the section
+  const dress=text.match(/##\s*Dress Rehearsal Log[^\n]*\n([\s\S]+?)(?=\n## |\n---|$)/i);
+  if(dress){
+    dress[1].split('\n').forEach(line=>{
+      const mm=line.match(/^#{2,4}\s+(.+?)\s*[—–-]\s*(.+)$/)
+        ||line.match(/^[-*]\s*\[[xX ]\]\s*(.+?)\s*[—–:-]\s*(.+)$/)
+        ||line.match(/^[-*]\s+(.+?):\s*(.+)$/);
+      if(mm&&!/\[.*\]/.test(mm[1]))flows.push({pass:mm[1].trim(),note:mm[2].trim(),date,kind:'polish'});
+    });
+  }
+  return flows;
+}
+
+/* movement-map.md → where the book is in drafting */
+function parseMovementMap(text){
+  const mv={total:0,drafted:0,settled:0,planned:0,next:null};
+  const rows=text.split('\n').filter(l=>/^\|\s*\d+\s*\|/.test(l));
+  rows.forEach(l=>{
+    const cells=l.split('|').map(c=>c.trim());
+    const n=parseInt(cells[1]); if(isNaN(n))return;
+    const status=(cells[cells.length-2]||'').toUpperCase();
+    mv.total++;
+    if(/SETTLED/.test(status))mv.settled++;
+    else if(/DRAFTED|REHEARSAL/.test(status))mv.drafted++;
+    else if(/PLANNED/.test(status)){mv.planned++; if(mv.next===null)mv.next=n;}
+  });
+  mv.drafted+=mv.settled; // settled implies drafted
+  return mv;
+}
+
+/* leitmotif-ledger.md → pending decisions for the Composer */
+function parseLedgerDecisions(text){
+  const out=[];
+  const sec=text.match(/##\s*Escalations Awaiting a Ruling[^\n]*\n([\s\S]+?)(?=\n##|\n---|$)/i);
+  if(!sec)return out;
+  sec[1].split('\n').forEach(l=>{
+    if(!/^\|/.test(l)||/Thread ID|^\|[-\s|]+$/i.test(l))return;
+    const c=l.split('|').map(x=>x.trim());
+    const threadId=c[1]||'', raisedBy=c[2]||'', problem=c[3]||'', decision=c[4]||'';
+    if(problem && !decision)out.push({threadId,raisedBy,problem});  // unresolved
+  });
+  return out;
+}
+function renderLogs(){
+  const logs=loadAutoLogs();
+  const host=document.getElementById('logs');
+  if(!logs.length){host.innerHTML='<div class="empty-log">Nothing recorded yet. As Claude premieres movements and runs backward waves, each book&rsquo;s rehearsal log fills in &mdash; and this list fills itself. Connect your folder above and hit RESCAN after a session.</div>';return}
+  const byBook={};
+  logs.forEach(l=>{(byBook[l.book]=byBook[l.book]||[]).push(l)});
+  let html='';
+  Object.keys(byBook).forEach(book=>{
+    const entries=byBook[book];
+    html+=`<div class="book-log"><div class="book-log-head">
+        <span class="book-log-title">&#9835; ${esc(book)}</span>
+        <span class="book-log-count">${entries.length} pass${entries.length>1?'es':''}</span></div>`;
+    entries.forEach(e=>{
+      const icon=e.kind==='wave'?'&#8635;':'&#10003;';
+      html+=`<div class="quest"><span class="quest-check">[${icon}]</span>
+        <div class="quest-body"><div class="quest-pass">${esc(e.pass)}</div>
+        ${e.note?`<div class="quest-note">${esc(e.note)}</div>`:''}</div>
+        <span class="quest-date">${esc(fmtDate(e.date))}</span></div>`;
+    });
+    html+=`</div>`;
+  });
+  host.innerHTML=html;
+}
+
+/* ── Now Playing board (reads the dashboard's book data) ── */
+const PROJECTS_KEY='bm-projects-v2';
+const STATUS_MAP={
+  idle:{c:'#9a8ad0',label:'IDEA'},
+  drafting:{c:'#3fd0c0',label:'DRAFTING'},
+  editing:{c:'#f0a81e',label:'EDITING'},
+  revision:{c:'#b07ad6',label:'REVISION'},
+  complete:{c:'#ffd23f',label:'COMPLETE'}
+};
+function loadProjects(){try{return JSON.parse(localStorage.getItem(PROJECTS_KEY))||[]}catch(e){return[]}}
+function xpBar(pct){
+  const SEG=20, on=Math.round(Math.max(0,Math.min(1,pct))*SEG);
+  let s='';for(let i=0;i<SEG;i++)s+=`<span class="xp-seg${i<on?' on':''}"></span>`;
+  return `<div class="xp-bar">${s}</div>`;
+}
+/* ── Book covers: real image if present, else an auto 8-bit emblem ── */
+let coverCache={};   // folderName -> object URL (live folder session only)
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function genrePalette(g){g=(g||'').toLowerCase();
+  if(/dark|paranormal|urban|gothic|vampire|fae|witch|demon/.test(g))return{bg:'#1d1140',a:'#b07ad6',b:'#ffd23f',c:'#3fd0c0'};
+  if(/fantasy/.test(g))return{bg:'#10202a',a:'#3fd0c0',b:'#ffd23f',c:'#b07ad6'};
+  if(/contemporary|romance/.test(g))return{bg:'#2a1230',a:'#d98ad0',b:'#ffd23f',c:'#3fd0c0'};
+  if(/thriller|mystery|crime|horror|noir/.test(g))return{bg:'#0e1822',a:'#f0a81e',b:'#3fd0c0',c:'#e87ab0'};
+  if(/sci|space|cyber/.test(g))return{bg:'#0c1830',a:'#3fd0c0',b:'#ffd23f',c:'#9a7ae0'};
+  return{bg:'#1a1138',a:'#ffd23f',b:'#b07ad6',c:'#3fd0c0'};
+}
+function emblemSVG(title,genre){
+  const pal=genrePalette(genre), rand=rng(hashStr((title||'book')+'|'+(genre||'')));
+  const W=64,H=28; let r='';
+  for(let i=0;i<48;i++){const x=Math.floor(rand()*W),y=Math.floor(rand()*H);
+    const col=rand()<.25?pal.b:(rand()<.4?pal.c:pal.a),o=(0.10+rand()*0.22).toFixed(2);
+    r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${col}" opacity="${o}"/>`;}
+  const gw=11,gh=11,cx=Math.floor((W-gw)/2),cy=Math.floor((H-gh)/2),half=Math.ceil(gw/2);
+  for(let y=0;y<gh;y++)for(let x=0;x<half;x++){
+    if(rand()>=0.5)continue;
+    const col=rand()<0.22?pal.b:(rand()<0.30?pal.c:pal.a),mx=gw-1-x;
+    r+=`<rect x="${cx+x}" y="${cy+y}" width="1" height="1" fill="${col}"/>`;
+    if(mx!==x)r+=`<rect x="${cx+mx}" y="${cy+y}" width="1" height="1" fill="${col}"/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" style="background:${pal.bg}">${r}</svg>`;
+}
+function coverMarkup(b){
+  const url=coverCache[b.folderName];
+  return url ? `<div class="bcard-cover"><img src="${url}" alt=""></div>`
+             : `<div class="bcard-cover">${emblemSVG(b.title,b.genre)}</div>`;
+}
+
+function renderBoard(){
+  const host=document.getElementById('board');
+  const books=loadProjects();
+  if(!books.length){
+    host.innerHTML=`<div class="board-empty">No books loaded yet.<br>
+      Hit <b>&#127918; CONNECT BOOKS FOLDER</b> above and pick your Book Machine folder &mdash; every book in <code>books/</code> loads automatically.</div>`;
+    return;
+  }
+  let html='<div class="board-grid">';
+  books.forEach(b=>{
+    const st=STATUS_MAP[b.status]||STATUS_MAP.idle;
+    const wc=Number(b.wordsCurrent||b.wordCount||0), tgt=Number(b.wordsTarget||b.target||0);
+    const pct=tgt>0?wc/tgt:0;
+    const next=b.next||b.nextStep||'';
+    const metaBits=[b.genre,b.series,b.lastTouched].filter(Boolean).join(' &middot; ');
+    // stat chips — movements (if a movement-map exists) else chapters, plus scenes + remaining-to-target
+    const stats=[];
+    if(b.mv&&b.mv.total)stats.push(`&#9733; ${b.mv.drafted||0}/${b.mv.total} MOVEMENTS`);
+    else if(b.chapters)stats.push(`&#9783; ${b.chapters} CHAPTERS`);
+    if(b.scenes)stats.push(`&#9670; ${b.scenes} SCENES`);
+    if(tgt>0)stats.push(`&#9876; ${Math.max(0,tgt-wc).toLocaleString()} TO GO`);
+    html+=`<div class="bcard" style="--accent:${st.c}">
+      ${coverMarkup(b)}
+      <div class="bcard-top">
+        <div class="bcard-name">${esc(b.title||'Untitled')}</div>
+        <div class="bcard-badge">${st.label}</div>
+      </div>
+      ${metaBits?`<div class="bcard-meta">${metaBits}</div>`:''}
+      ${stats.length?`<div class="bcard-stats">${stats.map(s=>`<span class="stat-chip">${s}</span>`).join('')}</div>`:''}
+      ${b.logline?`<div class="bcard-logline">&ldquo;${esc(b.logline)}&rdquo;</div>`:''}
+      <div class="xp-row"><span class="xp-label">WORD XP</span>
+        <span class="xp-num">${wc.toLocaleString()} / ${tgt?tgt.toLocaleString():'—'}</span></div>
+      ${xpBar(pct)}
+      ${next?`<div class="bcard-next"><b>NEXT QUEST</b>${esc(next)}</div>`:''}
+    </div>`;
+  });
+  html+='</div>';
+  host.innerHTML=html;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ── Folder scanning (File System Access API) ───────────
+   Reads the books/ folder directly, writes the same
+   bm-projects-v2 key the live dashboard uses, and
+   remembers the folder handle in IndexedDB across reloads. */
+let rootDir=null;
+
+/* tiny IndexedDB store for the directory handle */
+function idbStore(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open('bm-arcade',1);
+    r.onupgradeneeded=()=>r.result.createObjectStore('h');
+    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
+  });
+}
+async function idbSet(k,v){const db=await idbStore();return new Promise((res,rej)=>{
+  const t=db.transaction('h','readwrite');t.objectStore('h').put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error);});}
+async function idbGet(k){const db=await idbStore();return new Promise((res)=>{
+  const t=db.transaction('h','readonly');const rq=t.objectStore('h').get(k);rq.onsuccess=()=>res(rq.result);rq.onerror=()=>res(null);});}
+
+async function connectFolder(){
+  if(!window.showDirectoryPicker){alert('Folder scanning needs Chrome or Edge.');return;}
+  try{
+    rootDir=await window.showDirectoryPicker({id:'book-machine',mode:'readwrite',startIn:'documents'});
+    await idbSet('rootDir',rootDir);
+    await scanBooksFolder();
+  }catch(e){if(e.name!=='AbortError')console.error(e);}
+}
+async function restoreFolder(){
+  try{
+    const h=await idbGet('rootDir'); if(!h)return false;
+    const perm=await h.queryPermission({mode:'readwrite'});
+    if(perm==='granted'){rootDir=h;await scanBooksFolder(true);return true;}
+    // permission needs a click to re-grant
+    rootDir=h; renderFolderBar('reconnect',h.name); return true;
+  }catch(e){return false;}
+}
+async function reconnectPermission(){
+  if(!rootDir)return connectFolder();
+  const perm=await rootDir.requestPermission({mode:'readwrite'});
+  if(perm==='granted')await scanBooksFolder();
+}
+
+async function scanBooksFolder(silent){
+  if(!rootDir){renderFolderBar('disconnected');return;}
+  let booksDir;
+  try{booksDir=await rootDir.getDirectoryHandle('books');}
+  catch{toast('No "books" folder inside that directory.');renderFolderBar('disconnected');return;}
+  const discovered=[];
+  for await(const [name,handle] of booksDir.entries()){
+    if(handle.kind!=='directory')continue;
+    const book=await readBookFromFolder(handle,name);
+    if(book)discovered.push(book);
+  }
+  const real=discovered.filter(b=>!b.title.includes('[')&&!b.title.includes('{')&&!/^template/i.test(b.title));
+  // build the auto Performance Log + the decisions inbox from each book
+  const auto=[], decisions=[];
+  real.forEach(b=>{
+    (b._flows||[]).forEach(f=>auto.push({book:b.title,...f}));
+    (b._decisions||[]).forEach(d=>decisions.push({book:b.title,folder:b.folderName,...d}));
+  });
+  saveAutoLogs(auto);
+  localStorage.setItem(DECISIONS_KEY,JSON.stringify(decisions));
+  // rebuild cover cache (revoke old object URLs first)
+  Object.values(coverCache).forEach(u=>{try{if(u)URL.revokeObjectURL(u);}catch{}});
+  coverCache={};
+  real.forEach(b=>{if(b._coverURL)coverCache[b.folderName]=b._coverURL;});
+  // store projects without the bulky transient fields (keep mv, chapters, scenes)
+  const clean=real.map(({_flows,_decisions,_coverURL,...r})=>r);
+  const manual=loadProjects().filter(p=>!p.fromScan);
+  localStorage.setItem(PROJECTS_KEY,JSON.stringify([...manual,...clean]));
+  renderFolderBar('connected',rootDir.name);
+  renderBoard();
+  renderLogs();
+  if(typeof renderConductor==='function')renderConductor();
+  if(!silent)toast(`FOUND ${real.length} BOOK${real.length!==1?'S':''} ✓`);
+}
+
+async function readBookFromFolder(dirHandle,folderName){
+  const book={folderName,title:folderNameToTitle(folderName),fromScan:true,status:'idle',
+    wordsCurrent:0,wordsTarget:80000,genre:'',series:'',logline:'',next:'',lastTouched:'',chapters:0,scenes:0};
+  try{const f=await dirHandle.getFileHandle('book-order.md');parseBookOrder(await(await f.getFile()).text(),book);}catch{}
+  try{const f=await dirHandle.getFileHandle('SESSION_REPORT.md');parseSessionReport(await(await f.getFile()).text(),book);}catch{}
+  const mc=await findWordCount(dirHandle); if(mc){book.wordsCurrent=mc.words;book.chapters=mc.chapters;book.scenes=mc.scenes;}
+  // state/ — logline fallback, rehearsal log (history), movement map (progress), ledger (decisions)
+  book._flows=[]; book._decisions=[]; book.mv=null;
+  try{
+    const sd=await dirHandle.getDirectoryHandle('state');
+    if(!book.logline){
+      try{const f=await sd.getFileHandle('story-dossier.md');
+        const m=(await(await f.getFile()).text()).match(/(?:logline|premise|one.line)[^\n]*\n+([^\n]{20,200})/i);
+        if(m)book.logline=m[1].trim().replace(/^\*+|\*+$/g,'');}catch{}
+    }
+    try{const f=await sd.getFileHandle('rehearsal-log.md');
+      book._flows=parseFlows(await(await f.getFile()).text());}catch{}
+    try{const f=await sd.getFileHandle('movement-map.md');
+      book.mv=parseMovementMap(await(await f.getFile()).text());}catch{}
+    try{const f=await sd.getFileHandle('leitmotif-ledger.md');
+      book._decisions=parseLedgerDecisions(await(await f.getFile()).text());}catch{}
+  }catch{}
+  // optional real cover image: cover.* preferred, else any image at root / art/ / cover/
+  book._coverURL=null;
+  try{
+    let imgH=null,best=9;
+    for(const dir of [dirHandle,await safeSub(dirHandle,'art'),await safeSub(dirHandle,'cover')]){
+      if(!dir)continue;
+      for await(const [name,h] of dir.entries()){
+        if(h.kind!=='file'||!/\.(png|jpe?g|gif|webp)$/i.test(name))continue;
+        const rank=/cover/i.test(name)?0:(/(art|key|hero|tile|pixel)/i.test(name)?1:2);
+        if(rank<best){best=rank;imgH=h;}
+      }
+    }
+    if(imgH)book._coverURL=URL.createObjectURL(await imgH.getFile());
+  }catch{}
+  return book;
+}
+async function safeSub(dir,name){try{return await dir.getDirectoryHandle(name);}catch{return null;}}
+async function findWordCount(dirHandle){
+  const cands=[];
+  for(const dir of [dirHandle,await safeSub(dirHandle,'drafts')]){
+    if(!dir)continue;
+    for await(const [name,h] of dir.entries()){
+      if(h.kind!=='file'||!/\.md$/i.test(name))continue;
+      if(/_FULL_CLEAN\.md$/i.test(name)||/_MANUSCRIPT_CLEAN\.md$/i.test(name))cands.push([0,h]);
+      else if(/_CLEAN\.md$/i.test(name))cands.push([1,h]);
+      else if(/_FULL(_MANUSCRIPT)?\.md$/i.test(name))cands.push([2,h]);
+    }
+  }
+  cands.sort((a,b)=>a[0]-b[0]);
+  if(!cands.length)return {words:0,chapters:0,scenes:0};
+  const text=await(await cands[0][1].getFile()).text();
+  const words=text.split(/\s+/).filter(Boolean).length;
+  let chapters=(text.match(/^#\s+Chapter\b/gim)||[]).length;
+  if(!chapters)chapters=(text.match(/^#\s+\S/gm)||[]).length;   // fallback: any top-level heading
+  const scenes=(text.match(/^\* \* \*$/gm)||[]).length;
+  return {words,chapters,scenes};
+}
+function parseBookOrder(text,book){
+  const t=text.match(/^#\s+(?:Book Order\s*[-–—]\s*)?(.+)/im);if(t)book.title=t[1].trim();
+  const g=text.match(/\*\*Genre:\*\*\s*(.+)/i);if(g)book.genre=g[1].trim();
+  const w=text.match(/\*\*Target word count:\*\*\s*([\d,]+)/i);if(w)book.wordsTarget=parseInt(w[1].replace(/,/g,''));
+  const s=text.match(/\*\*Series or standalone:\*\*\s*(.+)/i);if(s)book.series=s[1].split('.')[0].trim();
+  const cq=text.match(/\*\*Core question[^*]*\*\*\s*(.+)/i);if(cq&&!book.logline)book.logline=cq[1].trim();
+}
+function parseSessionReport(text,book){
+  const d=text.match(/\*\*Date:\*\*\s*(.+)/i);if(d)book.lastTouched=d[1].trim();
+  const wc=text.match(/\*\*Manuscript length:\*\*\s*([\d,]+)/i);if(wc)book.wordsCurrent=parseInt(wc[1].replace(/,/g,''));
+  if(!book.wordsCurrent){const w2=text.match(/([\d,]+)\s+prose\s+words/i);if(w2)book.wordsCurrent=parseInt(w2[1].replace(/,/g,''));}
+  // status — orchestra vocab first, then legacy racing terms
+  if(/dress rehearsal|open items for revision|inspection complete/i.test(text))book.status='revision';
+  else if(/line edit|proofread|polish|booth|parc.ferm[eé]/i.test(text))book.status='editing';
+  else if(/premiere|rehearsal|movement\s*\d|soloist|backward wave|the race|driver loop|laps drafted/i.test(text))book.status='drafting';
+  else if(/tuning room|score architect|casting|complete/i.test(text)&&/complete/i.test(text))book.status='complete';
+  const open=text.match(/##\s*(?:Open Items|Punch List|How to Resume)[^\n]*\n([\s\S]+?)(?=\n## |\n---|$)/i);
+  if(open){const items=[];for(const line of open[1].split('\n')){
+    if(/\bDONE\b|\bDONE:|✓|✅|\[x\]|~~/i.test(line))continue;   // skip resolved items
+    const m=line.match(/^\d+\.\s+\*\*(.+?)\*\*/)||line.match(/^[-*]\s+\**(.+?)\**\s*$/);
+    if(m){items.push(m[1].trim());}if(items.length>=3)break;}
+    if(items.length)book.next=items.join(' · ');}
+}
+function folderNameToTitle(s){return s.split('-').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');}
+
+function renderFolderBar(state,name){
+  const bar=document.getElementById('folder-bar');
+  bar.classList.toggle('connected',state==='connected');
+  if(state==='connected'){
+    bar.innerHTML=`<span class="fb-icon">&#128193;</span>
+      <span class="fb-text"><b>Connected.</b> Books read live from <span class="fb-path">${esc(name)}/books/</span></span>
+      <button class="f-btn" onclick="scanBooksFolder()">&#8635; RESCAN</button>`;
+  }else if(state==='reconnect'){
+    bar.innerHTML=`<span class="fb-icon">&#128274;</span>
+      <span class="fb-text"><b>${esc(name||'Folder')}</b> remembered — click to re-grant access for this session.</span>
+      <button class="f-btn" onclick="reconnectPermission()">&#128279; RECONNECT</button>`;
+  }else{
+    bar.innerHTML=`<span class="fb-icon">&#127918;</span>
+      <span class="fb-text">Connect your Book Machine folder to load every book's status live &mdash; no typing.</span>
+      <button class="f-btn" onclick="connectFolder()">&#127918; CONNECT BOOKS FOLDER</button>`;
+  }
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',1600);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCard()});
+
+/* ── Settings (Claude-only — just the author name) ── */
+const SETTINGS_KEY='bm-settings-v2';
+function getSettings(){try{return JSON.parse(localStorage.getItem(SETTINGS_KEY))||{}}catch(e){return{}}}
+function val(id){return document.getElementById(id).value}
+function openSettings(){
+  document.getElementById('s-name').value=getSettings().authorName||'';
+  document.getElementById('settings-overlay').classList.add('open');
+}
+function closeSettings(){document.getElementById('settings-overlay').classList.remove('open')}
+function saveSettings(){
+  const s=getSettings(); s.authorName=val('s-name').trim();
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));
+  closeSettings(); toast('SAVED ✓');
+}
+
+/* ── Run controls ───────────────────────────────────── */
+function populateRunControls(){
+  const bsel=document.getElementById('run-book'), books=loadProjects();
+  bsel.innerHTML='<option value="">— no book context —</option>'+
+    books.map((b,i)=>`<option value="${i}">${esc(b.title||'Untitled')}</option>`).join('');
+  const ssel=document.getElementById('run-skill');
+  let html='';
+  ['podium','tuning','rehearsal','booth','principals','dress','leads'].forEach(ph=>{
+    html+=`<optgroup label="${PHASES[ph].label}">`;
+    AGENTS.filter(a=>a.phase===ph).forEach(a=>html+=`<option value="${a.id}">${a.name} — ${a.role}</option>`);
+    html+='</optgroup>';
+  });
+  html+='<optgroup label="OTHER"><option value="custom">&#9998; Custom task…</option></optgroup>';
+  ssel.innerHTML=html;
+  ssel.value='soloist';
+  onRunSkillChange();
+}
+function onRunSkillChange(){
+  document.getElementById('run-custom-wrap').style.display=val('run-skill')==='custom'?'block':'none';
+}
+function updateRunWC(){
+  const wc=val('run-text').split(/\s+/).filter(Boolean).length;
+  document.getElementById('run-wc').textContent=wc.toLocaleString()+' words';
+}
+async function loadRunFile(){
+  if(!window.showOpenFilePicker){alert('Use Chrome or Edge to load files.');return;}
+  try{
+    const [h]=await window.showOpenFilePicker({types:[{description:'Markdown / text',accept:{'text/plain':['.md','.txt','.markdown']}}]});
+    document.getElementById('run-text').value=await(await h.getFile()).text();
+    updateRunWC(); toast('LOADED '+h.name);
+  }catch(e){if(e.name!=='AbortError')toast('Could not open: '+e.message)}
+}
+
+/* ── Brief builder — the Claude Code handoff ───────── */
+let _lastBrief={text:'',book:'',pass:''};
+function buildBrief(){
+  const s=getSettings();
+  const skill=val('run-skill'), bookIdx=val('run-book');
+  const book=bookIdx!==''?loadProjects()[parseInt(bookIdx)]:null;
+  const raw=val('run-text').trim();
+  const a=AGENTS.find(x=>x.id===skill);
+  const who=s.authorName||'the author';
+  const folder=book?(book.folderName||'<folder>'):null;
+  const looksLikePath=raw && raw.length<200 && !/\n/.test(raw) && /\.(md|txt|markdown)$/i.test(raw);
+
+  let target;
+  if(book && looksLikePath) target=`Work on the file: books/${folder}/${raw.replace(/^\/+/,'')}`;
+  else if(book && raw) target=`Book: "${book.title}" (folder: books/${folder}). Locate this text in the manuscript and edit it in place:\n\n"""\n${raw}\n"""`;
+  else if(book) target=`Book: "${book.title}" (folder: books/${folder}). Choose the right file(s) in that folder for this pass.`;
+  else if(looksLikePath) target=`Work on the file: ${raw}`;
+  else if(raw) target=`Work on this text:\n\n"""\n${raw}\n"""`;
+  else target=`Ask ${who} which file to work on.`;
+
+  let body;
+  if(skill==='custom'){
+    const task=val('run-custom').trim();
+    if(!task){toast('DESCRIBE THE TASK');return null;}
+    body=`# Book Machine brief — custom task\n\nFrom ${who}. This is the live Book Machine (Claude-only; see CLAUDE.md and skills/orchestra/).\n\nTASK: ${task}\n\nTARGET:\n${target}`;
+    _lastBrief={book:book?book.title:'',pass:'Custom task'};
+  }else{
+    body=`# Book Machine brief — ${a.name}\n\nActivate as the **${a.name}** (${a.role}) from the orchestra in ${who}'s Book Machine — the live NPE system (see CLAUDE.md and skills/orchestra/).\n\nYOUR JOB: ${a.does}\n\nWHEN YOU RUN: ${a.when}\n\nTARGET:\n${target}\n\nHold to the rules in CLAUDE.md: tune to the voice anchor, gates before edits, ration tics (never eliminate), surface real decisions and handle the rest silently. If your role is to draft or rewrite, edit the file(s) in place. If your role is to audit/measure, report findings and propose changes rather than rewriting.`;
+    _lastBrief={book:book?book.title:'',pass:a.name};
+  }
+  _lastBrief.text=body;
+  return body;
+}
+function generateBrief(){
+  const brief=buildBrief(); if(brief===null)return;
+  showBrief(brief,'BRIEF — '+_lastBrief.pass+(_lastBrief.book?' · '+_lastBrief.book:''));
+}
+
+/* ── Shared brief modal (RUN + CONDUCTOR) ───────────── */
+function showBrief(text,title){
+  document.getElementById('brief-title').textContent=title||'CLAUDE BRIEF';
+  document.getElementById('brief-out').textContent=text;
+  document.getElementById('brief-overlay').classList.add('open');
+}
+function closeBrief(){document.getElementById('brief-overlay').classList.remove('open')}
+function copyBrief(){navigator.clipboard.writeText(document.getElementById('brief-out').textContent)
+  .then(()=>toast('COPIED — paste into Claude Code ✓'))}
+async function writeBrief(){
+  const content=document.getElementById('brief-out').textContent; if(!content)return;
+  if(!rootDir){toast('CONNECT YOUR FOLDER FIRST (MY WORK tab)');return;}
+  try{
+    if(await rootDir.requestPermission({mode:'readwrite'})!=='granted'){toast('NEED FOLDER PERMISSION');return;}
+    const fh=await rootDir.getFileHandle('_CLAUDE_BRIEF.md',{create:true});
+    const w=await fh.createWritable(); await w.write(content); await w.close();
+    toast('WROTE _CLAUDE_BRIEF.md — say “run the brief” in Claude Code ✓');
+  }catch(e){toast('Write failed: '+e.message)}
+}
+
+/* ── Conductor ──────────────────────────────────────── */
+const DECISIONS_KEY='bm_decisions_v1';
+function loadDecisions(){try{return JSON.parse(localStorage.getItem(DECISIONS_KEY))||[]}catch(e){return[]}}
+const PIPE_PHASES=[
+  {key:'tuning',name:'TUNING ROOM'},{key:'rehearsal',name:'REHEARSAL'},
+  {key:'booth',name:'BOOTH + PRINCIPALS'},{key:'dress',name:'DRESS REHEARSAL'},{key:'done',name:'DELIVERY'}
+];
+/* where is the book, and what's the next step / next block */
+function computeNext(b){
+  const mv=b.mv||{total:0,drafted:0,planned:0,next:null,settled:0};
+  const st=b.status||'idle';
+  // phase detection
+  let phase;
+  if(st==='complete')phase='done';
+  else if(st==='revision'||st==='editing')phase='dress';
+  else if(mv.total>0 && mv.drafted>=mv.total && st!=='drafting')phase='booth';
+  else if(mv.drafted>0||st==='drafting')phase='rehearsal';
+  else phase='tuning';
+
+  let step,block,scopeNote=b.next?` Open items on record: ${b.next}.`:'';
+  if(phase==='tuning'){
+    step='Build the score — Score Architect lays out structure & movements, World Builder the setting & tension curve, Casting Director the truth vaults, Name-Lock the names, Tuning the voice A.';
+    block='Run the entire Tuning Room: structure, world, cast, names, and the tuning A — leave the book ready to premiere movement 1.';
+  }else if(phase==='rehearsal'){
+    const n=mv.next||((mv.drafted||0)+1);
+    step=`Premiere movement ${n} (Soloist) through the seven-step loop, run its Booth gates + Principals, then the backward wave on the movements the Ledger flags.`;
+    block=`Premiere all remaining planned movements (${mv.planned||'the rest'}), each with its gates and a backward wave between — pausing only for decisions that need me.`;
+  }else if(phase==='booth'){
+    step='Run the Booth gates + Principals across the drafted movements; bounce anything that blows a Bowing-Sheet budget.';
+    block='Sweep the whole draft through the Booth + all four Principals, then hand to Dress Rehearsal.';
+  }else if(phase==='dress'){
+    step='Run the next Dress-Rehearsal pass — pacing-whole, then Audience cold read, then Line Editor, then the Payoff audit against the Ledger.';
+    block='Run the full Dress Rehearsal panel (pacing, audience, line edit, payoff) end to end and resolve open Ledger escalations.';
+  }else{
+    step='Final proofread + delivery: produce the FULL_CLEAN and FULL_ANNOTATED files and the session report.';
+    block='Final proofread + delivery package.';
+  }
+  return {phase,step:step+scopeNote,block};
+}
+function buildConductorBrief(b,scope){
+  const nx=computeNext(b);
+  const mv=b.mv||{};
+  const what=scope==='block'?nx.block:nx.step;
+  return `# Conductor brief — ${b.title}\n\nYou are the **Conductor** of the orchestra for "${b.title}" (folder: books/${b.folderName||'<folder>'}). This is the live Book Machine — read CLAUDE.md and skills/orchestra/conductor first.\n\nWHERE IT IS: phase **${nx.phase}**, status ${b.status||'idle'}${mv.total?`, movements ${mv.drafted||0}/${mv.total} drafted`:''}.\n\nDO THIS ${scope==='block'?'BLOCK':'NEXT STEP'}:\n${what}\n\nRun the loop in CLAUDE.md (PREMIERE → RECORD → BACKWARD WAVE → RECONCILE → CHECKPOINT). Dispatch the players as subagents; never write prose or state yourself — the Librarian records every movement to state/ (movement-map, rehearsal-log, leitmotif-ledger) and commits each wave.\n\nSURFACE DECISIONS TO ME (the Composer): drift-as-discovery vs tangent, oscillations, and any thread escalation. STOP and ask rather than guessing; park anything for later in the Ledger's "Escalations Awaiting a Ruling". When you pause, tell me clearly what you need.`;
+}
+function buildDecisionsBrief(b,decs){
+  const list=decs.map((d,i)=>`${i+1}. ${d.problem}${d.threadId?` (thread ${d.threadId}`:''}${d.raisedBy?`, raised by movement ${d.raisedBy})`:d.threadId?')':''}`).join('\n');
+  return `# Decisions — ${b.title}\n\nYou are the Conductor for "${b.title}" (folder: books/${b.folderName||'<folder>'}). I'm ready to make the open calls parked for the Composer.\n\nWalk me through each one below, one at a time: state the problem, give your recommendation and the trade-off, then wait for my choice. Once I decide, have the Librarian record it — fill the "Decision" column in the Ledger's "Escalations Awaiting a Ruling" table and update any affected movements and the Score.\n\nPENDING DECISIONS:\n${list||'(none parked — check rehearsal-log.md for anything I flagged.)'}`;
+}
+function renderConductor(){
+  const sel=document.getElementById('cond-book');
+  const books=loadProjects();
+  if(sel){
+    const cur=sel.value;
+    sel.innerHTML=books.length?books.map((b,i)=>`<option value="${i}">${esc(b.title||'Untitled')}</option>`).join(''):'<option value="">— no books —</option>';
+    if(cur&&books[cur])sel.value=cur;
+  }
+  const host=document.getElementById('conductor-body'); if(!host)return;
+  if(!books.length){host.innerHTML='<div class="cond-empty">Connect your folder on the MY WORK tab — then the Conductor can see each book and drive it.</div>';return;}
+  const b=books[parseInt(sel.value||0)]||books[0];
+  const nx=computeNext(b);
+  const decs=loadDecisions().filter(d=>d.book===b.title);
+  // pipeline ribbon
+  const order=['tuning','rehearsal','booth','dress','done'];
+  const curIdx=order.indexOf(nx.phase);
+  let ribbon='<div class="pipe-ribbon">';
+  PIPE_PHASES.forEach((p,i)=>{
+    const cls=i<curIdx?'done':(i===curIdx?'active':'');
+    ribbon+=`<div class="pr-node ${cls}"><div class="pn">${p.name}</div><div class="ps">${i<curIdx?'done':(i===curIdx?'you are here':'—')}</div></div>`;
+    if(i<PIPE_PHASES.length-1)ribbon+='<span class="pr-arrow">&#9654;</span>';
+  });
+  ribbon+='</div>';
+  // next panel
+  const next=`<div class="cond-panel next">
+    <div class="cond-h"><span>&#9654;</span> NEXT FOR ${esc((b.title||'').toUpperCase())}</div>
+    <div class="cond-next-txt">${esc(nx.step)}</div>
+    <div class="cond-actions">
+      <button class="f-btn" onclick="condBrief('step')">&#9654; RUN NEXT STEP</button>
+      <button class="btn-ghost" onclick="condBrief('block')">&#9776; RUN NEXT BLOCK</button>
+    </div>
+    <div class="cond-note">Builds a Conductor brief and opens it. COPY it into Claude Code, or WRITE TO FOLDER and say &ldquo;run the brief&rdquo;. Claude takes the baton from there.</div>
+  </div>`;
+  // decisions panel
+  let dec=`<div class="cond-panel decide"><div class="cond-h"><span>&#9888;</span> DECISIONS — WAITING ON YOU</div>`;
+  if(decs.length){
+    dec+=decs.map(d=>`<div class="dec-card"><span class="dec-badge">CALL</span>
+      <div class="dec-body"><div class="dec-prob">${esc(d.problem)}</div>
+      <div class="dec-meta">${d.threadId?'thread '+esc(d.threadId):''}${d.raisedBy?(d.threadId?' · ':'')+'raised by movement '+esc(d.raisedBy):''}</div></div></div>`).join('');
+    dec+=`<div class="cond-actions" style="margin-top:14px"><button class="f-btn" onclick="condBrief('decisions')">&#127911; BRING THESE TO CLAUDE</button></div>`;
+  }else{
+    dec+=`<div class="cond-empty">Nothing waiting. When Claude hits a call mid-run it stops and asks you right there in your Claude Code chat; anything parked for later (the Ledger&rsquo;s escalations) lands here.</div>`;
+  }
+  dec+=`</div>`;
+  host.innerHTML=ribbon+next+dec;
+}
+function condBrief(scope){
+  const books=loadProjects();
+  const b=books[parseInt(document.getElementById('cond-book').value||0)]||books[0];
+  if(!b)return;
+  if(scope==='decisions'){
+    const decs=loadDecisions().filter(d=>d.book===b.title);
+    showBrief(buildDecisionsBrief(b,decs),'DECISIONS — '+b.title);
+  }else{
+    showBrief(buildConductorBrief(b,scope),'CONDUCTOR — '+b.title+(scope==='block'?' · BLOCK':' · NEXT STEP'));
+  }
+}
+
+/* init */
+renderStage();
+renderFolderBar('disconnected');
+renderBoard();
+renderLogs();
+populateRunControls();
+renderConductor();
+document.getElementById('run-text').addEventListener('input',updateRunWC);
+restoreFolder();   /* auto-rescan if we still have folder permission */
+</script>
+</body>
+</html>

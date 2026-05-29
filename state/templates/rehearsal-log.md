@@ -47,6 +47,15 @@
 
 ---
 
+## Dress Rehearsal Log — whole-book passes
+*(Each dress-rehearsal pass the Conductor runs over the finished draft — for the author's "what has been done" history. One line each: `### Pass name — result`.)*
+
+### [Pass name] — [result / one-line]
+<!-- e.g.  ### Line Edit — ch 1–24, tightened openings, 3 AI-isms cleared -->
+<!-- e.g.  ### Payoff Audit — all 11 ledger threads paid; 1 orphaned setup flagged -->
+
+---
+
 ## Score Change Log — drift = discovery
 *(Every time the Conductor ruled that a divergence from the outline is a genuine discovery and updated the Score / dossier.)*
 
