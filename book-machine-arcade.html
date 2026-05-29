@@ -235,10 +235,14 @@ svg{image-rendering:pixelated;shape-rendering:crispEdges;display:block}
 .fb-path{font-family:var(--term);font-size:17px;color:var(--c-rehearsal);letter-spacing:.6px}
 .board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:30px}
 .bcard{background:var(--bg2);border:2px solid var(--line);border-left:8px solid var(--accent);
-  padding:16px 18px;box-shadow:5px 5px 0 rgba(0,0,0,.4)}
-.bcard-cover{width:100%;height:104px;margin-bottom:14px;border:2px solid var(--line);
-  background:var(--stage);overflow:hidden;display:block;position:relative}
-.bcard-cover img,.bcard-cover svg{width:100%;height:100%;object-fit:cover;display:block;image-rendering:pixelated}
+  padding:16px 18px;box-shadow:5px 5px 0 rgba(0,0,0,.4);position:relative;overflow:hidden}
+/* cover art = full-card background, behind the text */
+.bcard-bg{position:absolute;inset:0;z-index:0}
+.bcard-bg img,.bcard-bg svg{width:100%;height:100%;object-fit:cover;display:block;image-rendering:pixelated}
+.bcard-scrim{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(10,8,16,.52) 0%,rgba(10,8,16,.74) 52%,rgba(10,8,16,.88) 100%)}
+.bcard>*:not(.bcard-bg):not(.bcard-scrim){position:relative;z-index:2}
+.bcard-name,.bcard-next{text-shadow:1px 1px 0 #000,0 0 6px rgba(0,0,0,.6)}
 .bcard-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
 .bcard-name{font-family:var(--pix);font-size:12px;color:var(--ink);line-height:1.6;flex:1;letter-spacing:.5px}
 .bcard-badge{font-family:var(--pix);font-size:8px;color:#1a1208;background:var(--accent);
@@ -1078,6 +1082,7 @@ const STATUS_MAP={
   drafting:{c:'#3fd0c0',label:'DRAFTING'},
   editing:{c:'#f0a81e',label:'EDITING'},
   revision:{c:'#b07ad6',label:'REVISION'},
+  polish:{c:'#79e6da',label:'POLISH'},
   complete:{c:'#ffd23f',label:'COMPLETE'}
 };
 function loadProjects(){try{return JSON.parse(localStorage.getItem(PROJECTS_KEY))||[]}catch(e){return[]}}
@@ -1098,25 +1103,53 @@ function genrePalette(g){g=(g||'').toLowerCase();
   if(/sci|space|cyber/.test(g))return{bg:'#0c1830',a:'#3fd0c0',b:'#ffd23f',c:'#9a7ae0'};
   return{bg:'#1a1138',a:'#ffd23f',b:'#b07ad6',c:'#3fd0c0'};
 }
+/* Representational palette: real-world colours per element; genre only tints the sky mood. */
+function scenePalette(genre){
+  const g=(genre||'').toLowerCase(); let sky='#1a1a3a';
+  if(/dark|paranormal|fae|witch|vampire|gothic|urban|demon/.test(g))sky='#1e1442';
+  else if(/fantasy/.test(g))sky='#122a2c';
+  else if(/contemporary|romance/.test(g))sky='#2a1736';
+  else if(/thriller|mystery|crime|horror|noir/.test(g))sky='#101a26';
+  else if(/sci|space|cyber/.test(g))sky='#0c1630';
+  return {sky,star:'#f6edc6',moon:'#f1e4ba',ground:'#140f22',
+    wood:'#8a5a2e',woodDk:'#5e3c1e',canvas:'#efe7d2',graphite:'#46415e',
+    skin:'#e3ac7c',skin2:'#cf9466',hair:'#2f2438',cloth:'#b5566e',
+    gold:'#f4c430',wing1:'#9a7ce0',wing2:'#56cfc0',robe:'#5a3a86',glow:'#7fe0d0',
+    flame:'#f08030',stone:'#9aa0b4',water:'#3f86d6',foliage:'#4fa24f'};
+}
 function emblemSVG(title,genre){
-  const pal=genrePalette(genre), rand=rng(hashStr((title||'book')+'|'+(genre||'')));
-  const W=64,H=28; let r='';
-  for(let i=0;i<48;i++){const x=Math.floor(rand()*W),y=Math.floor(rand()*H);
-    const col=rand()<.25?pal.b:(rand()<.4?pal.c:pal.a),o=(0.10+rand()*0.22).toFixed(2);
-    r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${col}" opacity="${o}"/>`;}
-  const gw=11,gh=11,cx=Math.floor((W-gw)/2),cy=Math.floor((H-gh)/2),half=Math.ceil(gw/2);
-  for(let y=0;y<gh;y++)for(let x=0;x<half;x++){
-    if(rand()>=0.5)continue;
-    const col=rand()<0.22?pal.b:(rand()<0.30?pal.c:pal.a),mx=gw-1-x;
-    r+=`<rect x="${cx+x}" y="${cy+y}" width="1" height="1" fill="${col}"/>`;
-    if(mx!==x)r+=`<rect x="${cx+mx}" y="${cy+y}" width="1" height="1" fill="${col}"/>`;
+  const P=scenePalette(genre), rand=rng(hashStr((title||'book')+'|'+(genre||'')));
+  const W=36,H=36;   // square so it fills any card shape with minimal crop
+  const R=(x,y,w,h,f,o)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"${o!=null?` opacity="${o}"`:''}/>`;
+  const disc=(cx,cy,rad,f)=>{let s='';for(let y=-rad;y<=rad;y++)for(let x=-rad;x<=rad;x++)if(x*x+y*y<=rad*rad+rad)s+=R(cx+x,cy+y,1,1,f);return s;};
+  let r=R(0,0,W,H,P.sky);
+  // stars + pale crescent moon
+  for(let i=0;i<18;i++){const x=Math.floor(rand()*W),y=Math.floor(rand()*16);r+=R(x,y,1,1,P.star,(0.3+rand()*0.5).toFixed(2));}
+  const mx=27+Math.floor(rand()*4),my=6+Math.floor(rand()*2);
+  r+=disc(mx,my,4,P.moon)+disc(mx+3,my-1,4,P.sky);
+  r+=R(0,32,W,4,P.ground);   // ground
+  const g=(genre||'').toLowerCase();
+  if(/sci|space|cyber/.test(g)){            // sci-fi: blue planet + rocket
+    r+=disc(11,14,4,P.water)+R(22,10,4,14,P.stone)+R(23,8,2,2,P.water)+R(22,24,1,3,P.flame)+R(25,24,1,3,P.flame);
+  } else {                                  // default: a winged fae + an artist at an easel — natural colours
+    // wings (violet/teal iridescent)
+    r+=R(20,14,3,2,P.wing1)+R(17,16,6,2,P.wing1)+R(14,18,9,2,P.wing2)+R(16,20,7,2,P.wing1)+R(19,22,4,2,P.wing1);
+    r+=R(25,14,3,2,P.wing1)+R(25,16,6,2,P.wing1)+R(25,18,9,2,P.wing2)+R(25,20,7,2,P.wing1)+R(25,22,4,2,P.wing1);
+    r+=R(22,16,4,12,P.robe)+disc(24,12,2,P.skin2)+R(23,10,3,1,P.hair);                // robe + head + hair
+    r+=R(22,8,1,2,P.gold)+R(24,7,1,3,P.gold)+R(26,8,1,2,P.gold)+R(22,10,5,1,P.gold);   // gold crown
+    r+=R(20,28,9,1,P.glow,0.45);                                                       // glow
+    // artist + easel (wood + cream canvas, skin-toned figure)
+    r+=R(6,18,8,10,P.wood)+R(7,19,6,8,P.canvas);                                       // easel frame + canvas
+    r+=disc(9,22,1,P.graphite)+R(8,24,3,2,P.graphite)+R(7,23,1,1,P.gold)+R(11,23,1,1,P.gold); // sketch
+    r+=R(7,28,1,4,P.woodDk)+R(12,28,1,4,P.woodDk)+R(7,29,6,1,P.woodDk);                // easel legs
+    r+=disc(3,22,1,P.skin)+R(2,24,3,5,P.cloth)+R(5,25,2,1,P.skin)+R(6,24,1,1,P.gold);  // artist + arm + brush
   }
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" style="background:${pal.bg}">${r}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges" style="background:${P.sky};width:100%;height:100%">${r}</svg>`;
 }
 function coverMarkup(b){
   const url=coverCache[b.folderName];
-  return url ? `<div class="bcard-cover"><img src="${url}" alt=""></div>`
-             : `<div class="bcard-cover">${emblemSVG(b.title,b.genre)}</div>`;
+  const inner=url?`<img src="${url}" alt="">`:emblemSVG(b.title,b.genre);
+  return `<div class="bcard-bg">${inner}</div><div class="bcard-scrim"></div>`;
 }
 
 function renderBoard(){
@@ -1307,8 +1340,18 @@ function parseSessionReport(text,book){
   const d=text.match(/\*\*Date:\*\*\s*(.+)/i);if(d)book.lastTouched=d[1].trim();
   const wc=text.match(/\*\*Manuscript length:\*\*\s*([\d,]+)/i);if(wc)book.wordsCurrent=parseInt(wc[1].replace(/,/g,''));
   if(!book.wordsCurrent){const w2=text.match(/([\d,]+)\s+prose\s+words/i);if(w2)book.wordsCurrent=parseInt(w2[1].replace(/,/g,''));}
-  // status — orchestra vocab first, then legacy racing terms
-  if(/dress rehearsal|open items for revision|inspection complete/i.test(text))book.status='revision';
+  // status — explicit "**Status:**" / "**Stage:**" line wins; else heuristics
+  const stRaw=(text.match(/\*\*(?:Status|Stage):\*\*\s*([^\n]+)/i)||[])[1];
+  if(stRaw){
+    const w=(stRaw.toLowerCase().match(/[a-z]+/)||[''])[0];   // first word only (ignore the description after)
+    book.status = /^(complete|done|finished|shipped|published)$/.test(w)?'complete'
+      : /^(polish|polishing|final|proof|deliver|delivery)$/.test(w)?'polish'
+      : /^revis/.test(w)?'revision'
+      : /^edit/.test(w)?'editing'
+      : /^(draft|drafting|premiere|rehearsal|rehearsing)$/.test(w)?'drafting'
+      : /^(idea|idle|concept)$/.test(w)?'idle'
+      : book.status;
+  } else if(/dress rehearsal|open items for revision|inspection complete/i.test(text))book.status='revision';
   else if(/line edit|proofread|polish|booth|parc.ferm[eé]/i.test(text))book.status='editing';
   else if(/premiere|rehearsal|movement\s*\d|soloist|backward wave|the race|driver loop|laps drafted/i.test(text))book.status='drafting';
   else if(/tuning room|score architect|casting|complete/i.test(text)&&/complete/i.test(text))book.status='complete';
@@ -1456,7 +1499,7 @@ const DECISIONS_KEY='bm_decisions_v1';
 function loadDecisions(){try{return JSON.parse(localStorage.getItem(DECISIONS_KEY))||[]}catch(e){return[]}}
 const PIPE_PHASES=[
   {key:'tuning',name:'TUNING ROOM'},{key:'rehearsal',name:'REHEARSAL'},
-  {key:'booth',name:'BOOTH + PRINCIPALS'},{key:'dress',name:'DRESS REHEARSAL'},{key:'done',name:'DELIVERY'}
+  {key:'booth',name:'BOOTH + PRINCIPALS'},{key:'dress',name:'DRESS REHEARSAL'},{key:'polish',name:'POLISH + DELIVERY'}
 ];
 /* where is the book, and what's the next step / next block */
 function computeNext(b){
@@ -1465,6 +1508,7 @@ function computeNext(b){
   // phase detection
   let phase;
   if(st==='complete')phase='done';
+  else if(st==='polish')phase='polish';
   else if(st==='revision'||st==='editing')phase='dress';
   else if(mv.total>0 && mv.drafted>=mv.total && st!=='drafting')phase='booth';
   else if(mv.drafted>0||st==='drafting')phase='rehearsal';
@@ -1484,9 +1528,12 @@ function computeNext(b){
   }else if(phase==='dress'){
     step='Run the next Dress-Rehearsal pass — pacing-whole, then Audience cold read, then Line Editor, then the Payoff audit against the Ledger.';
     block='Run the full Dress Rehearsal panel (pacing, audience, line edit, payoff) end to end and resolve open Ledger escalations.';
+  }else if(phase==='polish'){
+    step='Final pass — Proofreader over the whole manuscript, then export the FULL_CLEAN + FULL_ANNOTATED deliverables and update the session report.';
+    block='Proofread end to end + produce the delivery package (clean + annotated exports + session report).';
   }else{
-    step='Final proofread + delivery: produce the FULL_CLEAN and FULL_ANNOTATED files and the session report.';
-    block='Final proofread + delivery package.';
+    step='Delivered. Anything further is optional — e.g. word-count expansion or a fresh read.';
+    block='Delivered — no block queued.';
   }
   return {phase,step:step+scopeNote,block};
 }
@@ -1514,8 +1561,8 @@ function renderConductor(){
   const nx=computeNext(b);
   const decs=loadDecisions().filter(d=>d.book===b.title);
   // pipeline ribbon
-  const order=['tuning','rehearsal','booth','dress','done'];
-  const curIdx=order.indexOf(nx.phase);
+  // current node index in PIPE_PHASES; 'done' (complete) = past the last node
+  const curIdx=nx.phase==='done'?PIPE_PHASES.length:PIPE_PHASES.findIndex(p=>p.key===nx.phase);
   let ribbon='<div class="pipe-ribbon">';
   PIPE_PHASES.forEach((p,i)=>{
     const cls=i<curIdx?'done':(i===curIdx?'active':'');
