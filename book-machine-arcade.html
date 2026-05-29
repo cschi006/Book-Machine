@@ -33,6 +33,7 @@
   --c-booth:#f0a81e;       /* amber/gold */
   --c-principals:#9a7ae0;  /* violet */
   --c-dress:#46c2a8;       /* deep teal */
+  --c-polish:#79e6da;      /* bright teal */
   --c-leads:#d98ad0;       /* orchid */
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -761,9 +762,10 @@ const PHASES={
   booth:{label:"THE BOOTH · GATES",color:"var(--c-booth)",sub:"deterministic — pass, or bounce back"},
   principals:{label:"PRINCIPALS · PER-PASSAGE",color:"var(--c-principals)",sub:"audit each passage"},
   dress:{label:"ACT III · DRESS REHEARSAL",color:"var(--c-dress)",sub:"whole-symphony passes"},
+  polish:{label:"POLISH · DELIVERY",color:"var(--c-polish)",sub:"final passes before the audience"},
   leads:{label:"SECTION LEADS",color:"var(--c-leads)",sub:"rule the hard calls · write the state"}
 };
-const RAWCOLOR={podium:"#ffd23f",tuning:"#b07ad6",rehearsal:"#3fd0c0",booth:"#f0a81e",principals:"#9a7ae0",dress:"#46c2a8",leads:"#d98ad0"};
+const RAWCOLOR={podium:"#ffd23f",tuning:"#b07ad6",rehearsal:"#3fd0c0",booth:"#f0a81e",principals:"#9a7ae0",dress:"#46c2a8",polish:"#79e6da",leads:"#d98ad0"};
 
 const AGENTS=[
  // PODIUM
@@ -883,6 +885,23 @@ const AGENTS=[
   summon:"Run the payoff audit against the ledger.",
   flavor:"Makes sure every gun on the wall goes off."},
 
+ // POLISH · DELIVERY
+ {id:"ai-decontamination",name:"AI-Decontamination",role:"Scrubber",phase:"polish",sprite:"monitor",
+  does:"Removes AI-isms — the generic, statistically-probable phrasings that flatten voice. Counts patterns deterministically (pattern_detector.py), then rations them: kills the repetition, keeps any instance that earns its place.",
+  when:"Pass 1.5 — after the developmental edit is approved, before the Line Editor.",
+  summon:"Run AI-decontamination on chapter N.",
+  flavor:"Scrubs the machine-smell off the prose."},
+ {id:"dialogue-polish",name:"Dialogue Polish",role:"Voice Coach",phase:"polish",sprite:"note",
+  does:"Makes every character sound distinct, loads dialogue with subtext, kills on-the-nose lines — polished toward each character's truth vault, never toward generic.",
+  when:"In Polish, after the Line Editor; or standalone on any conversation.",
+  summon:"Run dialogue polish on chapter N.",
+  flavor:"Nobody on the page should sound like the author."},
+ {id:"proofreader",name:"Proofreader",role:"Final Gate",phase:"polish",sprite:"glass",
+  does:"The last mechanical pass before delivery: typos, punctuation, grammar, and consistency of names, terms, scene breaks, and headings. Fixes errors in place; never improves prose.",
+  when:"Last step of Polish, once every craft pass is settled.",
+  summon:"Proofread the whole manuscript.",
+  flavor:"Catches what everyone else read straight past."},
+
  // SECTION LEADS
  {id:"concertmaster",name:"Concertmaster",role:"Voice Lead",phase:"leads",sprite:"violin",
   does:"Voice section-lead. Rules the ambiguous signature-vs-crutch calls the Booth escalates; coordinates the Tuning, Voice, and Line Editor when automation is on.",
@@ -907,7 +926,7 @@ function renderStage(){
   document.getElementById('conductor-sprite').innerHTML=spriteSVG('baton',RAWCOLOR.podium,6);
   document.getElementById('conductor-block').onclick=()=>openCard('conductor');
 
-  const order=['tuning','rehearsal','booth','principals','dress','leads'];
+  const order=['tuning','rehearsal','booth','principals','dress','polish','leads'];
   const host=document.getElementById('sections');
   host.innerHTML='';
   order.forEach(ph=>{
@@ -1410,7 +1429,7 @@ function populateRunControls(){
     books.map((b,i)=>`<option value="${i}">${esc(b.title||'Untitled')}</option>`).join('');
   const ssel=document.getElementById('run-skill');
   let html='';
-  ['podium','tuning','rehearsal','booth','principals','dress','leads'].forEach(ph=>{
+  ['podium','tuning','rehearsal','booth','principals','dress','polish','leads'].forEach(ph=>{
     html+=`<optgroup label="${PHASES[ph].label}">`;
     AGENTS.filter(a=>a.phase===ph).forEach(a=>html+=`<option value="${a.id}">${a.name} — ${a.role}</option>`);
     html+='</optgroup>';
