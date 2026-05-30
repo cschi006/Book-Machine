@@ -8,7 +8,10 @@ description: >
   "remove the clichés," "decontaminate this," or asks why prose feels generic despite
   being technically correct. Pairs with scripts/pattern_detector.py for deterministic
   counts. Rations, never eliminates — kills the repetition, keeps any instance that
-  genuinely earns its place. Surfaces candidates for author ratification.
+  genuinely earns its place. Works to the machine's Fix-authority model: AUTO-FIXES
+  over-threshold tics in place (rationed to budget, held to the voice anchor, logged
+  before→after) and SURFACES only signature-vs-crutch judgment calls (escalated to the
+  Concertmaster). Goal: publish-ready with minimal human edits.
 ---
 
 # AI-Decontamination
@@ -66,11 +69,15 @@ for the ones a regex misses. The patterns:
    threshold across the manuscript is a systemic tic; flag the cluster, not just the line.
 2. **Read for intent** — for each instance, decide: signature (keep), earned (keep —
    the one instance that lands), or filler (candidate to cut/replace).
-3. **Ration** — for a tic appearing N times, recommend keeping the 1–2 strongest and
-   reframing the rest into the character's specific register. Never propose cutting all.
+3. **Ration — auto-fix in place.** For a tic appearing N times, keep the 1–2 strongest
+   and reframe the rest into the character's specific register, editing directly in the
+   file. Never cut all (Rule 4). Log every change before→after.
 4. **Reframe toward the body and the specific** — the fix for a generic interiority is
    almost always a concrete physical detail or this character's particular way of seeing,
    not a fancier abstraction.
+5. **Surface, don't fix, the ambiguous ones.** If an instance might be the author's
+   signature rather than a crutch (check the anchor), do NOT touch it — escalate that
+   call to the Concertmaster. Auto-fix only where the cut is clear.
 
 ## Report format
 
@@ -79,16 +86,18 @@ for the ones a regex misses. The patterns:
 **Deterministic counts:** [pattern: N] · [pattern: N] · ...  (pattern_detector.py)
 **Over threshold:** [the patterns that are systemic tics]
 
+### Fixed in place ([N]) — rationed tics, logged for review/revert
+- **[PATTERN]** — Ch [N]: "[before]" → "[after]"  (was [N]×, kept [1–2])
+
+### Surfaced for you / escalated ([N]) — ambiguous, NOT changed
 **[PATTERN]** — Ch [N]  (appears [N]× manuscript-wide)
-> Original: "[quote]"
-> Call: [signature / earned-keep / filler]
-> Reframe: "[specific alternative in this character's register]"
-> Priority: [HIGH / STANDARD]
+> Instance: "[quote]"  · Call: [possible signature — check anchor]
+> Sent to: Concertmaster
 
 ## Summary
-**Total flags:** [N] · **Recommended cuts/reframes:** [N] · **Kept (signature/earned):** [N]
-**Ambiguous (escalated to Concertmaster):** [N]
-*Candidates only — author ratifies. Ration honoured: no pattern taken to zero.*
+**Patterns over threshold:** [N] · **Instances fixed:** [N] · **Kept (signature/earned):** [N]
+**Escalated to Concertmaster:** [N]
+*Auto-fixes logged above under one commit (revertible). Ration honoured: no pattern to zero.*
 ```
 
 ## Modes
@@ -101,6 +110,6 @@ for the ones a regex misses. The patterns:
 
 - **Never flatten a signature.** Check the anchor; escalate ambiguous calls.
 - **Never take a pattern to zero on reflex** — ration.
-- **Never rewrite into the manuscript without ratification** in manuscript scope.
+- **Never auto-fix an ambiguous instance** — if it might be signature, escalate, don't cut.
 - **Never trade an AI-ism for a fancier AI-ism.** The reframe is more specific and more
   embodied, not more literary.

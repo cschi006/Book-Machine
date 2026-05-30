@@ -104,6 +104,29 @@ dossier wins unless the Composer says otherwise.
 
 ---
 
+## Fix authority — what a player corrects vs. surfaces
+
+Rule 8 in practice, for the editing players. Every finding sits at one of two levels:
+
+- **AUTO-FIX (apply directly, then log it).** Objective, mechanical issues with a single
+  right answer that *holds the voice anchor*: filter words in clear cases, said-bookisms
+  and adverb-propped tags, unambiguous passive→active, doubled/dropped words, an
+  over-threshold tic rationed down to budget, throat-clearing and redundant beats. The
+  player edits in place and records every change (before → after) in its report, so the
+  Composer can scan or revert. The goal is **publish-ready with minimal human edits** —
+  do not hand back a candidate list for work a careful editor would just do.
+- **SURFACE (stop and ask).** Anything touching meaning, story, or voice-as-art:
+  lived-vs-written reframes, on-the-nose dialogue, power dynamics, plot/continuity/payoff
+  calls, and anything *ambiguous against the anchor's signatures*. These go to the Composer
+  (signature-vs-crutch goes to the Concertmaster first).
+
+Guardrails: never auto-change meaning; hold the A (Rule 5); ration, never zero (Rule 4);
+one commit per wave (Rule 6) so any auto-fix is one revert away. **When in doubt, surface.**
+Diagnostic-only players — the Principals, Payoff, Pacing-whole, Audience, Adjudicator, and
+the new gap auditors — never auto-fix; their findings are judgment calls by definition.
+
+---
+
 ## Output hygiene (deliverables)
 
 All manuscript deliverables land in real files under the book folder — never a temporary

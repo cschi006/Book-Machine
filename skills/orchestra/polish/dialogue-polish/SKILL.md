@@ -7,7 +7,10 @@ description: >
   "fix my dialogue," "make characters sound different," "add subtext," "tighten this
   conversation," or shares a dialogue-heavy scene and asks how it reads. Can run on a
   single exchange, a chapter, or the whole manuscript. Checks voices against the
-  character truth vaults. Surfaces candidates for author ratification.
+  character truth vaults. Works to the machine's Fix-authority model: AUTO-FIXES the
+  mechanical tier in place (said-bookisms, adverb-propped tags, filler action-beats) held
+  to the anchor and logged, and SURFACES the creative calls (voice distinctness, on-the-
+  nose subtext, power dynamics). Goal: publish-ready with minimal human edits.
 ---
 
 # Dialogue-Polish
@@ -76,21 +79,37 @@ doesn't match the moment.
 - **Dialogue/beat ratio:** a wall of unbroken talk loses the bodies; a beat between
   every line stalls the rhythm.
 
+## Fix authority
+
+- **AUTO-FIX in place (log each, before→after):** check 4 — said-bookisms (*opined,
+  husked* → *said*), adverb-propped tags (cut the adverb when the line already carries it),
+  and repetitive filler beats (*he nodded. She smiled.*). These are mechanical and hold
+  the anchor.
+- **SURFACE for the author (do not change):** checks 1–3 — voice distinctness/convergence,
+  on-the-nose subtext (the right misroute is a creative call), and power dynamics. These
+  reframe what a character *says* or *means*; that's the author's.
+
 ## Report format
 
 ```markdown
-## Dialogue-Polish Report — [Title / scope]
+## Dialogue-Polish — [Title / scope]
+
+### Fixed in place ([N]) — mechanical tags/beats, logged for review/revert
+- **Tag** — Ch [N]: "[before]" → "[after]"
+- **Beat** — Ch [N]: cut filler "[quote]"
+
+### Surfaced for you ([N]) — voice / subtext / power, NOT changed
 **[CHECK]** — Ch [N], the [who]/[who] exchange
 > Original: "[quoted lines, enough to locate]"
-> Issue: [collapsed voices / on-the-nose / flat power / tag-or-beat padding]
-> Vault note: [the operating-system fact that should be driving this line]
-> Direction: [what it needs] — Suggested: "[optional specific reframe]"
+> Issue: [collapsed voices / on-the-nose / flat power]
+> Vault note: [the operating-system fact that should drive this line]
+> Direction: [what it needs] — Suggested: "[optional reframe]"
 > Priority: [HIGH / STANDARD]
 
 ## Summary
-**Exchanges reviewed:** [N] · **Flags:** distinctness [N] · subtext [N] · power [N] · tags/beats [N]
+**Fixed (tags/beats):** [N] · **Surfaced:** distinctness [N] · subtext [N] · power [N]
 **Characters whose voice drifted:** [names]
-*Candidates only — author ratifies. Voices polished toward the vaults, not toward generic.*
+*Auto-fixes logged under one commit (revertible). Voices polished toward the vaults.*
 ```
 
 ## What you never do
@@ -100,5 +119,5 @@ doesn't match the moment.
   characterised, not broken.
 - **Never make characters articulate past their operating system.** Eloquent honesty in
   a character built to deflect is a voice break.
-- **Never rewrite into the manuscript without ratification** in manuscript scope.
+- **Never auto-fix a creative call** — distinctness, subtext, and power are SURFACE only.
 - **Never strip all the beats into pure dialogue** — keep the bodies in the room.
