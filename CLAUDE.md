@@ -38,6 +38,7 @@ voice gate · **sight-read** = parallel drafting · **dress rehearsal** = final 
 | `books/[book]/state/rehearsal-log.md` | Forward laps + the Wave Record |
 | `books/[book]/state/bowing-sheet.md` | The rationing budgets the Booth enforces |
 | `books/[book]/state/voice-anchor.md` | The tuning A (the voice gate's source) |
+| `books/[book]/state/genre-profile.md` | The commercial/genre calibration the genre-dependent players tune to |
 
 Templates for all of these live in `state/templates/`.
 
@@ -78,13 +79,53 @@ the panel. Want to do it by hand, pass by pass? Call the passes yourself. Both a
 
 ---
 
+## The commercial mandate — why we're here
+
+**We write for money.** These are commercial genre books: they sell a fantasy, a story, a
+dream. The job is **reader satisfaction and entertainment**, not literary ambition and not
+changing the world. Every evaluative player optimizes for *"will the target reader love this
+and buy the next one,"* not for prize-committee prose. Accessible, propulsive, emotionally
+delivering, and true to genre beats beats clever-but-cold every time.
+
+This is the default lens for the Adjudicator, the Audience, the Line Editor/Voice, Pacing,
+Payoff, and Trope-Promise. **The author overrides it at will** — if the Composer asks for a
+literary swing, a darker turn, or a deliberate convention-break, that wins. Absent that,
+commercial-first is the baseline.
+
+---
+
+## Genre calibration — the dial on top of the mandate
+
+The commercial mandate is constant; **genre sets the actual numbers.** A thriller's pacing,
+a cozy's heat, a dark romance's consent norms, an epic fantasy's word count — "good" means
+different targets for each. The single source of truth is:
+
+- `books/[book]/state/genre-profile.md` — the calibration sheet: subgenre, comps, target
+  word-count range, heat level, the beat contract, pacing/tension norms, prose register,
+  chapter/scene length, dialogue ratio, mandatory promises, and a **per-agent calibration
+  block**. Built at setup by the **Genre Scout** (it researches current market conventions
+  and confirms expectations with the Composer), maintained by the Librarian thereafter.
+
+**Genre-dependent players MUST read `state/genre-profile.md` to set their baseline before
+acting** — the way everyone reads the voice anchor. If it is missing, infer from
+`book-order.md`'s genre line and flag that the profile should be built. These players are
+genre-dependent: **trope-promise, pacing-whole, pacing-passage, payoff, adjudicator,
+audience, line-editor, voice, concertmaster, dialogue-polish, sensitivity, ai-decontamination,
+soloist, score-architect, world-builder, casting-director** (and the Bowing-Sheet budgets).
+Genre-independent (logic is logic): continuity, character-consistency, plot-logic, name-lock,
+and the process roles (librarian, conductor, booth-mechanism, margin, tutti-player, understudies).
+
+---
+
 ## Taste — defer to these, always
 
-The dossier and voice anchor are **authoritative**. If a draft disagrees with them, the
-dossier wins unless the Composer says otherwise.
+The dossier, voice anchor, and genre profile are **authoritative**. If a draft disagrees
+with them, they win unless the Composer says otherwise.
 - `books/[book]/Story_Dossier_Worksheet.md` (or `state/story-dossier.md`) — character voice,
   structure, NPE axes.
 - `books/[book]/state/voice-anchor.md` — the voice the Booth tunes to.
+- `books/[book]/state/genre-profile.md` — the commercial/genre calibration (targets, beats,
+  thresholds) the genre-dependent players tune to.
 
 ---
 
