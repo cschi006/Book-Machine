@@ -24,7 +24,7 @@ At 11 pm I doubted it was the squirrel that lived somewhere near the shared fenc
 
 My jaw unhinged as the live camera feed loaded. Two strange men stood on my porch.
 
-One of them was a little back from the door, hands visible, posture relaxed. Even through the warped fish-eye view, there was something off about how their face resolved on the screen. Not ugly. Not even remotely that. It has a bit of uncanny valley in there; proportions were too exact.
+One of them was a little back from the door, hands visible, posture relaxed. Even through the warped fish-eye view, there was something off about how their face resolved on the screen. Not ugly. Not even remotely that. It had a bit of uncanny valley in there; proportions were too exact.
 
 The other man was worse.
 
@@ -64,7 +64,7 @@ I snatched my phone off my nightstand, ripping the charging cord out. Opening my
 
 My soul left my body. I went through every mundane explanation I had, distracted, called off on the radio, deciding they weren't worth the paperwork…none of them felt good.
 
-I switched to the live feed, and there they were, lying down. I downloaded the videos of the officer walking away AND the video of me talking to them last night. I sent them to Mara with a run down. She wouldn't see it for hours, 6:30 was way to early for her.
+I switched to the live feed, and there they were, lying down. I downloaded the videos of the officer walking away AND the video of me talking to them last night. I sent them to Mara with a run down. She wouldn't see it for hours, 6:30 was way too early for her.
 
 *There are two people outside my door that will not leave since last night. They waved OFF the police. Like magic or something. Wtf. What do you do when police don't work.*
 
@@ -232,7 +232,7 @@ She made a small sound that might have been disbelief. "Um, source of what? I wa
 
 She backed away from us before disappearing into what I assumed was the kitchen. Without taking my eyes off the room she went into, I helped Cai to a sitting position, legs still outstretched longways taking up the length of the couch.
 
-"Cai, she drew you." I said.
+"Cai, she drew you," I said.
 
 "Truly? Where is the drawing? Have you seen it?" they said, controlling their breath.
 
@@ -248,7 +248,7 @@ I huffed, letting the conversation drop as I could hear her approaching. She car
 
 "I brought you some tea with honey too, in case you are having a sugar crash or something. Here." She set the tea down in front of them, handing the water directly. Both mine and Cai's eyebrows rose when she went a step further to put a small pillow on the floor behind him. *Nectar it is then.*
 
-"Thank you, Bianca." I said. "I think we may have gotten off on the wrong foot earlier. Could we sit down and talk calmly?" I tried to keep my voice level, and the slight nod from Cai told me I had accomplished my goal.
+"Thank you, Bianca," I said. "I think we may have gotten off on the wrong foot earlier. Could we sit down and talk calmly?" I tried to keep my voice level, and the slight nod from Cai told me I had accomplished my goal.
 
 Without a word she reached behind the couch and pulled out a folding chair with a hammock bottom. She sat down closest to Cai, causing me to step aside to give her room.
 
@@ -302,7 +302,7 @@ When she came back downstairs moments later, she was texting on her phone while 
 
 "Ok," she said, putting her phone in her pocket. "I will show this to you, but I want to know more. You promise to answer more of my questions?"
 
-"Of course." Cai said, then they both looked to me. I sighed.
+"Of course," Cai said, then they both looked to me. I sighed.
 
 "This was a discovery mission, I suppose discovery can extend to you…"
 
@@ -330,7 +330,7 @@ I could feel the faint pull of magic. This was the source. I needed to contain t
 
 "Show me."
 
-"No." She said, leaning back. "I have questions too. Like why is my drawing causing problems and what does your face look like? Do you have pointy ears?" she asked looking over my face, "Can you cast spells?"
+"No," she said, leaning back. "I have questions too. Like why is my drawing causing problems and what does your face look like? Do you have pointy ears?" she asked looking over my face, "Can you cast spells?"
 
 "Bianca, this is serious. We need to know how much of a problem this is before we know how to solve it. What you are doing is dangerous for us." My hand hovered gently over the paper, stirring the notes of magic embedded within. "This is why Cai collapsed. You are hurting them with your drawings…"
 
@@ -340,7 +340,7 @@ I could feel the faint pull of magic. This was the source. I needed to contain t
 
 I opened my mouth to tell Cai to stay here, but one look told me it was futile.
 
-The townhouse was small by my court standards. My bedroom was larger than her ground floor. The front room was a bit chaotic as a landing area, but the rest of home was labeled, controlled. I inspected the neatly hung portraits on the wall at the top of her stairs. One reminded me of my father, King Idris. Bianca noticed me noticing and went still for half a step.
+The townhouse was small by my court standards. My bedroom was larger than her ground floor. The front room was a bit chaotic as a landing area, but the rest of the home was labeled, controlled. I inspected the neatly hung portraits on the wall at the top of her stairs. One reminded me of my father, King Idris. Bianca noticed me noticing and went still for half a step.
 
 "That one's normal," she said.
 
@@ -358,7 +358,7 @@ She turned, walking backwards towards a closed door on the landing.
 
 She nodded once before turning back to the closed door. Her shoulders tucked up under her ears with one hand on the door knob.
 
-"Open it." I commanded.
+"Open it," I commanded.
 
 "I want to call my friend here… This doesn't feel right."
 
@@ -370,7 +370,7 @@ Her shoulders sagged, the handle turned with a click.
 
 There were two workstations on either side of the room. One had a white laptop and two monitors. There was barely anything else on the desk, besides a mug that said "no drama lama," filled with pens. The other desk had pencils, pens, ink, stacks of paper. There was a lamp attached to the side of the desk, facing down to the surface. Another laptop sat open but off with stickers all over it. Shelves were full of books and little dolls with big eyes.
 
-Along bottom of the wall were stacks of empty glass frames and the mattes. There was packing supplies, giant plastic totes labeled in neat handwriting, and stacks of hardbacked notebooks in neat piles everywhere.
+Along the bottom of the wall were stacks of empty glass frames and the mattes. There were packing supplies, giant plastic totes labeled in neat handwriting, and stacks of hardbacked notebooks in neat piles everywhere.
 
 Cai took a few steps in, only to sink down to the absurdly fluffy white rug dominating the room. "My Prince… it is everywhere."
 
@@ -386,7 +386,7 @@ I approached the desk with the drawings, starting to sift through them carefully
 
 "Loren? That's the name of where you are from?" Before they could answer she noticed what I was doing. "Um, excuse me, prince or not, you can't just touch my stuff. Seriously, what is happening to Cai?"
 
-"You are happening to Cai." I said, a little too harshly. This idiot woman was killing my friend, draining my kingdom, and she was concerned about me touching her 'stuff.'
+"You are happening to Cai," I said, a little too harshly. This idiot woman was killing my friend, draining my kingdom, and she was concerned about me touching her 'stuff.'
 
 "What is that supposed to mean? You don't even care they collapsed again. Fae or whatever we need to get them to a hospital… Are you listening to me?"
 
@@ -408,7 +408,7 @@ I began touching each notebook, each drawer, laying a containment sigil on the s
 
 I turned around to see her kneeling next to my friend, who sat legs crossed on their bottom. Both her arms were around their shoulders in a side hug. She was both supporting and protecting them. Cai's eyes were shut, while hers were wetter than usual. Maybe she was scared. Maybe she should be.
 
-I took Cai's portrait from they still held under their arm. I slid it between two sheets of inert backing paper. Even through the buffer, the name bit. Their eyes fluttered open.
+I took Cai's portrait from where they still held it under their arm. I slid it between two sheets of inert backing paper. Even through the buffer, the name bit. Their eyes fluttered open.
 
 "You are coming with us," I said.
 
@@ -420,7 +420,7 @@ I took Cai's portrait from they still held under their arm. I slid it between tw
 
 "I already have."
 
-She took a deep breath, voice raising. "You can't drag people around through what, let me guess, a magical portal? I have a medical condition. I don't know about whatever you find is so wrong about my art but it's not—"
+She took a deep breath, voice rising. "You can't drag people around through what, let me guess, a magical portal? I have a medical condition. I don't know about whatever you find is so wrong about my art but it's not—"
 
 Cai surprised me cutting her off. "Bianca."
 
@@ -557,6 +557,7 @@ She turned and walked to the sideboard. Cai's hand closed around the edge of the
 The room narrowed around the page Vael was about to put on the table.
 
 I did not yet know what was on it. I knew it was already what mattered.
+
 * * *
 
 She came back with a shallow bronze dish, not a page.
@@ -768,6 +769,7 @@ She turned toward the door without waiting to be agreed with.
 The page in the dish had stopped being a page some time ago. The ash inside the bronze did not have the courtesy to retain a shape. Felix did not look at the dish again. He did not look at me. He looked at Cai for one beat that contained more than the room had seen so far in this conversation, and Cai's mouth did a small thing that was not relief and not exhaustion but something fae had a word for and I did not.
 
 Then he followed Vael out.
+
 * * *
 
 The portal opened into my kitchen and my house did not feel like mine.
@@ -935,7 +937,7 @@ I would file that for later, with the other things.
 
 I scrolled.
 
-The thumbnails went on. And on. Each one a small magical wound photographed in good light and priced in mortal money and shipped on a Tuesday. *Original ink portrait — Caelith Noct'Aravain.* *Original ink portrait — Sylven.* *Original ink portrait — Branwych.* Names I knew. Names I had heard at court a decade ago. Names from the older roster I had not thought about since taking on the work of ruling. Some were people I had served beside. One was a councillor whose retirement I had personally signed off on.
+The thumbnails went on. And on. Each one a small magical wound photographed in good light and priced in mortal money and shipped on a Tuesday. *Original ink portrait — Caelith Noct-Aravain.* *Original ink portrait — Sylven.* *Original ink portrait — Branwych.* Names I knew. Names I had heard at court a decade ago. Names from the older roster I had not thought about since taking on the work of ruling. Some were people I had served beside. One was a councillor whose retirement I had personally signed off on.
 
 The grid did not falter under my scrolling. It went on. *And on.*
 
@@ -1103,7 +1105,7 @@ It was *Bianca.*
 
 The building was beige.
 
-That was not a court observation. It was the working sentence I gave it because beige was what the structure had in place of any other architectural intention. Three stories of leasable apartments above a row of small commercial storefronts that included a pet groomer, a vape shop, and a place selling bubble tea. The buyer lived on the second floor in unit 214. She had owned the original of Caelith Noct'Aravain for twenty-one months and reviewed it as *the prettiest piece in my whole apartment, perfectly captured the vibe.*
+That was not a court observation. It was the working sentence I gave it because beige was what the structure had in place of any other architectural intention. Three stories of leasable apartments above a row of small commercial storefronts that included a pet groomer, a vape shop, and a place selling bubble tea. The buyer lived on the second floor in unit 214. She had owned the original of Caelith Noct-Aravain for twenty-one months and reviewed it as *the prettiest piece in my whole apartment, perfectly captured the vibe.*
 
 I parked across the lot in a row that gave us angles on both the main entrance and the service door at the side. Bianca had texted ahead from the shop account — *materials issue on a piece from your June order, mind if I swing by and replace the backing? Will only take a minute.* The buyer had replied within four minutes: *Yes please, I love that one and I want it safe.* The phrasing in the reply had registered to me as the kind of mortal commitment that would yield in our favor if Bianca did not require it to.
 
@@ -1870,7 +1872,7 @@ The number landed cleanly enough to make anger briefly useful.
 
 I did not move closer to them. I did not let my voice harden. The shuttle of fear and anger that had run under my work for two days oscillated once and resolved into the colder thing it had been trained to resolve into: triage. I had a count. I would carry the count. I would burn the next four hundred and nine names and recover the twenty-eight that belonged to my closest friend, and I would do it in order, and Cai's body would not have to wait longer than the math allowed.
 
-"You have been concealing this since Spring."
+"You have been concealing this since spring."
 
 "Yes."
 
@@ -1990,7 +1992,7 @@ I knew it was not a thing I could carry to a Loren guest room and put on a shelf
 
 I looked at my desk.
 
-My laptop was on standby. The label printer had not been run in two days. The shipping scale was where I had left it. The good Bristol was clipped into the upper-right cabinet where I kept the unstamped stock. There was a half-eaten energy bar I had abandoned on Tuesday whose wrapper had begun to slubbed at the open end where the foil had started to fatigue.
+My laptop was on standby. The label printer had not been run in two days. The shipping scale was where I had left it. The good Bristol was clipped into the upper-right cabinet where I kept the unstamped stock. There was a half-eaten energy bar I had abandoned on Tuesday whose wrapper had begun to slub at the open end where the foil had started to fatigue.
 
 I could pack a bag.
 
@@ -2254,7 +2256,7 @@ I had not gone home.
 
 I had made the room my home was inside of bigger.
 
-# Chapter 8 — Felix POV (Mortal Logistics)
+# Chapter 8 — Felix
 
 The recovery campaign acquired the texture of mortal labor by the end of the second morning.
 
@@ -2458,7 +2460,7 @@ The bait was set.
 
 The next move was not ours.
 
-# Chapter 9 — Bianca POV (Only Art)
+# Chapter 9 — Bianca
 
 I drew the decoy sketch in the morning light with Felix at my desk.
 
@@ -2698,7 +2700,7 @@ He did not start the car.
 
 "Tell me everything you know about your neighbor."
 
-# Chapter 10 — Felix POV (Visible)
+# Chapter 10 — Felix
 
 She told me everything about her neighbor.
 
@@ -2926,11 +2928,11 @@ A new message in the buyer's thread.
 
 He knew.
 
-# Chapter 11 — Bianca POV (In Plain Sight) — DARK MOMENT
+# Chapter 11 — Bianca
 
 By eleven forty, I had been holding the customer-service voice on for two hours.
 
-That was the part I had budgeted for. The fluorescent lights, the bone-deep noise of three thousand mortal humans browsing tables in a convention hall, the wave of people who saw my prints and wanted to tell me about their childhood pets and their breakup art and the etsy seller they had ordered from in 2019 who had ghosted them mid-commission — I had budgeted for all of it. Mara had built a system. The system was working. The booth was at the end of the row. There was a wall at my back. A stool I could sit on between sales. A back-hall exit Mara had marked as my personal break route. A folder of pre-cut prints I could hand over without doing live commission negotiations. Cai working the aisle as a tester for the air around me. Felix six feet away in the position of someone trying very hard not to register as my bodyguard.
+That was the part I had budgeted for. The fluorescent lights, the bone-deep noise of three thousand mortal humans browsing tables in a convention hall, the wave of people who saw my prints and wanted to tell me about their childhood pets and their breakup art and the Etsy seller they had ordered from in 2019 who had ghosted them mid-commission — I had budgeted for all of it. Mara had built a system. The system was working. The booth was at the end of the row. There was a wall at my back. A stool I could sit on between sales. A back-hall exit Mara had marked as my personal break route. A folder of pre-cut prints I could hand over without doing live commission negotiations. Cai working the aisle as a tester for the air around me. Felix six feet away in the position of someone trying very hard not to register as my bodyguard.
 
 The system was working.
 
@@ -3166,7 +3168,7 @@ He hit the table. The pen jumped in my hand. I drew her again on the next page.
 
 I drew her again.
 
-The basement had gone full late-afternoon. The Idris box sat against the wall. The Anwyll pages stacked on the work table in a small clean column.
+The basement had gone full late-afternoon. The Idris box sat against the wall. The Anwyll pages stacked on the worktable in a small clean column.
 
 Somewhere in mortal Atlanta, Mara's phone was tracking the location of my phone, which was in the pocket of the cloak Evander had not removed.
 
@@ -3174,7 +3176,7 @@ Somewhere in Loren, Felix was — I hoped — already moving.
 
 I drew her again.
 
-# Chapter 12 — Felix POV (Next Door) — RESCUE
+# Chapter 12 — Felix
 
 By the time I reached Bianca's booth, Cai was on the floor with Mara at their head, and Bianca was gone.
 
@@ -3452,7 +3454,7 @@ Safe, then, was insufficient.
 
 She wanted paper.
 
-# Chapter 13 — Bianca POV (Still Here) — AFTERMATH + DELIBERATE CHANNEL
+# Chapter 13 — Bianca
 
 The room had no paper in it.
 
@@ -3746,7 +3748,7 @@ I had been expecting the summons. I had been expecting it since the basement, th
 
 "Tomorrow," I said.
 
-# Chapter 14 — Bianca POV (True Name)
+# Chapter 14 — Bianca
 
 The court was exactly the kind of room I had spent most of my adult life arranging myself to avoid.
 
@@ -4056,7 +4058,7 @@ When we finally separated enough to speak, it was only because the lamp had burn
 
 I leaned my forehead against his and closed my eyes.
 
-# Chapter 15 — Bianca POV (You Can Move)
+# Chapter 15 — Bianca
 
 Six weeks is the length of time it takes a mortal life to absorb a fae prince without making a production out of it.
 

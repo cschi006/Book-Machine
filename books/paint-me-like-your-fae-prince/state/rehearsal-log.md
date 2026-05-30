@@ -39,6 +39,7 @@ The drafting-era backward sweeps are recorded in `race-log.md`.
 ### Audience cold read — hooked open + Ch 11–12; one sag in Ch 5–8 (repetitive recovery montage + verbatim Vael-witnessing) now de-duped; leftover Driver-notes scaffolding found in the "clean" file and stripped.
 ### Payoff audit — 3/3 reader promises paid, 12/12 micro-promises now paid (the three neutral-vote purchases closed in Ch 13). No orphaned setups.
 ### Line edit / crutch — "as if" cut 16 → 6; "closed/shut eyes" 6 → 4; Ch 5–8 witnessing beats varied; Ch 13 neutral-vote line added.
+### Proofread — final mechanical pass: ~20 fixes (tense, agreement, dialogue-comma punctuation, name consistency e.g. Noct-Aravain/Etsy, "voice rising", "slub"); chapters 8–15 headings simplified to "# Chapter N — Name" to match Ch 1–7 (Composer-ratified); no mojibake, UTF-8 intact. Delivery-ready.
 
 ---
 

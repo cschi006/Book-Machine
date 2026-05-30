@@ -1,7 +1,7 @@
 # Session Report — Paint Me Like Your Fae Prince
 
 **Date:** 2026-05-26
-**Status:** Polish — drafting + dress rehearsal complete; proofread → delivery remaining
+**Status:** Complete — delivered. Proofread-clean; deliverable is drafts/_FULL_MANUSCRIPT_CLEAN.md (43,7xx prose words).
 **Project:** First full run of the Book Machine
 **Outcome:** 45,027-word first-draft manuscript (15 chapters), ratified voice anchor, full state docs, Parc Fermé inspection complete
 
@@ -205,9 +205,8 @@ Plus the **Anwyll-at-six discovery drift** (Ch 6) — ratified, integrated downs
 
 ## Open Items for Revision
 
-1. **`as if` reduction** — DONE (2026-05-29 dress-rehearsal pass): cut 16 → 6. Voice-bearing instances kept.
-2. **One unresolved micro-promise** — DONE (2026-05-29 dress-rehearsal pass): the three "neutral vote" Evander purchases (Ch 7 Scene 2) resolved by a Ch 13 line about completing the neutrals during deliberate-channel work. 12 of 12 micro-promises now paid.
-3. **`closed/shut eyes`** — DONE (2026-05-29 dress-rehearsal pass): cut 6 → 4, within anchor limits.
+> All craft/proofreading items closed 2026-05-29; the two below are optional/marketing, not blockers.
+
 4. **Word count is 90% of target** (45,027 / 50,000). Acceptable for paranormal romance KU but if you want to hit 50k, the easiest expansion targets are: the convention scene (Ch 11 Scene 1), Mara's introduction (Ch 10 Scene 2), and any romance beat that wants more breathing room.
 5. **Title decision is locked** as *Paint Me Like Your Fae Prince.* The dossier had *True Names* as working title — make sure this propagates to any marketing or cover materials.
 
