@@ -5,9 +5,10 @@ description: >
   at the start of every passage with a scene brief. Also trigger when the user says
   "write this scene," "draft scene N," "run the passage," or "write from this brief."
   The Soloist runs one scene through the seven-step loop: gather context, receive
-  word injection seeds, plan the scene, draft, run a repetition pass against the
-  previous five scenes, run a continuity self-check against the bible and POV
-  knowledge state, run a craft pass on the prose, then produce the finalized scene.
+  word injection seeds, plan the scene, draft, then run METERED self-checks — it runs
+  the deterministic detectors (pattern_detector, redundancy_detector, fact_ledger_diff)
+  on its own draft and fixes to the Bowing-Sheet budgets, plus a continuity self-check
+  against the bible/POV knowledge and a craft pass — then produces the finalized scene.
   The Soloist does not make severity calls (that's the Conductor), does not
   update the Bible (that's the Librarian), and does not run the
   post-passage audit (that's the Principals). It writes one scene as well as it
@@ -169,10 +170,20 @@ the landing. Cut to the bone before you move to Step 5.
 
 ### Step 5 — Repetition Pass
 
-Read the scene against the last five scenes in the manuscript.
+**Run the meters first, then read.** Don't grade by feel when a script can count.
 
-You are looking for **echoes** — patterns the author would not want repeated this
-close together:
+```
+python scripts/pattern_detector.py <this-scene-file>        # crutch density, sentence-opener variety, AI-isms
+python scripts/redundancy_detector.py <this-scene> <recent> # echoed phrasing against recent scenes
+```
+
+Compare the counts to the **Bowing-Sheet budgets** (`state/bowing-sheet.md`). Anything
+over budget is not a judgment call — **fix it to budget now**, before handoff. Record the
+before/after counts in your Soloist Notes. If a script isn't available, say so in the notes
+and fall back to the manual read below — but try the script first.
+
+Then read the scene against the last five scenes for the **echoes** the counter can't see —
+patterns the author would not want repeated this close together:
 
 **Physical beats:** Did the same gesture, posture, or physical reaction appear
 in a recent scene? A character tucking hair behind her ear is fine once. Three
@@ -202,9 +213,17 @@ Default echoes get revised before moving to Step 6.
 
 Cross-check the draft against the bible and the POV character's knowledge state.
 
+**Run the fact diff first:**
+```
+python scripts/fact_ledger_diff.py <this-scene-file>   # facts asserted here vs. the Bible
+```
+Every fact the script flags as new or conflicting is a hard check: either it's consistent
+with the Bible and the POV knowledge state, or it's an error you fix now (or a genuine new
+fact you flag for the Librarian). Don't wave it through.
+
 This is your own pass — not the Continuity Principal's. The Principal will run
-independently after the passage. Your pass is faster and less formal: you are looking
-for the obvious errors that don't need independent verification.
+independently after the passage. The script + the four checks below catch the obvious
+errors cheaply, before they come back as a Hold.
 
 **Check 1 — Knowledge state filter:**
 Read every sentence where the POV character references a fact, makes an inference,
@@ -259,14 +278,14 @@ sentence length match the scene's energy — shorter and choppier in conflict, l
 and more flowing in interiority? Flat rhythm reads flat. Find where the rhythm has
 settled into one groove and break it.
 
-**AI-ism check:** Scan for the construction patterns that signal generic prose:
-- "She found herself [gerund]"
-- "Something in his [noun]"
-- "She couldn't help [gerund]"
-- "As if [comparison]" used as default interiority
-- "Her heart [verb]"
-- "The air between them [verb]"
-If any appear, revise. One instance is a yellow. Two in the same scene is too many.
+**AI-ism + filter-word check (metered):** the Step 5 `pattern_detector.py` run already
+counted filter words, vague nouns, and the AI-ism constructions:
+- "She found herself [gerund]" · "Something in his [noun]" · "She couldn't help [gerund]"
+- "As if [comparison]" as default interiority · "Her heart [verb]" · "The air between them [verb]"
+Work the detector's list: cut filter words in clear cases, and ration any AI-ism over the
+Bowing-Sheet budget down to budget (hold the anchor — a signature is not a crutch; if it's
+ambiguous, leave it and note it for the Voice Principal/Concertmaster). Re-run the detector
+after revising to confirm you're within budget. Numbers, not vibes.
 
 **Dialogue subtext:** Read every dialogue exchange. Is any character saying exactly
 what they mean in a moment of high emotion? The vault says she never asks for help
