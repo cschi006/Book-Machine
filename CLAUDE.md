@@ -62,9 +62,18 @@ itself — it dispatches and reconciles.
 
 There are two entry points:
 
-1. **Full pipeline** — from a blank page: **Tuning Room** (build the score, cast the
-   characters, tune the A) → **Rehearsal** (premiere movements + backward waves) → **Dress
-   Rehearsal** (the whole-symphony passes). The draft-from-scratch path.
+1. **Full pipeline** — from a blank page: **Tuning Room** (Genre Scout builds the genre
+   profile → build the score, cast the characters) → **Voice-Sample Gate** → **Rehearsal**
+   (premiere movements + backward waves) → **Dress Rehearsal** (the whole-symphony passes).
+   The draft-from-scratch path.
+
+   > **Voice-Sample Gate (mandatory for every new book, the Composer's standing rule).**
+   > Before full drafting, the Soloist premieres **only the first 2–3 chapters** as a voice
+   > sample, then **STOP**: hand them to the Composer to **edit by hand.** She hands them
+   > back; the **Tuning** agent rebuilds `state/voice-anchor.md` from her edits (the diff
+   > between the AI draft and her edit *is* the voice lesson). Only then does the orchestra
+   > draft the rest, tuned to that A. Do this by default — don't wait to be asked. The
+   > Composer may waive it per book.
 2. **Editing-only** — bring an **already-drafted manuscript** and edit it without drafting
    anything. Point the Conductor at the manuscript and ask for a Dress Rehearsal (the
    Principals + the Booth + the Audience), or invoke any single pass on its own.
